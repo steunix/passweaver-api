@@ -3,5 +3,4 @@
 .vscode
 node_modules
 vaulted.code-workspace
-prisma/seed.js
 prisma/vaulted.db

@@ -1,3 +1,9 @@
+/**
+ * Group object module
+ * @module model/group
+ * @author Stefano Rivoir <rs4000@gmail.com>
+ */
+
 import { PrismaClient } from '@prisma/client'
 import * as Cache from '../src/cache.mjs'
 import * as Config from '../src/config.mjs'

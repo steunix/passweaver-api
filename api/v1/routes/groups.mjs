@@ -1,6 +1,7 @@
 /**
  * Groups route module
  * @module routes/groups
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { Router } from 'express'

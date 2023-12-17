@@ -1,3 +1,12 @@
+/**
+ * Vaulted, a collaborative password manager
+ *
+ * (c) 2023 - Stefano Rivoir <rs4000@gmail.com>
+ *
+ * @module src/response
+ * @author Stefano Rivoir <rs4000@gmail.com>
+ */
+
 import Express from "express"
 
 import * as Config from './src/config.mjs'

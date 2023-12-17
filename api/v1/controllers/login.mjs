@@ -1,6 +1,7 @@
 /**
  * Login controller module
  * @module controllers/login
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { PrismaClient } from '@prisma/client'

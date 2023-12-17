@@ -1,6 +1,7 @@
 /**
  * Config module
  * @module src/config
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { readFile } from 'fs/promises';

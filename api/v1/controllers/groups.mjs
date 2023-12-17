@@ -1,6 +1,7 @@
 /**
  * Groups controller module
  * @module controllers/groups
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { PrismaClient } from '@prisma/client'

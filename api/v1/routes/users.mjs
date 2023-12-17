@@ -1,6 +1,7 @@
 /**
  * Users route module
  * @module routes/users
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { Router } from 'express'

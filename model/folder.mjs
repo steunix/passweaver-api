@@ -1,10 +1,15 @@
+/**
+ * Folder object module
+ * @module model/folder
+ * @author Stefano Rivoir <rs4000@gmail.com>
+ */
+
 import { PrismaClient } from '@prisma/client'
 import * as User from './user.mjs'
 import * as Cache from '../src/cache.mjs'
 import * as Config from '../src/config.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
-
 
 /**
  * Returns true if the folder exists

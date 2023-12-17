@@ -1,6 +1,7 @@
 /**
  * Folders route module
  * @module routes/folders
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { Router } from 'express'

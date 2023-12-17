@@ -1,3 +1,9 @@
+/**
+ * User object module
+ * @module model/user
+ * @author Stefano Rivoir <rs4000@gmail.com>
+ */
+
 import { PrismaClient } from '@prisma/client'
 import * as Config from '../src/config.mjs'
 

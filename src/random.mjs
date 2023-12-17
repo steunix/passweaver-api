@@ -1,6 +1,7 @@
 /**
  * Random module
  * @module src/random
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { ulid } from 'ulid'

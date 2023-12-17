@@ -1,6 +1,7 @@
 /**
  * Crypto module
  * @module src/crypt
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { PrismaClient } from '@prisma/client'

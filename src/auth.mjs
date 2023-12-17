@@ -1,6 +1,7 @@
 /**
  * Authorization module
  * @module src/auth
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { PrismaClient } from '@prisma/client'

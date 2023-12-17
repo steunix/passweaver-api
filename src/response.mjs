@@ -1,6 +1,7 @@
 /**
  * Response module
  * @module src/response
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 /**

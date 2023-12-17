@@ -1,6 +1,7 @@
 /**
  * Items controller module
  * @module controllers/items
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { PrismaClient } from '@prisma/client'

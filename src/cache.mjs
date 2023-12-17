@@ -1,6 +1,7 @@
 /**
  * Cache module
  * @module src/cache
+ * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
 import Sizeof from "object-sizeof"
