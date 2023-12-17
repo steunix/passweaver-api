@@ -1,0 +1,32 @@
+# Request bodies for folders
+
+folderCreateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Folder description
+  required:
+    - description
+
+folderUpdateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Folder description
+  required:
+    - description
+
+folderAddGroupBody:
+  type: object
+  properties:
+    read:
+      type: boolean
+      description: Group can view items in folder
+    write:
+      type: boolean
+      description: Group can add and delete items or subfolders in folder
+  required:
+    - read
+    - write

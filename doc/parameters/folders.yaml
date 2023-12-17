@@ -1,0 +1,17 @@
+# Folder parameters
+
+folderid:
+  name: folderid
+  in: path
+  description: Folder ID
+  required: true
+  schema:
+    type: string
+
+parentfolderid:
+  name: parentfolderid
+  in: path
+  description: Parent folder ID
+  required: true
+  schema:
+    type: string

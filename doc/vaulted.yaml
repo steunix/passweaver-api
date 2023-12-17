@@ -1,0 +1,29 @@
+openapi: 3.0.0
+info:
+  title: Vaulted API
+  version: v1
+  description: Vaulted API documentation
+  license:
+    name: MIT
+    url: me
+
+servers:
+  - url: http://localhost
+
+
+security:
+  - bearerAuth: []
+
+paths:
+  /login:
+    $ref: '.\paths\login.yaml'
+  /folders:
+    $ref: '.\paths\folders.yaml'
+  /folders/{folderid}:
+    $ref: '.\paths\foldersid.yaml'
+  /folders/{folderid}/groups/{groupid}:
+    $ref: '.\paths\foldersgroupsid.yaml'
+
+components:
+  securitySchemes:
+    $ref: '.\components\security.yaml#/components/securitySchemes'

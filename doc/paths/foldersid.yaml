@@ -1,0 +1,66 @@
+get:
+  tags:
+    -  Folders
+  operationId: "get"
+  summary: Get a folder details
+  description: Returns a folder
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+  responses:
+    "200":
+      description: Folder found
+      $ref: '..\components\response.yaml#/success'
+    "401":
+      $ref: '..\components\response.yaml#/unauthorized'
+    "403":
+      $ref: '..\components\response.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\components\response.yaml#/failure'
+
+delete:
+  tags:
+    -  Folders
+  operationId: "delete"
+  summary: Delete a folder
+  description: The folder must be empty and must not have children folders
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+  responses:
+    "200":
+      description: Folder deleted
+      $ref: '..\components\response.yaml#/success'
+    "401":
+      $ref: '..\components\response.yaml#/unauthorized'
+    "403":
+      $ref: '..\components\response.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\components\response.yaml#/failure'
+    "422":
+      description: Folder is not empty
+      $ref: '..\components\response.yaml#/failure'
+put:
+  tags:
+    -  Folders
+  operationId: "update"
+  summary: Updates a folder
+  description: Updates a folder
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\folders.yaml#/folderUpdateBody'
+  responses:
+    "200":
+      description: Folder deleted
+      $ref: '..\components\response.yaml#/success'
+    "401":
+      $ref: '..\components\response.yaml#/unauthorized'
+    "403":
+      $ref: '..\components\response.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\components\response.yaml#/failure'

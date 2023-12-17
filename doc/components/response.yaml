@@ -1,0 +1,84 @@
+# Success response
+status:
+  type: string
+  enum: [ "success", "failed" ]
+
+success:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+
+failure:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: string
+            example: failed
+          message:
+            type: string
+            example: Error message
+          data:
+            type: object
+            example: {}
+
+badrequest:
+  description: Payload data is not readable, or missing some elements
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: string
+            example: failed
+          message:
+            type: string
+            example: Bad request
+          data:
+            type: object
+            example: {}
+
+forbidden:
+  description: You don't have permissions for the operation
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: string
+            example: failed
+          message:
+            type: string
+            example: No permissions
+          data:
+            type: object
+            example: {}
+
+unauthorized:
+  description: Your are not logged in
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            type: string
+            example: failed
+          message:
+            type: string
+            example: Unauthorized
+          data:
+            type: object
+            example: {}

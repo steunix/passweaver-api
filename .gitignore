@@ -1,0 +1,7 @@
+# Things to keep out of version control
+.env
+.vscode
+node_modules
+vaulted.code-workspace
+prisma/seed.js
+prisma/vaulted.db

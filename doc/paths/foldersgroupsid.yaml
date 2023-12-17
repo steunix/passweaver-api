@@ -1,0 +1,47 @@
+post:
+  tags:
+    - Folder permissions
+  operationId: "addgroup"
+  summary: Add a group to a folder
+  description:
+    Add a group to a folder, with given permissions. If 'write' is true also 'read' must be true, and
+    if 'read' is false, also 'write' must be false
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\groups.yaml#/groupid'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\folders.yaml#/folderAddGroupBody'
+  responses:
+    "201":
+      description: Group added to the folder
+      $ref: '..\components\response.yaml#/success'
+    "401":
+      $ref: '..\components\response.yaml#/unauthorized'
+    "403":
+      $ref: '..\components\response.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\components\response.yaml#/failure'
+delete:
+  tags:
+    - Folder permissions
+  operationId: "deletegroup"
+  summary: Remove a group from a folder
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\groups.yaml#/groupid'
+  responses:
+    "201":
+      description: Group removed from folder
+      $ref: '..\components\response.yaml#/success'
+    "401":
+      $ref: '..\components\response.yaml#/unauthorized'
+    "403":
+      $ref: '..\components\response.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\components\response.yaml#/failure'

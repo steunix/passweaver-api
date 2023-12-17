@@ -1,0 +1,19 @@
+# Request bodies for groups
+
+groupCreateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Group description
+  required:
+    - description
+
+groupUpdateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Group description
+  required:
+    - description

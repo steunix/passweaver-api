@@ -1,0 +1,11 @@
+# Login request body
+
+loginBody:
+  type: object
+  properties:
+    username:
+      type: string
+      example: user
+    password:
+      type: string
+      example: mypassword

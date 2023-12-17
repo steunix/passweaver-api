@@ -1,0 +1,22 @@
+{
+  "name": "vaulted",
+  "version": "0.0.1",
+  "description": "Collaborative password manager",
+  "main": "vaulted.mjs",
+  "scripts": {
+  },
+  "author": "Stefano Rivoir",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.6.0",
+    "express": "^4.18.2",
+    "jsonschema": "^1.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "object-sizeof": "^2.6.3",
+    "prisma": "^5.6.0",
+    "ulid": "^2.3.0"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  }
+}

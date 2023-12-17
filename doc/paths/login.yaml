@@ -1,0 +1,23 @@
+post:
+  tags:
+    - Login
+  operationId: login
+  summary: Login a user
+  description: Login in a user and return a JWT token
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '..\components\login.yaml#/loginBody'
+
+  responses:
+    "200":
+      description: Successfully logged in. JWT is available in 'data' object.
+      $ref: '..\components\response.yaml#/success'
+    "400":
+      description: Request body is not correct or unreadable
+      $ref: '..\components\response.yaml#/failure'
+    "401":
+      description: User cannot be logged in, wrong credentials
+      $ref: '..\components\response.yaml#/failure'

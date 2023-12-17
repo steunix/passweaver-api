@@ -1,0 +1,10 @@
+{
+  "jwt_key_env": "VAULTED_JWT_KEY",
+  "master_key_env": "VAULTED_MASTER_KEY",
+  "listen_port": 3000,
+  "ldap_enabled": false,
+  "ldap_options": {
+  },
+  "prisma_options": {},
+  "prisma_options2": {"log": ["query"]}
+}
