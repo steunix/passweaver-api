@@ -18,6 +18,7 @@ import groups from "./api/v1/routes/groups.mjs"
 import items from "./api/v1/routes/items.mjs"
 import users from "./api/v1/routes/users.mjs"
 import login from "./api/v1/routes/login.mjs"
+import rateLimitMiddleware from "./src/ratelimiter.mjs"
 
 console.log("Vaulted "+Config.packageJson().version+" starting...")
 
@@ -36,6 +37,9 @@ if ( !cfg.listen_port ) {
   console.error("Listen port is not defined, verify config.json")
   process.exit(2)
 }
+
+// Rate limiter
+app.use(rateLimitMiddleware)
 
 // Use json middleware
 app.use(Express.json());
