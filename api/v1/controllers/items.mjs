@@ -33,7 +33,7 @@ export async function get(req, res) {
   const id = req.params.id
 
   // Search item
-  const item = await prisma.Items.findUnique({
+  const item = await prisma.items.findUnique({
     where: { id: id }
   });
 
