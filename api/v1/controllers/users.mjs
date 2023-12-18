@@ -82,13 +82,14 @@ export async function create(req, res) {
 
   // Creates user
   const newid = randomId()
+  const hash = await Crypt.hash(req.body.secret)
   await prisma.users.create({
     data: {
       id: newid,
       login: req.body.login,
       description: req.body.description,
       email: req.body.email,
-      secret: Crypt.hash(req.body.secret),
+      secret: hash,
       secretexpiresat: new Date(2050,12,31,23,59,59)
     }
   })
@@ -142,12 +143,13 @@ export async function update(req, res) {
   }
 
   // Updates
+  const hash = Crypt.hash(req.body.secret)
   await prisma.users.update({
     data: {
       login: req.body.login,
       description: req.body.description,
       email: req.body.email,
-      secret: Crypt.hash(req.body.secret),
+      secret: hash,
       secretexpiresat: new Date(2050,12,31,23,59,59)
     },
     where: {

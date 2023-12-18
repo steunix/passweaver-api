@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client'
 
 import * as Config from '../src/config.mjs'
 import * as crypto from 'crypto'
+import bcrypt from "bcrypt"
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -16,8 +17,17 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  * @param {string} string String to hash
  * @returns {string} Base64 encoded hash
  */
-export function hash(string) {
-  return crypto.createHash('sha512').update(string).digest('hex')
+export async function hash(string) {
+  return await bcrypt.hash(string, 12)
+}
+
+/**
+ * Hashes a string
+ * @param {string} string String to hash
+ * @returns {string} Base64 encoded hash
+ */
+export async function checkPassword(password, hash) {
+  return await bcrypt.compare(password, hash)
 }
 
 /**
