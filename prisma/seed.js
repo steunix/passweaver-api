@@ -81,7 +81,7 @@ async function main() {
     update: {},
     create: {
       id: id,
-      group: "0",
+      group: "A",
       user: "0"
     }
   })
