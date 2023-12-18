@@ -17,7 +17,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  * @returns {string} Base64 encoded hash
  */
 export function hash(string) {
-  return crypto.createHash('sha512').update(string).digest('base64')
+  return crypto.createHash('sha512').update(string).digest('hex')
 }
 
 /**

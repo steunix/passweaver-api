@@ -11,6 +11,7 @@ import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
 import * as Auth from '../../../src/auth.mjs'
 import * as Config from '../../../src/config.mjs'
+import * as Crypt from '../../../src/crypt.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -49,7 +50,8 @@ export async function login(req, res) {
   }
 
   // Check password
-  if ( user.secret != req.body.password ) {
+  const hash = Crypt.hash(req.body.password)
+  if ( user.secret != hash ) {
     actions.log(null, "loginfail", "user", req.body.username)
     res.status(401).send(R.ko("Unauthorized"))
     return
