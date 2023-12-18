@@ -23,10 +23,9 @@ const createSchema = {
   "type": "object",
   "properties": {
     "title" : { "type": "string" },
-    "description" : { "type": "string" },
     "data" : { "type": "object" }
   },
-  "required": ["title","description","data"]
+  "required": ["title","data"]
 }
 
 // Get an item
@@ -51,12 +50,9 @@ export async function get(req, res) {
   }
 
   // Decrypt content
-  item.description = Auth.decrypt(item.description, item.descriptioniv, item.descriptionauthtag)
   item.data = JSON.parse(Auth.decrypt(item.data, item.dataiv, item.dataauthtag))
 
   // Removes unneeded info
-  delete(item.descriptionauthtag)
-  delete(item.descriptioniv)
   delete(item.dataauthtag)
   delete(item.dataiv)
 
@@ -137,7 +133,6 @@ export async function create(req, res) {
   }
 
   // Encrypt data
-  const encDescription = Crypt.encrypt(req.body.description)
   const encData = Crypt.encrypt(JSON.stringify(req.body.data))
 
   // Creates the item
@@ -147,9 +142,6 @@ export async function create(req, res) {
       id: newid,
       folder: folder,
       title: req.body.title,
-      description: encDescription.encrypted,
-      descriptioniv: encDescription.iv,
-      descriptionauthtag: encDescription.authTag,
       data: encData.encrypted,
       dataiv: encData.iv,
       dataauthtag: encData.authTag
@@ -201,7 +193,6 @@ export async function update(req, res) {
     data: {
       folder: req.body.folder,
       title: req.body.title,
-      description: req.body.description,
       data: JSON.stringify(req.body.data)
     },
     where: {

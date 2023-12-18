@@ -92,9 +92,6 @@ model Items {
   id          String @id
   folder      String
   title       String
-  description String
-  descriptioniv String
-  descriptionauthtag String
   data        String
   dataiv      String
   dataauthtag String
