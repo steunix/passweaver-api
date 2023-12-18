@@ -12,7 +12,7 @@
     "express-rate-limit": "^7.1.5",
     "jsonschema": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
-    "object-sizeof": "^2.6.3",
+    "node-cache": "^5.1.2",
     "prisma": "^5.6.0",
     "ulid": "^2.3.0"
   },

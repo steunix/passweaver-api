@@ -4,10 +4,11 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import Sizeof from "object-sizeof"
+import NodeCache from 'node-cache'
+
+const Cache = new NodeCache()
 
 console.log("Initializing cache...")
-let cache = {}
 
 /**
  * Returns a cache item
@@ -15,11 +16,7 @@ let cache = {}
  * @returns {any} The key
  */
 export function get(key) {
-  if ( cache[key] ) {
-    return cache[key]
-  } else {
-    return null
-  }
+  return Cache.get(key)
 }
 
 /**
@@ -28,7 +25,7 @@ export function get(key) {
  * @param {any} data
  */
 export function set(key, data) {
-  cache[key] = data
+  return Cache.set(key, data)
 }
 
 /**
@@ -36,9 +33,10 @@ export function set(key, data) {
  * @param {string} keyStart
  */
 export function reset(keyStart) {
-  for ( const elem of Object.keys(cache) ) {
-    if ( elem.startsWith(keyStart)!==null ) {
-      delete cache[elem]
+  const keys = Cache.keys()
+  for ( const key of keys ) {
+    if ( key.startsWith(keyStart)!==null ) {
+      Cache.del(key)
     }
   }
 }
@@ -48,5 +46,5 @@ export function reset(keyStart) {
  * @returns integer
  */
 export function size() {
-  return Sizeof(cache)
+  return Cache.getStats().vsize + Cache.getStats().ksize
 }
