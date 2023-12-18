@@ -18,12 +18,12 @@ import * as Crypt from '../../../src/crypt.mjs'
 const prisma = new PrismaClient(Config.get().prisma_options)
 
 // Payload schema
-const createSchema = {
+const itemSchema = {
   "id": "create",
   "type": "object",
   "properties": {
     "title" : { "type": "string" },
-    "data" : { "type": "object" }
+    "data" : { "type": "string" }
   },
   "required": ["title","data"]
 }
@@ -111,7 +111,7 @@ export async function list(req, res) {
  */
 export async function create(req, res) {
   // Validate payload
-  const validate = jsonschema.validate(req.body, createSchema)
+  const validate = jsonschema.validate(req.body, itemSchema)
   if ( !validate.valid ) {
     res.status(400).send(R.ko("Bad request"))
     return
@@ -133,7 +133,7 @@ export async function create(req, res) {
   }
 
   // Encrypt data
-  const encData = Crypt.encrypt(JSON.stringify(req.body.data))
+  const encData = Crypt.encrypt(req.body.data)
 
   // Creates the item
   const newid = randomId();
