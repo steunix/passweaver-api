@@ -1,3 +1,7 @@
+# Forewords
+
+This project is still a work in progress, bolts need to be tightened
+
 # Vaulted
 
 Vaulted is a collaborative password manager API. It allows to store and retreive secrets, such as sites passwords, API credentials, network passwords... in other words any information that needs to be encrypted and protected
@@ -105,6 +109,7 @@ Vaulted endpoints respond with standard HTTP response codes, so be sure to handl
 - 422: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
 
 Along with HTTP response code, you'll always get this minimum payload:
+```
 {
   request: {
     id: text,
@@ -113,10 +118,51 @@ Along with HTTP response code, you'll always get this minimum payload:
   success: true/false,
   message: text
 }
+```
 
 In case of errors (success=false), you can find the explanation in the "message" field. If any data is returned by the endpoint, it will be always encapsulated in a "data" field:
+```
 {
   success: true/false,
   message: text,
   data: { whatever }
 }
+```
+
+# Install and run
+## Install
+
+Download the source, and install all dependencies with npm:
+
+npm install
+
+## Configure
+
+Edit config.json
+
+## Environment
+
+Your environment must contain these 2 variables (these are the default names, they can be changed in config.json):
+
+- VAULTED_MASTER_KEY: the AES-256-GCM key used for encryption
+- VAULTED_JWT_KEY: the token used to sign JWT tokens for API authorization
+
+## Database
+
+Vaulted uses Prisma to access the database. As the time of writing, the database is a SQLite db (vaulted.db), and it's located in prisma/ subfolder: I will
+soon add proper configuration in config.js, allowing also for other RDBMS.
+
+LIMITATION: ATM Prisma does not allow to specify a column length for text columns, so they are all created with the maximum width allowed by the single
+backend; this is of course sub-optimal and will be addressed in Vaulted in a later time.
+
+To initialize the db:
+
+- npx prisma db push
+
+To feed initial data (built-it data):
+
+- npx prisma db feed
+
+## Run
+
+npm vaulted.mjs
