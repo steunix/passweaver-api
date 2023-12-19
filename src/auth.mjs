@@ -61,7 +61,7 @@ export function validateJWT(req, res, next) {
 export async function isAdmin(req) {
   const perm = await prisma.usersGroups.findMany({
     where: {
-      group: "0",
+      group: "A",
       user: req.user
     }
   })
