@@ -50,7 +50,7 @@ export async function login(req, res) {
   }
 
   // Check password
-  const hash = await Crypt.hash(req.body.password)
+  const hash = await Crypt.hashPassword(req.body.password)
   if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
     actions.log(null, "loginfail", "user", req.body.username)
     res.status(401).send(R.ko("Unauthorized"))

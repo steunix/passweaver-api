@@ -82,7 +82,7 @@ export async function create(req, res) {
 
   // Creates user
   const newid = randomId()
-  const hash = await Crypt.hash(req.body.secret)
+  const hash = await Crypt.hashPassword(req.body.secret)
   await prisma.users.create({
     data: {
       id: newid,
@@ -143,7 +143,7 @@ export async function update(req, res) {
   }
 
   // Updates
-  const hash = Crypt.hash(req.body.secret)
+  const hash = Crypt.hashPassword(req.body.secret)
   await prisma.users.update({
     data: {
       login: req.body.login,

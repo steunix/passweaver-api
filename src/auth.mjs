@@ -9,7 +9,6 @@ import { PrismaClient } from '@prisma/client'
 import * as R from '../src/response.mjs'
 import jsonwebtoken from 'jsonwebtoken'
 import * as Config from '../src/config.mjs'
-import * as crypto from 'crypto'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 

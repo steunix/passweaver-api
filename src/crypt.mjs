@@ -3,22 +3,17 @@
  * @module src/crypt
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
-
-import { PrismaClient } from '@prisma/client'
-
 import * as Config from '../src/config.mjs'
 import * as crypto from 'crypto'
 import bcrypt from "bcrypt"
-
-const prisma = new PrismaClient(Config.get().prisma_options)
 
 /**
  * Hashes a string
  * @param {string} string String to hash
  * @returns {string} Base64 encoded hash
  */
-export async function hash(string) {
-  return await bcrypt.hash(string, 12)
+export async function hashPassword(string) {
+  return (await bcrypt.hash(string, 12))
 }
 
 /**
