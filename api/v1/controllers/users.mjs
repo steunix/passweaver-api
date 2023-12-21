@@ -130,7 +130,7 @@ export async function create(req, res) {
   actions.log(req.user, "create", "user", newid)
   Cache.resetGroupsTree()
   Cache.resetFoldersTree()
-  res.send(R.ok({id: newid}))
+  res.status(201).send(R.ok({id: newid}))
 }
 
 /**
