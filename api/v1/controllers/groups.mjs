@@ -194,7 +194,7 @@ export async function update(req, res) {
   actions.log(req.user, "update", "group", id)
   Cache.resetFoldersTree()
   Cache.resetGroupsTree()
-  res.send(R.ok())
+  res.status(200).send(R.ok())
 }
 
 /**
@@ -257,7 +257,7 @@ export async function remove(req, res) {
   actions.log(req.user, "delete", "group", id)
   Cache.resetFoldersTree()
   Cache.resetGroupsTree()
-  res.send(R.ok())
+  res.status(200).send(R.ok())
 }
 
 /**

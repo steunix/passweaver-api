@@ -189,7 +189,7 @@ export async function update(req, res) {
   })
 
   actions.log(req.user, "update", "user", id)
-  res.send(R.ok())
+  res.status(200).send(R.ok())
 }
 
 /**
@@ -248,5 +248,5 @@ export async function remove(req, res) {
   })
 
   actions.log(req.user, "delete", "folder", id)
-  res.send(R.ok('Done'))
+  res.status(200).send(R.ok('Done'))
 }
