@@ -152,16 +152,16 @@ export async function update (req, res) {
   }
 
   // Check write permissions on new parent folder
-  const perm = await Folder.permissions(req.body.parent, req.user);
-  if ( !perm.write ) {
+  const perm1 = await Folder.permissions(req.body.parent, req.user);
+  if ( !perm1.write ) {
     res.status(403).send(R.ko("Unauthorized"))
     return
   }
 
   // Check write permissions on actual parent folder
   const parent = await Folder.parent(id);
-  perm = await Folder.permissions(parent, req.user);
-  if ( !perm.write ) {
+  const perm2 = await Folder.permissions(parent.id, req.user);
+  if ( !perm2.write ) {
     res.status(403).send(R.ko("Unauthorized"))
     return
   }
