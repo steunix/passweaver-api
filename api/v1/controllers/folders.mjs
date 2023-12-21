@@ -139,9 +139,25 @@ export async function update (req, res) {
     return
   }
 
+  // Check for Personal root folder
+  if ( id=="P" ) {
+    res.status(422).send(R.ko("Personal root folder cannot be updated"))
+    return
+  }
+
   // Search folder
-  if ( !await Folder.exists(id) ) {
+  const folder = await prisma.folders.findUnique({
+    where: { id: id }
+  });
+
+  if ( !folder ) {
     res.status(404).send(R.ko("Folder not found"))
+    return
+  }
+
+  // Personal folders cannot be altered
+  if ( folder.personal ) {
+    res.status(422).send(R.ko("Personal folders cannot be updated"))
     return
   }
 
@@ -204,8 +220,16 @@ export async function remove(req, res) {
   }
 
   // Search folder
-  if ( !await Folder.exists(id) ) {
+  const folder = await prisma.folders.findUnique({
+    where: { id: id }
+  })
+  if ( !folder ) {
     res.status(404).send(R.ko("Folder not found"))
+    return
+  }
+
+  if ( folder.personal ) {
+    res.status(422).send(R.ko("Personal folders cannot be deleted"))
     return
   }
 

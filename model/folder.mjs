@@ -8,6 +8,7 @@ import { PrismaClient } from '@prisma/client'
 import * as User from './user.mjs'
 import * as Cache from '../src/cache.mjs'
 import * as Config from '../src/config.mjs'
+import * as Auth from '../src/auth.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -147,9 +148,10 @@ export async function permissions(id,user,foldersRecordset) {
 
   let folders = await parents(id,true,foldersRecordset)
 
-  // First folder is itself, so I can check it directly
+  // First folder is itself, so I can check if it's personal
   if ( folders[0].personal ) {
-    if ( folders[0].user == id ) {
+    const admin = Auth.isAdmin(user)
+    if ( admin || folders[0].user == id ) {
       perm.read = true
       perm.write = true
     }
