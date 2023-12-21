@@ -85,6 +85,11 @@ export async function create(req, res) {
     return
   }
 
+  if ( req.params.parent=="E" ) {
+    res.status(422).send(R.ko("Cannot create groups in Everyone group"))
+    return
+  }
+
   // Creates group
   const newid = randomId()
   await prisma.groups.create({
@@ -131,8 +136,14 @@ export async function update(req, res) {
     return;
   }
 
-  // Check for admins group
+  // Check for Admins group
   if ( id=="A" ) {
+    res.status(422).send(R.ko("Admins group cannot be modified"))
+    return;
+  }
+
+  // Check for Everyone group
+  if ( id=="E" ) {
     res.status(422).send(R.ko("Admins group cannot be modified"))
     return;
   }
@@ -208,6 +219,12 @@ export async function remove(req, res) {
     return
   }
 
+  // Everyone group cannot be deleted
+  if ( id=="E" ) {
+    res.status(422).send(R.ko("Root group cannot be deleted"))
+    return
+  }
+
   // Gets the group
   if ( !await Group.exists(id) ) {
     res.status(404).send(R.ko("Group not found"))
@@ -262,6 +279,12 @@ export async function addUser(req, res) {
   // Checks the group
   if ( !await Group.exists(group) ) {
     res.status(404).send(R.ko("Group not found"))
+    return
+  }
+
+  // Cannot add user to Everyone
+  if ( group=="E" ) {
+    res.status(422).send(R.ko("Cannot add users to Everyone group"))
     return
   }
 
@@ -328,7 +351,13 @@ export async function removeUser(req, res) {
 
   // Admin cannot be removed from Admins
   if ( group=="0" && user=="0" ) {
-    res.status(422).send(R.ko("Admin cannot be removed from Admnins"))
+    res.status(422).send(R.ko("Admin cannot be removed from Adnins group"))
+    return
+  }
+
+  // Cannot remove user from Everyone
+  if ( group=="E" ) {
+    res.status(422).send(R.ko("Cannot remove users from Everyone group"))
     return
   }
 

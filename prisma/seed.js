@@ -57,6 +57,18 @@ async function main() {
     }
   })
 
+  // Everyone
+  id = "E"
+  const everyoneGroup = await prisma.groups.upsert({
+    where: { id: id },
+    update: {},
+    create: {
+        id: id,
+        description: "Everyone",
+        parent: "0"
+    }
+  })
+
   /** USERS */
   // User admin
   id = "0"
@@ -82,6 +94,17 @@ async function main() {
     create: {
       id: id,
       group: "A",
+      user: "0"
+    }
+  })
+
+  id = "gu1"
+  const gu2 = await prisma.usersGroups.upsert({
+    where: { id: id },
+    update: {},
+    create: {
+      id: id,
+      group: "E",
       user: "0"
     }
   })

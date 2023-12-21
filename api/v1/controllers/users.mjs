@@ -13,6 +13,7 @@ import * as actions from '../../../src/action.mjs'
 import * as Config from '../../../src/config.mjs'
 import * as Auth from '../../../src/auth.mjs'
 import * as Crypt from '../../../src/crypt.mjs'
+import * as Cache from '../../../src/cache.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -116,7 +117,19 @@ export async function create(req, res) {
     }
   })
 
+  // Add user to 'Everyone' group
+  const newid2 = randomId()
+  await prisma.usersGroups.create({
+    data: {
+      id: newid2,
+      group: "E",
+      user: newid
+    }
+  })
+
   actions.log(req.user, "create", "user", newid)
+  Cache.reset("vaulted.group")
+  Cache.reset("vaulted.tree")
   res.send(R.ok({id: newid}))
 }
 
@@ -204,11 +217,11 @@ export async function remove(req, res) {
     return
   }
 
-  // Search user
+  // Search user personal folders
   const personal = await prisma.folders.findMany({
     where: { personal: true, user: id }
   });
-  const personalId = personal[0].id
+  const personalId = personal.length ? personal[0].id : ""
 
   prisma.$transaction(async(tx)=> {
     // Deletes user groups
@@ -221,15 +234,17 @@ export async function remove(req, res) {
       where: { id: id }
     })
 
-    // Deletes items in personal folder
-    await prisma.items.deleteMany({
-      where: { folder: personalId }
-    })
+    if ( personalId ) {
+      // Deletes items in personal folder
+      await prisma.items.deleteMany({
+        where: { folder: personalId }
+      })
 
-    // Deletes personal folder
-    await prisma.folders.delete({
-      where: { id: personalId }
-    })
+      // Deletes personal folder
+      await prisma.folders.delete({
+        where: { id: personalId }
+      })
+    }
   })
 
   actions.log(req.user, "delete", "folder", id)
