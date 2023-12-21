@@ -151,6 +151,17 @@ export async function update(req, res) {
       res.status(404).send(R.ko("Parent group not found"))
       return
     }
+
+    // New parent cannot be one of its current children, otherwise it would break the tree
+    const group = await prisma.groups.findUnique({
+      where: { id: id}
+    })
+
+    const children = await Group.children(group.id)
+    if ( children.find( (elem)=> { return elem.id == req.body.parent} ) ) {
+      res.status(422).send(R.ko("Parent group is invalid"))
+      return
+    }
   }
 
   let updateStruct = {}

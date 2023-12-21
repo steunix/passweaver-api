@@ -89,18 +89,20 @@ export async function parents(id, includeSelf) {
 export async function children(id) {
   let ret = []
 
+  const groups = await prisma.groups.findMany()
+
   // Recursive to get all children
-  async function addChildren(id) {
-    let items = await prisma.groups.findMany({where: {parent: id}})
+  function addChildren(id) {
+    let items = groups.filter(elem => elem.parent == id)
     for ( const child of items ) {
       if ( child.id!="0" ) {
         ret.push(child)
-        await addChildren(child.id)
+        addChildren(child.id)
       }
     }
   }
 
-  await addChildren(id)
+  addChildren(id)
 
   return ret
 }

@@ -171,13 +171,20 @@ export async function update (req, res) {
   if ( req.body.parent ) {
     // Parent cannot be itself
     if ( req.body.parent == folder.id ) {
-      res.status(404).send(R.ko("Parent folder is invalid"))
+      res.status(422).send(R.ko("Parent folder is invalid"))
       return
     }
 
     // Search parent folder
     if ( !await Folder.exists(req.body.parent) ) {
       res.status(404).send(R.ko("Parent folder not found"))
+      return
+    }
+
+    // Parent cannot be one of its current children, otherwise it would break the tree
+    const children = await Folder.children(folder.id)
+    if ( children.find( (elem)=> { return elem.id == req.body.parent} ) ) {
+      res.status(422).send(R.ko("Parent folder is invalid"))
       return
     }
 

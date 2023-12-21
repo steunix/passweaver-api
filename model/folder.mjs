@@ -101,17 +101,17 @@ export async function children(id, foldersRecordset) {
   const folders = foldersRecordset || await prisma.folders.findMany()
 
   // Recursive to get all children
-  async function addChildren(id) {
+  function addChildren(id) {
     let items = folders.filter(elem => elem.parent == id)
     for ( const child of items ) {
       if ( child.id!="0" ) {
         ret.push(child)
-        await addChildren(child.id)
+        addChildren(child.id)
       }
     }
   }
 
-  await addChildren(id)
+  addChildren(id)
 
   return ret
 }
