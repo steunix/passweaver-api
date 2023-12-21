@@ -18,7 +18,7 @@ router.get('/:id', usersController.get)
 
 router.post("/", usersController.create)
 
-router.put("/:id", usersController.update)
+router.patch("/:id", usersController.update)
 
 router.delete("/:id", usersController.remove)
 

@@ -17,8 +17,8 @@ import * as Crypt from '../../../src/crypt.mjs'
 const prisma = new PrismaClient(Config.get().prisma_options)
 
 // Payload schema
-const schema = {
-  "id": "/users",
+const createSchema = {
+  "id": "create",
   "type": "object",
   "properties": {
     "login" : { "type": "string" },
@@ -27,6 +27,16 @@ const schema = {
     "secret" : { "type": "string" }
   },
   "required": ["login", "description","email","secret"]
+}
+const updateSchema = {
+  "id": "update",
+  "type": "object",
+  "properties": {
+    "login" : { "type": "string" },
+    "description" : { "type": "string" },
+    "email" : { "type": "string" },
+    "secret" : { "type": "string" }
+  }
 }
 
 /**
@@ -74,7 +84,7 @@ export async function create(req, res) {
   }
 
   // Validate payload
-  const validate = jsonschema.validate(req.body, schema)
+  const validate = jsonschema.validate(req.body, createSchema)
   if ( !validate.valid ) {
     res.status(400).send(R.ko("Bad request"))
     return
@@ -124,7 +134,7 @@ export async function update(req, res) {
   }
 
   // Validate payload
-  const validate = jsonschema.validate(req.body, schema)
+  const validate = jsonschema.validate(req.body, updateSchema)
   if ( !validate.valid ) {
     res.status(400).send(R.ko("Bad request"))
     return
@@ -142,16 +152,24 @@ export async function update(req, res) {
     return
   }
 
+  let updateStruct = {}
+  if ( req.body.login ) {
+    updateStruct.login = req.body.login
+  }
+  if ( req.body.description ) {
+    updateStruct.description = req.body.description
+  }
+  if ( req.body.email ) {
+    updateStruct.email = req.body.email
+  }
+  if ( req.body.secret ) {
+    updateStruct.secret = await Crypt.hashPassword(req.body.secret)
+    updateStruct.secretexpiresat = new Date(2050,12,31,23,59,59)
+  }
+
   // Updates
-  const hash = Crypt.hashPassword(req.body.secret)
   await prisma.users.update({
-    data: {
-      login: req.body.login,
-      description: req.body.description,
-      email: req.body.email,
-      secret: hash,
-      secretexpiresat: new Date(2050,12,31,23,59,59)
-    },
+    data: updateStruct,
     where: {
       id: id
     }

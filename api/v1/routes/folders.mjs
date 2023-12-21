@@ -23,7 +23,7 @@ router.get('/:id', foldersController.get)
 
 router.post("/:parent/folders/", foldersController.create)
 
-router.put("/:id", foldersController.update)
+router.patch("/:id", foldersController.update)
 
 router.delete("/:id", foldersController.remove)
 

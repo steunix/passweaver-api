@@ -18,14 +18,21 @@ import * as Crypt from '../../../src/crypt.mjs'
 const prisma = new PrismaClient(Config.get().prisma_options)
 
 // Payload schema
-const itemSchema = {
+const createSchema = {
   "id": "create",
-  "type": "object",
   "properties": {
     "title" : { "type": "string" },
     "data" : { "type": "string" }
   },
   "required": ["title","data"]
+}
+const updateSchema = {
+  "id": "update",
+  "properties": {
+    "title" : { "type": "string" },
+    "data" : { "type": "string" },
+    "folder" : { "type": "string" }
+  }
 }
 
 // Get an item
@@ -111,7 +118,7 @@ export async function list(req, res) {
  */
 export async function create(req, res) {
   // Validate payload
-  const validate = jsonschema.validate(req.body, itemSchema)
+  const validate = jsonschema.validate(req.body, createSchema)
   if ( !validate.valid ) {
     res.status(400).send(R.ko("Bad request"))
     return
@@ -159,6 +166,13 @@ export async function create(req, res) {
  * @returns
  */
 export async function update(req, res) {
+  // Validate payload
+  const validate = jsonschema.validate(req.body, updateSchema)
+  if ( !validate.valid ) {
+    res.status(400).send(R.ko("Bad request"))
+    return
+  }
+
   const id = req.params.id
 
   // Search item
@@ -171,30 +185,46 @@ export async function update(req, res) {
     return
   }
 
-  // Search folder
-  const folder = await prisma.folders.findUnique({
-    where: { id: req.body.folder }
-  });
+  const folderFromURL = req.params.folder || req.body.folder
 
-  if ( folder===null ) {
-    res.status(404).send(R.ko("Folder not found"))
+  // Check write permissions on current folder
+  const perm1 = await Folder.permissions(item.folder, req.user)
+  if ( !perm1.write ) {
+    res.status(403).send(R.ko("Unauthorized"))
     return
   }
 
-  // Check write permissions on folder
-  const perm = await Folder.permissions(req.body.folder, req.user);
-  if ( !perm.write ) {
-    res.status(401).send(R.ko("Unauthorized"))
-    return
+  // If a folder is given through path or payload, check for existanace and permissions
+  if ( folderFromURL ) {
+    if ( !await Folder.exists(folderFromURL) ) {
+      res.status(404).send(R.ko("Folder not found"))
+      return
+    }
+
+    const perm2 = await Folder.permissions(folderFromURL, req.user);
+    if ( !perm2.write ) {
+      res.status(401).send(R.ko("Unauthorized"))
+      return
+    }
+
   }
 
   // Updates
+  let updateStruct = {}
+  if ( req.body.data ) {
+    const encData = Crypt.encrypt(req.body.data)
+    updateStruct.data = encData.encrypted
+    updateStruct.dataiv = encData.iv
+    updateStruct.dataauthtag = encData.authTag
+  }
+  if ( folderFromURL ) {
+    updateStruct.folder = folderFromURL
+  }
+  if ( req.body.title ) {
+    updateStruct.title = req.body.title
+  }
   await prisma.items.update({
-    data: {
-      folder: req.body.folder,
-      title: req.body.title,
-      data: JSON.stringify(req.body.data)
-    },
+    data: updateStruct,
     where: {
       id: id
     }

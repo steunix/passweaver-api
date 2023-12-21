@@ -33,8 +33,7 @@ const updateSchema = {
   "properties": {
     "description" : { "type": "string" },
     "parent" : { "type": "string" }
-  },
-  "required": ["description", "parent"]
+  }
 }
 
 /**
@@ -128,7 +127,13 @@ export async function update(req, res) {
 
   // Check for root group
   if ( id=="0" ) {
-    res.status(422).send(R.ko("Root group cannot be updated"))
+    res.status(422).send(R.ko("Root group cannot be modified"))
+    return;
+  }
+
+  // Check for admins group
+  if ( id=="A" ) {
+    res.status(422).send(R.ko("Admins group cannot be modified"))
     return;
   }
 
@@ -138,18 +143,27 @@ export async function update(req, res) {
     return
   }
 
+  const groupFromURL = req.params.parent || req.body.parent
+
   // Search parent group
-  if ( !await Group.exists(req.body.parent) ) {
-    res.status(404).send(R.ko("Parent group not found"))
-    return
+  if ( groupFromURL ) {
+    if ( !await Group.exists(groupFromURL) ) {
+      res.status(404).send(R.ko("Parent group not found"))
+      return
+    }
+  }
+
+  let updateStruct = {}
+  if ( req.body.description ) {
+    updateStruct.description = req.body.description
+  }
+  if ( groupFromURL ) {
+    updateStruct.parent = groupFromURL
   }
 
   // Update group
   await prisma.groups.update({
-    data: {
-      description: req.body.description,
-      parent: req.body.parent
-    },
+    data: updateStruct,
     where: {
       id: id
     }

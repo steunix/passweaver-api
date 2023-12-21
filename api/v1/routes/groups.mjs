@@ -19,7 +19,7 @@ router.get('/:id', groupsController.get)
 
 router.post("/:parent/", groupsController.create)
 
-router.put("/:id", groupsController.update)
+router.patch("/:id", groupsController.update)
 
 router.delete("/:id", groupsController.remove)
 

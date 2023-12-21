@@ -33,8 +33,7 @@ const updateSchema = {
   "properties": {
     "description" : { "type": "string" },
     "parent" : { "type": "string" }
-  },
-  "required": ["description", "parent"]
+  }
 }
 const groupSchema = {
   "id": "addgroup",
@@ -161,33 +160,45 @@ export async function update (req, res) {
     return
   }
 
-  // Search parent folder
-  if ( !await Folder.exists(req.body.parent) ) {
-    res.status(404).send(R.ko("Parent folder not found"))
-    return
-  }
-
-  // Check write permissions on new parent folder
-  const perm1 = await Folder.permissions(req.body.parent, req.user);
+  // Check write permissions on current folder
+  const perm1 = await Folder.permissions(folder.id, req.user)
   if ( !perm1.write ) {
     res.status(403).send(R.ko("Unauthorized"))
     return
   }
 
-  // Check write permissions on actual parent folder
-  const parent = await Folder.parent(id);
-  const perm2 = await Folder.permissions(parent.id, req.user);
-  if ( !perm2.write ) {
-    res.status(403).send(R.ko("Unauthorized"))
-    return
+  // If parent is given, check for correctenns
+  if ( req.body.parent ) {
+    // Parent cannot be itself
+    if ( req.body.parent == folder.id ) {
+      res.status(404).send(R.ko("Parent folder is invalid"))
+      return
+    }
+
+    // Search parent folder
+    if ( !await Folder.exists(req.body.parent) ) {
+      res.status(404).send(R.ko("Parent folder not found"))
+      return
+    }
+
+    // Check write permissions on new parent folder
+    const perm2 = await Folder.permissions(req.body.parent, req.user);
+    if ( !perm2.write ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
   }
 
+  let updateStruct = {}
+  if ( req.body.description ) {
+    updateStruct.description = req.body.description
+  }
+  if ( req.body.parent ) {
+    updateStruct.parent = req.body.parent
+  }
   // Update folder
   await prisma.folders.update({
-    data: {
-      description: req.body.description,
-      parent: req.body.parent
-    },
+    data: updateStruct,
     where: {
       id: id
     }

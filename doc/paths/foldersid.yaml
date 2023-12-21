@@ -40,7 +40,7 @@ delete:
     "422":
       description: Folder is not empty
       $ref: '..\components\response.yaml#/failure'
-put:
+patch:
   tags:
     -  Folders
   operationId: "update"
