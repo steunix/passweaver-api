@@ -112,7 +112,7 @@ export async function create(req, res) {
   })
 
   actions.log(req.user, "create", "folder", newid)
-  Cache.reset("vaulted.tree")
+  Cache.resetFoldersTree()
   res.status(201).send(R.ok({id: newid}));
 }
 
@@ -212,7 +212,7 @@ export async function update (req, res) {
   })
 
   actions.log(req.user, "update", "folder", id)
-  Cache.reset("vaulted.tree")
+  Cache.resetFoldersTree()
   res.status(200).send(R.ok())
 }
 
@@ -287,7 +287,7 @@ export async function remove(req, res) {
   })
 
   await actions.log(req.user, "delete", "folder", id)
-  Cache.reset("vaulted.tree")
+  Cache.resetFoldersTree()
   res.status(200).send(R.ok('Done'))
 }
 
@@ -354,7 +354,7 @@ export async function addGroup(req, res) {
   })
 
   await actions.log(req.user, "add", "foldergroup", req.params.folder)
-  Cache.reset("vaulted.tree")
+  Cache.resetFoldersTree()
   res.status(200).send(R.ok('Done'))
 }
 
@@ -403,7 +403,7 @@ export async function removeGroup(req, res) {
   })
 
   await actions.log(req.user, "delete", "foldergroup", req.params.folder)
-  Cache.reset("vaulted.tree")
+  Cache.resetFoldersTree()
   res.status(200).send(R.ok('Done'))
 }
 

@@ -128,8 +128,8 @@ export async function create(req, res) {
   })
 
   actions.log(req.user, "create", "user", newid)
-  Cache.reset("vaulted.group")
-  Cache.reset("vaulted.tree")
+  Cache.resetGroupsTree()
+  Cache.resetFoldersTree()
   res.send(R.ok({id: newid}))
 }
 

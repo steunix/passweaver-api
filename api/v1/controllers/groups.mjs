@@ -103,7 +103,7 @@ export async function create(req, res) {
   // Tree cache doesn't need to be reset, because the group is empty
   actions.log(req.user, "create", "group", newid)
 
-  Cache.reset("vaulted.group")
+  Cache.resetGroupsTree()
   res.status(201).send(R.ok({id:newid}))
 }
 
@@ -192,8 +192,8 @@ export async function update(req, res) {
   })
 
   actions.log(req.user, "update", "group", id)
-  Cache.reset("vaulted.tree")
-  Cache.reset("vaulted.group")
+  Cache.resetFoldersTree()
+  Cache.resetGroupsTree()
   res.send(R.ok())
 }
 
@@ -255,8 +255,8 @@ export async function remove(req, res) {
   })
 
   actions.log(req.user, "delete", "group", id)
-  Cache.reset("vaulted.tree")
-  Cache.reset("vaulted.group")
+  Cache.resetFoldersTree()
+  Cache.resetGroupsTree()
   res.send(R.ok())
 }
 
@@ -316,8 +316,8 @@ export async function addUser(req, res) {
   })
 
   actions.log(req.user, "add", "usergroups", group+"/"+user)
-  Cache.reset("vaulted.tree")
-  Cache.reset("vaulted.group")
+  Cache.resetFoldersTree()
+  Cache.resetGroupsTree()
   res.status(200).send(R.ok())
 }
 
@@ -380,8 +380,8 @@ export async function removeUser(req, res) {
   })
 
   actions.log(req.user, "delete", "usergroups", group+"/"+user)
-  Cache.reset("vaulted.tree")
-  Cache.reset("vaulted.group")
+  Cache.resetFoldersTree()
+  Cache.resetGroupsTree()
   res.status(200).send(R.ok())
 }
 

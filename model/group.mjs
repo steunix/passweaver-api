@@ -123,7 +123,7 @@ export async function parent(id) {
  * @param {string} user
  */
 export async function tree(user) {
-  const c = Cache.get("vaulted.groups."+user)
+  const c = Cache.get(user, Cache.groupsTreeKey)
   if ( c ) {
     return c
   }
@@ -143,6 +143,6 @@ export async function tree(user) {
     }
   })
 
-  Cache.set("vaulted.groups."+user, tree)
+  Cache.set(user, Cache.groupsTreeKey, tree)
   return tree
 }

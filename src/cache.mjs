@@ -7,6 +7,8 @@
 import NodeCache from 'node-cache'
 
 const Cache = new NodeCache()
+export const foldersTreeKey = "folderstree"
+export const groupsTreeKey = "groupstree"
 
 console.log("Initializing cache...")
 
@@ -15,7 +17,7 @@ console.log("Initializing cache...")
  * @param {string} key
  * @returns {any} The key
  */
-export function get(key) {
+function _get(key) {
   return Cache.get(key)
 }
 
@@ -24,7 +26,7 @@ export function get(key) {
  * @param {string} key
  * @param {any} data
  */
-export function set(key, data) {
+function _set(key, data) {
   return Cache.set(key, data)
 }
 
@@ -33,12 +35,49 @@ export function set(key, data) {
  * @param {string} keyStart
  */
 export function reset(keyStart) {
+  const k = "vaulted."+keyStart
   const keys = Cache.keys()
   for ( const key of keys ) {
-    if ( key.startsWith(keyStart)!==null ) {
+    if ( key.startsWith(k)!==null ) {
       Cache.del(key)
     }
   }
+}
+
+/**
+ * Resets folders tree cache
+ */
+export function resetFoldersTree() {
+  const k = "vaulted."+foldersTreeKey
+  reset(k)
+}
+
+/**
+ * Reset groups tree cache
+ */
+export function resetGroupsTree() {
+  const k = "vaulted."+groupsTreeKey
+  reset(k)
+}
+
+/**
+ * Gets a key from cache
+ * @param {string} user
+ * @param {string} key
+ */
+export function get(user, key) {
+  const k = "vaulted."+key+"."+user
+  return _get(k)
+}
+
+/**
+ * Stores a key
+ * @param {string} user
+ * @param {string} key
+ */
+export function set(user, key, data) {
+  const k = "vaulted."+key+"."+user
+  _set(k, data)
 }
 
 /**

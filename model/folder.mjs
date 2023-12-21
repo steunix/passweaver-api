@@ -188,7 +188,7 @@ export async function permissions(id,user,foldersRecordset) {
  * @param {string} user
  */
 export async function tree(user) {
-  const c = Cache.get("vaulted.tree."+user)
+  const c = Cache.get(user, Cache.foldersTreeKey)
   if ( c ) {
     return c
   }
@@ -240,6 +240,6 @@ export async function tree(user) {
     }
   })
 
-  Cache.set("vaulted.tree."+user, tree)
+  Cache.set(user, Cache.foldersTreeKey, tree)
   return tree
 }
