@@ -41,10 +41,9 @@ const updateSchema = {
 }
 
 /**
- * Get a user
- * @param {string} user
- * @param {string} userlogin
- * @returns {string} A JWT
+ * Gets a user
+ * @param {object} req Express request
+ * @param {object} res Express response
  */
 export async function get(req, res) {
   const id = req.params.id
@@ -73,9 +72,8 @@ export async function get(req, res) {
 
 /**
  * Create a user
- * @param {string} user
- * @param {string} userlogin
- * @returns {string} A JWT
+ * @param {object} req Express request
+ * @param {object} res Express response
  */
 export async function create(req, res) {
   // Must be admin
@@ -135,9 +133,8 @@ export async function create(req, res) {
 
 /**
  * Update a user
- * @param {string} user
- * @param {string} userlogin
- * @returns {string} A JWT
+ * @param {object} req Express request
+ * @param {object} res Express response
  */
 export async function update(req, res) {
   // Must be admin
@@ -194,9 +191,8 @@ export async function update(req, res) {
 
 /**
  * Delete a user
- * @param {string} user
- * @param {string} userlogin
- * @returns {string} A JWT
+ * @param {object} req Express request
+ * @param {object} res Express response
  */
 export async function remove(req, res) {
   // Must be admin

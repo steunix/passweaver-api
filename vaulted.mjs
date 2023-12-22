@@ -42,7 +42,7 @@ if ( !cfg.listen_port ) {
 app.use(rateLimitMiddleware)
 
 // Use json middleware
-app.use(Express.json());
+app.use(Express.json())
 
 // Intall routers
 app.use("/api/v1/items", items)

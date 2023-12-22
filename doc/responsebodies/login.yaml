@@ -1,0 +1,19 @@
+# Success response
+status:
+  type: string
+  enum: [ "success", "failed" ]
+
+success:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              jwt:
+                type: string
