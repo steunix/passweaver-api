@@ -58,7 +58,7 @@ export async function login(req, res) {
   }
 
   // Creates JWT token
-  const token = Auth.createToken(user.id, user.login)
+  const token = Auth.createToken(user.id)
 
   actions.log(user.id,"login", "user", user.id)
   res.status(200).send(R.ok({jwt:token}))

@@ -15,12 +15,11 @@ const prisma = new PrismaClient(Config.get().prisma_options)
 /**
  * Creates a JWT token
  * @param {string} user
- * @param {string} userlogin
  * @returns {string} A JWT
  */
-export function createToken(user, userlogin) {
+export function createToken(user) {
   return jsonwebtoken.sign(
-    { user: user, userlogin: userlogin },
+    { user: user },
     Config.get().jwt_key, {
       algorithm: "HS512",
       expiresIn: "24h"
