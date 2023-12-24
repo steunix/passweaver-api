@@ -45,7 +45,7 @@ export async function login(req, res) {
   })
   if ( user===null ) {
     actions.log(req.body.username, "loginnotfound", "user", req.body.username)
-    res.status(401).send(R.ko("Unauthorized"))
+    res.status(401).send(R.ko("Bad user or wrong password"))
     return
   }
 
@@ -53,7 +53,7 @@ export async function login(req, res) {
   const hash = await Crypt.hashPassword(req.body.password)
   if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
     actions.log(null, "loginfail", "user", req.body.username)
-    res.status(401).send(R.ko("Unauthorized"))
+    res.status(401).send(R.ko("Bad user or wrong password"))
     return
   }
 
