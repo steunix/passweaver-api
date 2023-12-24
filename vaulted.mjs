@@ -51,6 +51,15 @@ app.use("/api/v1/groups", groups)
 app.use("/api/v1/users", users)
 app.use("/api/v1/login", login)
 
+// Error handler for invalid path/method
+app.all("*", (_req, res, _next) => {
+  res.status(500).send({
+    status: "failed",
+    message: "Path not found, or invalid method",
+    data: {}
+  })
+})
+
 console.log("Listening on port "+cfg.listen_port)
 
 app.listen(cfg.listen_port)
