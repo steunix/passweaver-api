@@ -55,7 +55,10 @@ export async function get (req, res) {
   const id = req.params.id
 
   // Search folder
-  if ( !await Folder.exists(id) ) {
+  const folder = await prisma.folders.findFirst({
+    where: { id: id }
+  })
+  if ( folder===null ) {
     res.status(404).send(R.ko("Folder not found"))
     return
   }
@@ -67,10 +70,9 @@ export async function get (req, res) {
     return
   }
 
-  // Reads folder
-  const folder = await prisma.folders.findFirst({
-    where: { id: id }
-  })
+  // Add permissions to the payload
+  folder.permissions = perm
+
   res.status(200).send(R.ok(folder))
 }
 
