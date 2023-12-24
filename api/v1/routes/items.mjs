@@ -18,9 +18,9 @@ router.get('/:id', itemsController.get)
 
 router.get('/', itemsController.list)
 
-router.patch("/", itemsController.create)
+router.post("/", itemsController.create)
 
-router.put("/:id", itemsController.update)
+router.patch("/:id", itemsController.update)
 
 router.delete("/:id", itemsController.remove)
 
