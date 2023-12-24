@@ -3,6 +3,14 @@ status:
   type: string
   enum: [ "success", "failed" ]
 
+statussuccess:
+  type: string
+  enum: [ "success" ]
+
+statusfailed:
+  type: string
+  enum: [ "failed" ]
+
 success:
   description: dummy
   content:
@@ -11,20 +19,19 @@ success:
         type: object
         properties:
           status:
-            $ref: '#/status'
+            $ref: '#/statussuccess'
           data:
             type: object
 
-failure:
-  description: dummy
+unprocessable:
+  description: Object cannot be processed
   content:
     application/json:
       schema:
         type: object
         properties:
           success:
-            type: string
-            example: failed
+            $ref: '#/statusfailed'
           message:
             type: string
             example: Error message
@@ -40,8 +47,7 @@ badrequest:
         type: object
         properties:
           success:
-            type: string
-            example: failed
+            $ref: '#/statusfailed'
           message:
             type: string
             example: Bad request
@@ -57,8 +63,7 @@ forbidden:
         type: object
         properties:
           success:
-            type: string
-            example: failed
+            $ref: '#/statusfailed'
           message:
             type: string
             example: No permissions
@@ -74,11 +79,42 @@ unauthorized:
         type: object
         properties:
           success:
-            type: string
-            example: failed
+            $ref: '#/statusfailed'
           message:
             type: string
             example: Unauthorized
           data:
             type: object
             example: {}
+
+created:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/statussuccess'
+          data:
+            type: object
+            properties:
+              id:
+                type: string
+                description: ID of new object
+
+notfound:
+  description: Not found
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/statusfailed'
+          message:
+            type: string
+            description: Error message
+            example: Not found
+          data:
+            type: object

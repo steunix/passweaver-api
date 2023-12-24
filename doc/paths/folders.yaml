@@ -10,13 +10,13 @@ post:
         schema:
           $ref: '..\requestbodies\folders.yaml#/folderCreateBody'
   responses:
-    "200":
+    "201":
       description: Folder created, the new id is returned
-      $ref: '..\components\response.yaml#/success'
+      $ref: '..\responsebodies\default.yaml#/created'
     "401":
-      $ref: '..\components\response.yaml#/unauthorized'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
-      $ref: '..\components\response.yaml#/forbidden'
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Folder not found
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/notfound'

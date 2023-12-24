@@ -17,7 +17,7 @@ post:
       $ref: '..\responsebodies\login.yaml#/success'
     "400":
       description: Request body is not correct or unreadable
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/badrequest'
     "401":
       description: User cannot be logged in, wrong credentials
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'

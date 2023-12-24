@@ -1,6 +1,6 @@
 post:
   tags:
-    - Folder permissions
+    - Folder/groups association
   operationId: "addgroup"
   summary: Add a group to a folder
   description:
@@ -18,14 +18,14 @@ post:
   responses:
     "201":
       description: Group added to the folder
-      $ref: '..\components\response.yaml#/success'
+      $ref: '..\responsebodies\default.yaml#/success'
     "401":
-      $ref: '..\components\response.yaml#/unauthorized'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
-      $ref: '..\components\response.yaml#/forbidden'
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Folder not found
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/notfound'
 delete:
   tags:
     - Folder permissions
@@ -37,11 +37,11 @@ delete:
   responses:
     "201":
       description: Group removed from folder
-      $ref: '..\components\response.yaml#/success'
+      $ref: '..\responsebodies\default.yaml#/success'
     "401":
-      $ref: '..\components\response.yaml#/unauthorized'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
-      $ref: '..\components\response.yaml#/forbidden'
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Folder not found
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/notfound'

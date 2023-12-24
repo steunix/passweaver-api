@@ -9,14 +9,14 @@ get:
   responses:
     "200":
       description: Folder found
-      $ref: '..\components\response.yaml#/success'
+      $ref: '..\responsebodies\folders.yaml#/getsuccess'
     "401":
-      $ref: '..\components\response.yaml#/unauthorized'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
-      $ref: '..\components\response.yaml#/forbidden'
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Folder not found
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/notfound'
 
 delete:
   tags:
@@ -29,17 +29,18 @@ delete:
   responses:
     "200":
       description: Folder deleted
-      $ref: '..\components\response.yaml#/success'
+      $ref: '..\responsebodies\default.yaml#/success'
     "401":
-      $ref: '..\components\response.yaml#/unauthorized'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
-      $ref: '..\components\response.yaml#/forbidden'
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Folder not found
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/notfound'
     "422":
       description: Folder is not empty
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/unprocessable'
+
 patch:
   tags:
     -  Folders
@@ -56,11 +57,11 @@ patch:
   responses:
     "200":
       description: Folder deleted
-      $ref: '..\components\response.yaml#/success'
+      $ref: '..\responsebodies\default.yaml#/success'
     "401":
-      $ref: '..\components\response.yaml#/unauthorized'
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
-      $ref: '..\components\response.yaml#/forbidden'
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Folder not found
-      $ref: '..\components\response.yaml#/failure'
+      $ref: '..\responsebodies\default.yaml#/notfound'
