@@ -57,7 +57,7 @@ export async function get(req, res) {
   }
 
   // Decrypt content
-  item.data = JSON.parse(Auth.decrypt(item.data, item.dataiv, item.dataauthtag))
+  item.data = JSON.parse(Crypt.decrypt(item.data, item.dataiv, item.dataauthtag))
 
   // Removes unneeded info
   delete(item.dataauthtag)
