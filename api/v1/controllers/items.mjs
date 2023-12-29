@@ -99,6 +99,9 @@ export async function list(req, res) {
       title: true,
       createdat: true,
       updatedat: true
+    },
+    orderBy: {
+      title: "asc"
     }
   });
 

@@ -38,7 +38,11 @@ export async function exists(id) {
 export async function parents(id, includeSelf, foldersRecordset) {
   let array = [];
 
-  const folders = foldersRecordset || await prisma.folders.findMany()
+  const folders = foldersRecordset || await prisma.folders.findMany({
+    orderBy: {
+      description: "asc"
+    }
+  })
 
   const item = folders.find(elem => elem.id == id)
 
@@ -98,7 +102,11 @@ export async function parents(id, includeSelf, foldersRecordset) {
 export async function children(id, foldersRecordset) {
   let ret = []
 
-  const folders = foldersRecordset || await prisma.folders.findMany()
+  const folders = foldersRecordset || await prisma.folders.findMany({
+    orderBy: {
+      description: "asc"
+    }
+  })
 
   // Recursive to get all children
   function addChildren(id) {
@@ -194,7 +202,11 @@ export async function tree(user) {
   }
 
   // Get folders
-  const folders = await prisma.folders.findMany()
+  const folders = await prisma.folders.findMany({
+    orderBy: {
+      description: "asc"
+    }
+  })
 
   let data = []
 

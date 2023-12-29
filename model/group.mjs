@@ -89,7 +89,11 @@ export async function parents(id, includeSelf) {
 export async function children(id) {
   let ret = []
 
-  const groups = await prisma.groups.findMany()
+  const groups = await prisma.groups.findMany({
+    orderBy: {
+      description: "asc"
+    }
+  })
 
   // Recursive to get all children
   function addChildren(id) {
@@ -129,7 +133,11 @@ export async function tree(user) {
   }
 
   // Get groups
-  const data = await prisma.groups.findMany()
+  const data = await prisma.groups.findMany({
+    orderBy: {
+      description: "asc"
+    }
+  })
 
   // Builds tree from flat data
   const tree = []
