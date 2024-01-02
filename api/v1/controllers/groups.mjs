@@ -59,12 +59,49 @@ export async function get(req, res) {
 }
 
 /**
+ * Gets a group members
+ * @param {object} req Express request
+ * @param {object} res Express response
+ */
+export async function getUsers(req, res) {
+  const id = req.params.id
+
+  var data = []
+
+  // Search group members
+  const users = await prisma.usersGroups.findMany({
+    where: { group: id },
+    select: {
+      relUsers: {
+        select: {
+          id: true,
+          login: true,
+          description: true,
+          active: true,
+          createdat: true,
+          updatedat: true
+        }
+      }
+    },
+    orderBy: {
+      relUsers: {
+        description: "asc"
+      }
+    }
+  })
+
+  for ( const user of users ) {
+    data.push(user.relUsers)
+  }
+  res.status(200).send(R.ok(data))
+}
+
+/**
  * Create a group
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @returns
  */
-
 export async function create(req, res) {
   // Must be admin
   if ( !await Auth.isAdmin(req) ) {

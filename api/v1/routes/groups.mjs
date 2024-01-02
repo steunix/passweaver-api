@@ -23,6 +23,8 @@ router.patch("/:id", groupsController.update)
 
 router.delete("/:id", groupsController.remove)
 
+router.get("/:id/users", groupsController.getUsers)
+
 router.post('/:group/users/:user', groupsController.addUser)
 
 router.delete('/:group/users/:user', groupsController.removeUser)
