@@ -181,7 +181,7 @@ export async function update(req, res) {
 
   // Check for Everyone group
   if ( id=="E" ) {
-    res.status(422).send(R.ko("Admins group cannot be modified"))
+    res.status(422).send(R.ko("Everyone group cannot be modified"))
     return;
   }
 
