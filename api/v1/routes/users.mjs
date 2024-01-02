@@ -22,4 +22,6 @@ router.patch("/:id", usersController.update)
 
 router.delete("/:id", usersController.remove)
 
+router.get('/:id/groups', usersController.getGroups)
+
 export default router

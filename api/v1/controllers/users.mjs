@@ -71,6 +71,33 @@ export async function get(req, res) {
 }
 
 /**
+ * Gets a user groups
+ * @param {object} req Express request
+ * @param {object} res Express response
+ */
+export async function getGroups(req, res) {
+  const id = req.params.id
+
+  var data = []
+
+  // Search user's groups
+  const groups = await prisma.usersGroups.findMany({
+    where: { user: id },
+    include: { relGroups: true },
+    orderBy: {
+      relGroups: {
+        description: "asc"
+      }
+    }
+  })
+
+  for ( const group of groups ) {
+    data.push(group.relGroups)
+  }
+  res.status(200).send(R.ok(data))
+}
+
+/**
  * Create a user
  * @param {object} req Express request
  * @param {object} res Express response
