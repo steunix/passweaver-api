@@ -17,7 +17,7 @@ router.use(auth.validateJWT)
 // Groups routes
 router.get('/:id', groupsController.get)
 
-router.post("/:parent/", groupsController.create)
+router.post("/:parent/groups", groupsController.create)
 
 router.patch("/:id", groupsController.update)
 
