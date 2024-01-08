@@ -5,5 +5,5 @@
   "ldap_enabled": false,
   "ldap_options": {
   },
-  "prisma_options2": {}
+  "prisma_options": {}
 }
