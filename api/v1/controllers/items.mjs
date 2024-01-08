@@ -280,7 +280,7 @@ export async function remove(req, res) {
     }
   })
 
-  await actions.log(req.user, "delete", "item", id)
+  actions.log(req.user, "delete", "item", id)
   res.status(200).send(R.ok('Done'))
 }
 

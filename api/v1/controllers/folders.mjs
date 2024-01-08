@@ -288,7 +288,7 @@ export async function remove(req, res) {
     where: { id: id }
   })
 
-  await actions.log(req.user, "delete", "folder", id)
+  actions.log(req.user, "delete", "folder", id)
   Cache.resetFoldersTree()
   res.status(200).send(R.ok('Done'))
 }
@@ -355,7 +355,7 @@ export async function addGroup(req, res) {
     }
   })
 
-  await actions.log(req.user, "add", "foldergroup", req.params.folder)
+  actions.log(req.user, "add", "foldergroup", req.params.folder)
   Cache.resetFoldersTree()
   res.status(200).send(R.ok('Done'))
 }
@@ -404,7 +404,7 @@ export async function removeGroup(req, res) {
     }
   })
 
-  await actions.log(req.user, "delete", "foldergroup", req.params.folder)
+  actions.log(req.user, "delete", "foldergroup", req.params.folder)
   Cache.resetFoldersTree()
   res.status(200).send(R.ok('Done'))
 }
