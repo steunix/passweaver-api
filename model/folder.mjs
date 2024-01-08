@@ -38,7 +38,7 @@ export async function exists(id) {
 export async function parents(id, includeSelf, foldersRecordset) {
   let array = [];
 
-  const folders = foldersRecordset && await prisma.folders.findMany({
+  const folders = foldersRecordset ?? await prisma.folders.findMany({
     orderBy: {
       description: "asc"
     }
@@ -102,7 +102,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
 export async function children(id, foldersRecordset) {
   let ret = []
 
-  const folders = foldersRecordset && await prisma.folders.findMany({
+  const folders = foldersRecordset ?? await prisma.folders.findMany({
     orderBy: {
       description: "asc"
     }
