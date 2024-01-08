@@ -5,6 +5,5 @@
   "ldap_enabled": false,
   "ldap_options": {
   },
-  "prisma_options": {},
-  "prisma_options2": {"log": ["query"]}
+  "prisma_options2": {}
 }

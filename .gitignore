@@ -3,4 +3,5 @@
 .vscode
 node_modules
 vaulted.code-workspace
+config.json
 prisma/vaulted.db
