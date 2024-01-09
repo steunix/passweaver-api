@@ -72,11 +72,14 @@ export async function getUsers(req, res) {
   const users = await prisma.usersGroups.findMany({
     where: { group: id },
     select: {
-      relUsers: {
+      Users: {
         select: {
           id: true,
           login: true,
-          description: true,
+          lastname: true,
+          firstname: true,
+          locale: true,
+          authmethod: true,
           active: true,
           createdat: true,
           updatedat: true
@@ -84,14 +87,14 @@ export async function getUsers(req, res) {
       }
     },
     orderBy: {
-      relUsers: {
-        description: "asc"
+      Users: {
+        lastname: "asc"
       }
     }
   })
 
   for ( const user of users ) {
-    data.push(user.relUsers)
+    data.push(user.Users)
   }
   res.status(200).send(R.ok(data))
 }

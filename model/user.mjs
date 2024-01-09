@@ -30,13 +30,13 @@ export async function groups(user) {
   const groups = await prisma.usersGroups.findMany({
     where: { user: user },
     include: {
-      relGroups: {}
+      Groups: {}
     }
   })
 
   let array = []
   for ( const rec of groups ) {
-    array.push(rec.relGroups)
+    array.push(rec.Groups)
   }
   return array
 }

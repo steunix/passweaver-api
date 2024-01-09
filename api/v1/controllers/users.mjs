@@ -23,20 +23,27 @@ const createSchema = {
   "type": "object",
   "properties": {
     "login" : { "type": "string" },
-    "description" : { "type": "string" },
+    "firstname" : { "type": "string" },
+    "lastname": { "type": "string" },
+    "authmethod": { "type": "string" },
+    "locale": { "type": "string" },
     "email" : { "type": "string" },
     "secret" : { "type": "string" }
   },
-  "required": ["login", "description","email","secret"]
+  "required": ["login", "firstname","email","secret"]
 }
 const updateSchema = {
   "id": "update",
   "type": "object",
   "properties": {
     "login" : { "type": "string" },
-    "description" : { "type": "string" },
+    "firstname" : { "type": "string" },
+    "lastname": { "type": "string" },
+    "authmethod": { "type": "string" },
+    "locale": { "type": "string" },
     "email" : { "type": "string" },
-    "secret" : { "type": "string" }
+    "secret" : { "type": "string" },
+    "active": { "type": "string" }
   }
 }
 
@@ -54,7 +61,10 @@ export async function get(req, res) {
     select: {
       id: true,
       login: true,
-      description: true,
+      firstname: true,
+      lastname: true,
+      authmethod: true,
+      locale: true,
       email: true,
       active: true,
       createdat: true,
@@ -83,16 +93,16 @@ export async function getGroups(req, res) {
   // Search user's groups
   const groups = await prisma.usersGroups.findMany({
     where: { user: id },
-    include: { relGroups: true },
+    include: { Groups: true },
     orderBy: {
-      relGroups: {
+      Groups: {
         description: "asc"
       }
     }
   })
 
   for ( const group of groups ) {
-    data.push(group.relGroups)
+    data.push(group.Groups)
   }
   res.status(200).send(R.ok(data))
 }
@@ -123,7 +133,10 @@ export async function create(req, res) {
     data: {
       id: newid,
       login: req.body.login,
-      description: req.body.description,
+      firstname: req.body.firstname,
+      lastname: req.body?.lastname,
+      locale: req.body?.locale ?? "en_US",
+      authmethod: req.body?.authmethod ?? "local",
       email: req.body.email,
       secret: hash,
       secretexpiresat: new Date(2050,12,31,23,59,59)
@@ -135,7 +148,7 @@ export async function create(req, res) {
   await prisma.folders.create({
     data: {
       id: newFolderId,
-      description: req.body.description,
+      description: req.body.login,
       parent: "P",
       personal: true,
       user: newid
@@ -193,8 +206,17 @@ export async function update(req, res) {
   if ( req.body.login ) {
     updateStruct.login = req.body.login
   }
-  if ( req.body.description ) {
-    updateStruct.description = req.body.description
+  if ( req.body.firstname ) {
+    updateStruct.firstname = req.body.firstname
+  }
+  if ( req.body.lastname ) {
+    updateStruct.lastname = req.body.lastname
+  }
+  if ( req.body.authmethod ) {
+    updateStruct.authmethod = req.body.authmethod
+  }
+  if ( req.body.locale ) {
+    updateStruct.locale = req.body.locale
   }
   if ( req.body.email ) {
     updateStruct.email = req.body.email
@@ -202,6 +224,9 @@ export async function update(req, res) {
   if ( req.body.secret ) {
     updateStruct.secret = await Crypt.hashPassword(req.body.secret)
     updateStruct.secretexpiresat = new Date(2050,12,31,23,59,59)
+  }
+  if ( req.body.personalsecret ) {
+    updateStruct.personalsecret = await Crypt.hashPassword(req.body.personalsecret)
   }
 
   // Updates
@@ -246,15 +271,10 @@ export async function remove(req, res) {
   });
   const personalId = personal.length ? personal[0].id : ""
 
-  prisma.$transaction(async(tx)=> {
+  await prisma.$transaction(async(tx)=> {
     // Deletes user groups
     await prisma.usersGroups.deleteMany({
       where: { user: id }
-    })
-
-    // Deletes user
-    await prisma.users.delete({
-      where: { id: id }
     })
 
     if ( personalId ) {
@@ -268,6 +288,12 @@ export async function remove(req, res) {
         where: { id: personalId }
       })
     }
+
+    // Deletes user
+    await prisma.users.delete({
+      where: { id: id }
+    })
+
   })
 
   actions.log(req.user, "delete", "folder", id)

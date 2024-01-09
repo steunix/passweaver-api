@@ -44,16 +44,20 @@ model Groups {
 model Users {
   id          String @id
   login       String
-  description String
+  lastname    String
+  firstname   String?
+  authmethod  String
+  locale      String
   email       String
   secret      String
   secretexpiresat DateTime
+  personalsecret String?
   active      Boolean @default(true)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  rel1        UsersGroups[]
-  relFolders  Folders[]
+  Groups      UsersGroups[]
+  Folders     Folders[]
 
   @@index([login])
 }
@@ -65,8 +69,8 @@ model UsersGroups {
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  relUsers    Users @relation(fields:[user], references:[id])
-  relGroups   Groups @relation(fields:[group], references:[id])
+  Users       Users @relation(fields:[user], references:[id])
+  Groups      Groups @relation(fields:[group], references:[id])
 
   @@index([user])
   @@index([group])

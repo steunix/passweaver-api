@@ -14,8 +14,9 @@ const packagejson = JSON.parse(
 )
 
 // Reads the configuration from file
+var json
 try {
-  const json = JSON.parse(
+  json = JSON.parse(
     await readFile(
       new URL('../config.json', import.meta.url)
     )

@@ -78,10 +78,14 @@ async function main() {
     create: {
         id: id,
         login: "admin",
-        description: "Admin",
+        firstname: "admin",
+        lastname: "",
+        locale: "en_US",
+        authmethod: "local",
         email: "admin",
         secret: "$2a$12$aSf1yr1F2cxiiz8oA28zLeInQ4bcKwdLhOEHnjytaPlA0Suh7wYh.",
         secretexpiresat: new Date(2050,1,1),
+        personalsecret: "$2a$12$aSf1yr1F2cxiiz8oA28zLeInQ4bcKwdLhOEHnjytaPlA0Suh7wYh.",
         active: true
     }
   })

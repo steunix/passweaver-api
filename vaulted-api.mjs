@@ -3,7 +3,7 @@
  *
  * (c) 2023 - Stefano Rivoir <rs4000@gmail.com>
  *
- * @module src/response
+ * @module main
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
