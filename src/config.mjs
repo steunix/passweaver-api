@@ -14,11 +14,16 @@ const packagejson = JSON.parse(
 )
 
 // Reads the configuration from file
-const json = JSON.parse(
-  await readFile(
-    new URL('../config.json', import.meta.url)
+try {
+  const json = JSON.parse(
+    await readFile(
+      new URL('../config.json', import.meta.url)
+    )
   )
-)
+} catch(err) {
+  console.error("config.json not found or invalid")
+  process.exit(1)
+}
 
 let config = json
 
