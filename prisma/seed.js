@@ -78,8 +78,8 @@ async function main() {
     create: {
         id: id,
         login: "admin",
-        firstname: "admin",
-        lastname: "",
+        lastname: "admin",
+        firstname: "",
         locale: "en_US",
         authmethod: "local",
         email: "admin",
