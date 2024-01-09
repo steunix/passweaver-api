@@ -70,7 +70,7 @@ export async function get(req, res) {
       createdat: true,
       updatedat: true
     }
-  });
+  })
 
   if ( user===null ) {
     res.status(404).send(R.ko("User not found"))
@@ -78,6 +78,26 @@ export async function get(req, res) {
   }
 
   res.status(200).send(R.ok(user))
+}
+
+/**
+ * Get users list
+ * @param {object} req Express request
+ * @param {object} res Express response
+ */
+export async function list(req, res) {
+  // Must be admin
+  if ( !await Auth.isAdmin(req) ) {
+    res.status(403).send(R.ko("Unauthorized"))
+    return
+  }
+
+  const id = req.params.id
+
+  // Search user
+  const users = await prisma.users.findMany()
+
+  res.status(200).send(R.ok(users))
 }
 
 /**

@@ -14,6 +14,8 @@ const router = Router()
 // Validation middleware
 router.use(auth.validateJWT)
 
+router.get("/", usersController.list)
+
 router.get('/:id', usersController.get)
 
 router.post("/", usersController.create)
