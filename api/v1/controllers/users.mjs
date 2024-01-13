@@ -43,7 +43,7 @@ const updateSchema = {
     "locale": { "type": "string" },
     "email" : { "type": "string" },
     "secret" : { "type": "string" },
-    "active": { "type": "string" }
+    "active": { "type": "boolean" }
   }
 }
 
@@ -247,6 +247,9 @@ export async function update(req, res) {
   }
   if ( req.body.personalsecret ) {
     updateStruct.personalsecret = await Crypt.hashPassword(req.body.personalsecret)
+  }
+  if ( req.body.hasOwnProperty("active") ) {
+    updateStruct.active = req.body.active
   }
 
   // Updates
