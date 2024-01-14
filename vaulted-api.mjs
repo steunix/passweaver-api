@@ -18,6 +18,8 @@ import groups from "./api/v1/routes/groups.mjs"
 import items from "./api/v1/routes/items.mjs"
 import users from "./api/v1/routes/users.mjs"
 import login from "./api/v1/routes/login.mjs"
+import util from "./api/v1/routes/util.mjs"
+
 import rateLimitMiddleware from "./src/ratelimiter.mjs"
 
 console.log("Vaulted "+Config.packageJson().version+" starting...")
@@ -44,12 +46,13 @@ app.use(rateLimitMiddleware)
 // Use json middleware
 app.use(Express.json())
 
-// Intall routers
+// Install routers
 app.use("/api/v1/items", items)
 app.use("/api/v1/folders", folders)
 app.use("/api/v1/groups", groups)
 app.use("/api/v1/users", users)
 app.use("/api/v1/login", login)
+app.use("/api/v1/util", util)
 
 // Error handler for invalid path/method
 app.all("*", (_req, res, _next) => {
