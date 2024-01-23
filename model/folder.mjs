@@ -201,49 +201,46 @@ export async function tree(user) {
     return c
   }
 
-  // Get folders
-  const folders = await prisma.folders.findMany({
+  // Get folders for cache
+  const allFolders = await prisma.folders.findMany({
     orderBy: {
       description: "asc"
     }
   })
 
-  let data = []
+  // Explicitly allowed folders
+  const readFolders = await prisma.$queryRaw`
+    select f.*
+    from   "Folders" f
+    join   "FolderGroupPermission" p
+    on     f.id = p.folder
+    join   "Groups" g
+    on     g.id = p."group"
+    join   "UsersGroups" ug
+    on     ug."group" = g.id
+    where  p."read" = true
+    and    ug."user" = ${user}
+	  order  by f.description`
 
-  // Removes all folders that are not visible:
-  // 1. For each folder, children are looped
-  // 2. If the children have permission to read, they must be readable, along with all of the fathers in order:
-  //    - to be represented correctly in a tree view, for example
-  //    - to retain the original structure, otherwise it would be a false representation
-  const cache = []
-  for (const record of folders) {
-    const items = await children(record.id, folders)
+  // For each allowed folder, add all parents and children
+  var data = []
+  for ( const folder of readFolders ) {
+    const achildren = await children(folder.id, allFolders)
+    const aparents  = await parents(folder.id, true, allFolders)
 
-    let perm = {}
-    for ( const child of items ) {
-      if ( cache[child.id] === undefined ) {
-        perm = await permissions(child.id, user, folders)
-        cache[child.id] = perm
-      } else {
-        perm = cache[child.id]
-      }
-
-      // If children has 'read', all parents must has 'read'
-      if ( perm.read ) {
-        const prnts = await parents(child.id, true, folders)
-        for ( const p of prnts ) {
-          if ( !data.find( (elem) => elem.id == p.id) ) {
-            data.push(p)
-          }
-        }
-      }
+    for ( const el of achildren ) {
+      data.push(el)
+    }
+    for ( const el of aparents ) {
+      data.push(el)
     }
   }
 
-  // Builds tree from flat data
+  // Builds tree from array
+  const hashTable = Object.create(null)
+  data.forEach(d => hashTable[d.id] = {...d, children: []})
+
   const tree = []
-  const hashTable = Object.create(null);
-  data.forEach(d => hashTable[d.id] = {...d, children: []});
   data.forEach(d => {
     if(d.parent) {
       hashTable[d.parent].children.push(hashTable[d.id])
