@@ -202,11 +202,7 @@ export async function tree(user) {
   }
 
   // Get folders for cache
-  const allFolders = await prisma.folders.findMany({
-    orderBy: {
-      description: "asc"
-    }
-  })
+  const allFolders = await prisma.folders.findMany()
 
   // Explicitly allowed folders
   const readFolders = await prisma.$queryRaw`
@@ -219,11 +215,9 @@ export async function tree(user) {
     join   "UsersGroups" ug
     on     ug."group" = g.id
     where  p."read" = true
-    and    ug."user" = ${user}
-	  order  by f.description`
+    and    ug."user" = ${user}`
 
-  // For each allowed folder, add all parents and children. Uses an array, so we can
-  // keep original folder sorting
+  // For each allowed folder, add all parents and children
   var data = []
   var added = new Map()
   for ( const folder of readFolders ) {
@@ -243,6 +237,13 @@ export async function tree(user) {
       }
     }
   }
+
+  // Sort by description
+  data.sort( (a,b)=>{
+    if ( a.description<b.description ) { return -1 }
+    if ( a.description>b.description ) { return 1 }
+    return 0
+  })
 
   // Builds tree from array
   const hashTable = Object.create(null)
