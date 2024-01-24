@@ -222,17 +222,25 @@ export async function tree(user) {
     and    ug."user" = ${user}
 	  order  by f.description`
 
-  // For each allowed folder, add all parents and children
+  // For each allowed folder, add all parents and children. Uses an array, so we can
+  // keep original folder sorting
   var data = []
+  var added = new Map()
   for ( const folder of readFolders ) {
     const achildren = await children(folder.id, allFolders)
     const aparents  = await parents(folder.id, true, allFolders)
 
     for ( const el of achildren ) {
-      data.push(el)
+      if ( !added.get(el.id) ) {
+        data.push(el)
+        added.set(el.id,el.id)
+      }
     }
     for ( const el of aparents ) {
-      data.push(el)
+      if ( !added.get(el.id) ) {
+        data.push(el)
+        added.set(el.id,el.id)
+      }
     }
   }
 
