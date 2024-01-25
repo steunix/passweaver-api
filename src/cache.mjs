@@ -8,6 +8,7 @@ import NodeCache from 'node-cache'
 
 const Cache = new NodeCache()
 export const foldersTreeKey = "folderstree"
+export const foldersReadableKey = "foldersreadable"
 export const groupsTreeKey = "groupstree"
 
 console.log("Initializing cache...")
@@ -48,7 +49,10 @@ export function reset(keyStart) {
  * Resets folders tree cache
  */
 export function resetFoldersTree() {
-  const k = "vaulted."+foldersTreeKey
+  var k = "vaulted."+foldersTreeKey
+  reset(k)
+
+  k = "vaulted."+foldersReadableKey
   reset(k)
 }
 
