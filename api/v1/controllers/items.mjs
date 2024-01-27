@@ -12,8 +12,8 @@ import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
 import * as Config from '../../../src/config.mjs'
 import * as Folder from '../../../model/folder.mjs'
-import * as Auth from '../../../src/auth.mjs'
 import * as Crypt from '../../../src/crypt.mjs'
+import * as Cache from '../../../src/cache.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -74,36 +74,50 @@ export async function get(req, res) {
  * @returns
  */
 export async function list(req, res) {
-  const folder = req.params.folder
-  const id = req.params.id
+  const folder = req.params?.folder
+  var items
 
-  // Search folder
-  if ( !await Folder.exists(folder) ) {
-    res.status(404).send(R.ko("Folder not found"))
-    return
-  }
-
-  // Check read permissions on folder
-  const perm = await Folder.permissions(folder, req.user);
-  if ( !perm.read ) {
-    res.status(403).send(R.ko("Unauthorized"))
-    return
-  }
-
-  // Search folder
-  const items = await prisma.items.findMany({
-    where: { folder: folder },
-    select: {
-      id: true,
-      folder: true,
-      title: true,
-      createdat: true,
-      updatedat: true
-    },
-    orderBy: {
-      title: "asc"
+  if ( folder ) {
+    // Single folder search, if from .../folder/items
+    if ( !await Folder.exists(folder) ) {
+      res.status(404).send(R.ko("Folder not found"))
+      return
     }
-  });
+
+    // Check read permissions on folder
+    const perm = await Folder.permissions(folder, req.user);
+    if ( !perm.read ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
+    // Search folder
+    items = await prisma.items.findMany({
+      where: { folder: folder },
+      select: {
+        id: true,
+        folder: true,
+        title: true,
+        createdat: true,
+        updatedat: true
+      },
+      orderBy: {
+        title: "asc"
+      }
+    })
+  } else {
+    // General search, use all permitted items
+    var permitted = Cache.get(Cache.foldersReadableKey)
+    if ( !permitted ) {
+      const tree = await Folder.tree(req.user)
+      permitted = Cache.get(Cache.foldersReadableKey)
+    }
+
+    items = prisma.$executeRaw`
+      select *
+      from   "Items"
+      where  folder in ( ${prisma.join(permitted)} )`
+  }
 
   if ( items.length==0 ) {
     res.status(404).send(R.ko("No item found"))
