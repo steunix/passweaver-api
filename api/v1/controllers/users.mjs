@@ -95,7 +95,20 @@ export async function list(req, res) {
   const id = req.params.id
 
   // Search user
-  const users = await prisma.users.findMany()
+  var users
+  if ( req.query?.search ) {
+    users = await prisma.users.findMany({
+      where: {
+        OR: [
+          { login: { contains: req.query.search } },
+          { firstname: { contains: req.query.search } },
+          { lastname: { contains: req.query.search } }
+        ]
+      }
+    })
+  } else {
+    users = await prisma.users.findMany()
+  }
 
   res.status(200).send(R.ok(users))
 }
