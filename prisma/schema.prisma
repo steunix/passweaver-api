@@ -85,8 +85,8 @@ model FolderGroupPermission {
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  rel1        Folders @relation(fields:[folder], references:[id])
-  rel2        Groups @relation(fields:[group], references:[id])
+  Folders     Folders @relation(fields:[folder], references:[id])
+  Groups      Groups @relation(fields:[group], references:[id])
 
   @@index([folder])
   @@index([group])

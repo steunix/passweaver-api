@@ -409,6 +409,58 @@ export async function removeGroup(req, res) {
   res.status(200).send(R.ok('Done'))
 }
 
+export async function groups(req,res) {
+  // Must be admin
+  if ( !await Auth.isAdmin(req) ) {
+    res.status(403).send(R.ko("Unauthorized"))
+    return
+  }
+
+  // Checks the folder
+  if ( !await Folder.exists(req.params.id) ) {
+    res.status(404).send(R.ko("Folder not found"))
+    return
+  }
+
+  // Get folders parents
+  const parents = await Folder.parents(req.params.id, true)
+  const perms = new Map()
+  const canmodify = !parents[0].personal && parents[0].id!="P"
+
+  // For each folder, group permissions are or'ed
+  for ( const folder of parents ) {
+    const groups = await prisma.folderGroupPermission.findMany({
+      where: {
+        folder: folder.id
+      },
+      include: {
+        Groups: {},
+        Folders: {}
+      }
+    })
+
+    for ( const group of groups ) {
+      var perm = perms.get(group.id) ?? { id: '', description: '', canmodify: false, inherited: false, read: false, write: false }
+      perm.id = group.Groups.id
+      perm.canmodify = canmodify
+      perm.description = group.Groups.description
+      perm.inherited = ( group.folder != req.params.id)
+      perm.read |= group.read
+      perm.write |= group.write
+      perms.set(group.id, perm)
+    }
+  }
+
+  const groups = Array.from(perms.values())
+  groups.sort((a,b)=>{
+    if ( a.description<b.description ) { return -1 }
+    if ( a.description>b.description ) { return 1 }
+    return 0
+  })
+
+  res.status(200).send(R.ok(groups))
+}
+
 /**
  * Gets the tree of visible folders for current user
  * @param {Object} req Express request

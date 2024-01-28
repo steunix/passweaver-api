@@ -294,7 +294,7 @@ export async function remove(req, res) {
   // Search user
   const user = await prisma.users.findUnique({
     where: { id: id }
-  });
+  })
 
   if ( user===null ) {
     res.status(404).send(R.ko("User not found"))
@@ -304,7 +304,7 @@ export async function remove(req, res) {
   // Search user personal folders
   const personal = await prisma.folders.findMany({
     where: { personal: true, user: id }
-  });
+  })
   const personalId = personal.length ? personal[0].id : ""
 
   await prisma.$transaction(async(tx)=> {

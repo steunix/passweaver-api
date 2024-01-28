@@ -21,6 +21,8 @@ router.use("/:folder/items", itemsRouter)
 // Folders routes
 router.get('/:id', foldersController.get)
 
+router.get('/:id/groups', foldersController.groups)
+
 router.post("/:parent/folders/", foldersController.create)
 
 router.patch("/:id", foldersController.update)
