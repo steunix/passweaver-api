@@ -59,6 +59,35 @@ export async function get(req, res) {
 }
 
 /**
+ * Get groups list
+ * @param {object} req Express request
+ * @param {object} res Express response
+ */
+export async function list(req, res) {
+  // Must be admin
+  if ( !await Auth.isAdmin(req) ) {
+    res.status(403).send(R.ko("Unauthorized"))
+    return
+  }
+
+  const id = req.params.id
+
+  // Search group
+  var groups
+  if ( req.query?.search ) {
+    groups = await prisma.groups.findMany({
+      where: {
+        description: { contains: req.query.search }
+      }
+    })
+  } else {
+    groups = await prisma.groups.findMany()
+  }
+
+  res.status(200).send(R.ok(groups))
+}
+
+/**
  * Gets a group members
  * @param {object} req Express request
  * @param {object} res Express response

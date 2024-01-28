@@ -15,6 +15,8 @@ const router = Router()
 router.use(auth.validateJWT)
 
 // Groups routes
+router.get("/", groupsController.list)
+
 router.get('/:id', groupsController.get)
 
 router.post("/:parent/groups", groupsController.create)
