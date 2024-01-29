@@ -202,7 +202,7 @@ export async function update(req, res) {
     return
   }
 
-  const folderFromURL = req.params.folder || req.body.folder
+  const folderFromURL = req.params.folder ?? req.body.folder
 
   // Check write permissions on current folder
   const perm1 = await Folder.permissions(item.folder, req.user)
