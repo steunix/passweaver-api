@@ -100,9 +100,9 @@ export async function list(req, res) {
     users = await prisma.users.findMany({
       where: {
         OR: [
-          { login: { contains: req.query.search } },
-          { firstname: { contains: req.query.search } },
-          { lastname: { contains: req.query.search } }
+          { login: { contains: req.query.search, mode: 'insensitive' } },
+          { firstname: { contains: req.query.search, mode: 'insensitive' } },
+          { lastname: { contains: req.query.search, mode: 'insensitive' } }
         ]
       }
     })
