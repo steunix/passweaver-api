@@ -75,7 +75,9 @@ export async function get(req, res) {
  */
 export async function list(req, res) {
   const folder = req.params?.folder
-  var items
+  const search = req.query?.search ?? ''
+
+  var items, folders
 
   if ( folder ) {
     // Single folder search, if from .../folder/items
@@ -91,33 +93,41 @@ export async function list(req, res) {
       return
     }
 
-    // Search folder
-    items = await prisma.items.findMany({
-      where: { folder: folder },
-      select: {
-        id: true,
-        folder: true,
-        title: true,
-        createdat: true,
-        updatedat: true
-      },
-      orderBy: {
-        title: "asc"
-      }
-    })
+    folders = [ req.params.folder ]
   } else {
-    // General search, use all permitted items
-    var permitted = Cache.get(Cache.foldersReadableKey)
-    if ( !permitted ) {
+    var folders = Cache.get(Cache.foldersReadableKey)
+    if ( !folders ) {
       const tree = await Folder.tree(req.user)
-      permitted = Cache.get(Cache.foldersReadableKey)
+      folders = Cache.get(Cache.foldersReadableKey)
     }
-
-    items = prisma.$executeRaw`
-      select *
-      from   "Items"
-      where  folder in ( ${prisma.join(permitted)} )`
   }
+
+  // Split search string and create array for later AND
+  let searchTokens = search.split(' ')
+  let contains = []
+  for ( const token of searchTokens ) {
+    contains.push( { title: { contains: token, mode: 'insensitive'} } )
+  }
+
+  // Search folder
+  items = await prisma.items.findMany({
+    where: {
+      AND: [
+        { folder: { in: folders.map(folders => folders) } },
+        { AND: contains }
+      ]
+    },
+    select: {
+      id: true,
+      folder: true,
+      title: true,
+      createdat: true,
+      updatedat: true
+    },
+    orderBy: {
+      title: "asc"
+    }
+  })
 
   if ( items.length==0 ) {
     res.status(404).send(R.ko("No item found"))
