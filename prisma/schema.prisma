@@ -102,7 +102,7 @@ model Items {
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  rel1        Folders @relation(fields: [folder], references: [id])
+  folderInfo  Folders @relation(fields: [folder], references: [id])
 
   @@index([folder])
 }
