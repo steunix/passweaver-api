@@ -17,9 +17,11 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  * @param {string} user
  * @returns {string} A JWT
  */
-export function createToken(user) {
+export async function createToken(user) {
+  const isadmin = await isAdmin(user)
+
   return jsonwebtoken.sign(
-    { user: user },
+    { user: user, admin: isadmin  },
     Config.get().jwt_key, {
       algorithm: "HS512",
       expiresIn: "24h"
@@ -54,13 +56,13 @@ export function validateJWT(req, res, next) {
 /**
  * Check if current user is an admin
  * @param {Object} req
- * @returns {boolean} Wehter current request user has admin privileges or not
+ * @returns {boolean} Whether current request user has admin privileges or not
  */
 export async function isAdmin(req) {
   const perm = await prisma.usersGroups.findMany({
     where: {
       group: "A",
-      user: req.user
+      user: typeof(req)==="string" ? req : req.user
     }
   })
 
