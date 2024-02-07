@@ -77,11 +77,18 @@ export async function list(req, res) {
   if ( req.query?.search ) {
     groups = await prisma.groups.findMany({
       where: {
-        description: { contains: req.query.search }
+        description: { contains: req.query.search, mode: 'insensitive' }
+      },
+      orderBy: {
+        description: "asc"
       }
     })
   } else {
-    groups = await prisma.groups.findMany()
+    groups = await prisma.groups.findMany({
+      orderBy: {
+        description: "asc"
+      }
+    })
   }
 
   res.status(200).send(R.ok(groups))
