@@ -95,10 +95,11 @@ export async function list(req, res) {
 
     folders = [ req.params.folder ]
   } else {
-    var folders = Cache.get(Cache.foldersReadableKey)
+    // If no folder is specified, get authorized folders from cache
+    folders = Cache.get(req.user, Cache.foldersReadableKey)
     if ( !folders ) {
-      const tree = await Folder.tree(req.user)
-      folders = Cache.get(Cache.foldersReadableKey)
+      await Folder.tree(req.user)
+      folders = Cache.get(req.user, Cache.foldersReadableKey)
     }
   }
 
@@ -122,7 +123,12 @@ export async function list(req, res) {
       folder: true,
       title: true,
       createdat: true,
-      updatedat: true
+      updatedat: true,
+      folderInfo: {
+        select: {
+          description: true
+        }
+      }
     },
     orderBy: {
       title: "asc"
