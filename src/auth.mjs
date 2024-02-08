@@ -24,7 +24,7 @@ export async function createToken(user) {
     { user: user, admin: isadmin  },
     Config.get().jwt_key, {
       algorithm: "HS512",
-      expiresIn: "24h"
+      expiresIn: Config.get().jwt_duration
     }
   )
 }
