@@ -48,7 +48,11 @@ export function validateJWT(req, res, next) {
     req.jwt = decoded
     req.user = decoded.user
   } catch (err) {
-    return res.status(401).send(R.ko("Invalid Token"))
+    var msg = "Invalid token"
+    if ( err.name=='TokenExpiredError' ) {
+      msg = "Token expired"
+    }
+    return res.status(401).send(R.ko(msg))
   }
   return next()
 }
