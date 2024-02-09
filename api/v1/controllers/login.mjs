@@ -32,34 +32,38 @@ const schema = {
  * @returns
  */
 export async function login(req, res) {
-  // Validate payload
-  const validate = jsonschema.validate(req.body, schema)
-  if ( !validate.valid ) {
-    res.status(400).send(R.ko("Bad request"))
-    return
+  try {
+    // Validate payload
+    const validate = jsonschema.validate(req.body, schema)
+    if ( !validate.valid ) {
+      res.status(400).send(R.ko("Bad request"))
+      return
+    }
+
+    // Check user
+    const user = await prisma.users.findFirst({
+      where: { login: req.body.username }
+    })
+    if ( user===null ) {
+      actions.log(req.body.username, "loginnotfound", "user", req.body.username)
+      res.status(401).send(R.ko("Bad user or wrong password"))
+      return
+    }
+
+    // Check password
+    const hash = await Crypt.hashPassword(req.body.password)
+    if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
+      actions.log(null, "loginfail", "user", req.body.username)
+      res.status(401).send(R.ko("Bad user or wrong password"))
+      return
+    }
+
+    // Creates JWT token
+    const token = await Auth.createToken(user.id)
+
+    actions.log(user.id,"login", "user", user.id)
+    res.status(200).send(R.ok({jwt:token}))
+  } catch(exc) {
+    res.status(500).send(R.ko("Generic error"))
   }
-
-  // Check user
-  const user = await prisma.users.findFirst({
-    where: { login: req.body.username }
-  })
-  if ( user===null ) {
-    actions.log(req.body.username, "loginnotfound", "user", req.body.username)
-    res.status(401).send(R.ko("Bad user or wrong password"))
-    return
-  }
-
-  // Check password
-  const hash = await Crypt.hashPassword(req.body.password)
-  if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
-    actions.log(null, "loginfail", "user", req.body.username)
-    res.status(401).send(R.ko("Bad user or wrong password"))
-    return
-  }
-
-  // Creates JWT token
-  const token = await Auth.createToken(user.id)
-
-  actions.log(user.id,"login", "user", user.id)
-  res.status(200).send(R.ok({jwt:token}))
 }
