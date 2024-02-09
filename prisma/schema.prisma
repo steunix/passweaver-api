@@ -101,6 +101,7 @@ model Items {
   dataauthtag String
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
+  accessedat  DateTime?
 
   folderInfo  Folders @relation(fields: [folder], references: [id])
 

@@ -63,6 +63,16 @@ export async function get(req, res) {
   delete(item.dataauthtag)
   delete(item.dataiv)
 
+  // Update last accessed on item
+  await prisma.items.update({
+    data: {
+      accessedat: new Date()
+    },
+    where: {
+      id: id
+    }
+  })
+
   actions.log(req.user, "read", "item", id)
   res.status(200).send(R.ok(item))
 }
