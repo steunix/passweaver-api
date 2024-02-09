@@ -9,6 +9,7 @@
   "dependencies": {
     "@prisma/client": "^5.9.1",
     "bcrypt": "^5.1.1",
+    "crockford-base32": "^2.0.0",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "generate-password": "^1.7.1",
@@ -16,7 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "node-cache": "^5.1.2",
     "prisma": "^5.9.1",
-    "ulid": "^2.3.0"
+    "uuidv7": "^0.6.3"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
