@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./vaulted.db"
+  provider = env(VAULTED_PRISMA_PROVIDER)
+  url      = env(VAULTED_PRISMA_URL)
 }
 
 // Folders of item
