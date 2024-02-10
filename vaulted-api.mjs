@@ -19,6 +19,7 @@ import items from "./api/v1/routes/items.mjs"
 import users from "./api/v1/routes/users.mjs"
 import login from "./api/v1/routes/login.mjs"
 import util from "./api/v1/routes/util.mjs"
+import * as R from './src/response.mjs'
 
 import rateLimitMiddleware from "./src/ratelimiter.mjs"
 
@@ -40,6 +41,7 @@ if ( !cfg.listen_port ) {
   process.exit(2)
 }
 
+
 // Rate limiter
 app.use(rateLimitMiddleware)
 
@@ -53,6 +55,11 @@ app.use("/api/v1/groups", groups)
 app.use("/api/v1/users", users)
 app.use("/api/v1/login", login)
 app.use("/api/v1/util", util)
+
+// Error handler
+app.use((err, req, res, next)=> {
+  res.status(500).send(R.ko("Internal error"))
+})
 
 // Error handler for invalid path/method
 app.all("*", (_req, res, _next) => {
