@@ -31,7 +31,7 @@ const schema = {
  * @param {Object} res Express response
  * @returns
  */
-export async function login(req, res) {
+export async function login(req, res, next) {
   try {
     // Validate payload
     const validate = jsonschema.validate(req.body, schema)
@@ -63,7 +63,7 @@ export async function login(req, res) {
 
     actions.log(user.id,"login", "user", user.id)
     res.status(200).send(R.ok({jwt:token}))
-  } catch(exc) {
-    res.status(500).send(R.ko("Generic error"))
+  } catch(err) {
+    next(err)
   }
 }
