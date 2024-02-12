@@ -322,6 +322,12 @@ export async function remove(req, res, next) {
       return
     }
 
+    // Admin user cannot be removed
+    if ( id=="0" ) {
+      res.status(422).send(R.ko("Admin user cannot be removed"))
+      return
+    }
+
     // Search user personal folders
     const personal = await prisma.folders.findMany({
       where: { personal: true, user: id }
