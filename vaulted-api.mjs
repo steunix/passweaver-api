@@ -52,8 +52,8 @@ app.use(Express.json())
 
 // Log requests
 const logStream = RFS.createStream("./logs/vaulted-api.log", {
-  size: "10M",
-  interval: "1d"
+  interval: "1d",
+  rotate: 14
 })
 app.use(Morgan('combined', { stream: logStream }))
 
