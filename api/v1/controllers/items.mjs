@@ -7,7 +7,7 @@
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { randomId } from '../../../src/random.mjs'
+import { newId } from '../../../src/id.mjs'
 import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
 import * as Config from '../../../src/config.mjs'
@@ -195,7 +195,7 @@ export async function create(req, res, next) {
     const encData = Crypt.encrypt(req.body.data)
 
     // Creates the item
-    const newid = randomId();
+    const newid = newId();
     await prisma.items.create({
       data: {
         id: newid,

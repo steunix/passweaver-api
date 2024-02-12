@@ -6,7 +6,7 @@
 
 import { PrismaClient } from '@prisma/client'
 
-import { randomId } from './random.mjs'
+import { newId } from './id.mjs'
 import * as Config from '../src/config.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
@@ -19,7 +19,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  * @param {string} itemid Item id
  */
 export async function log(user,action,itemtype,itemid) {
-  const newid = randomId()
+  const newid = newId()
 
   await prisma.actionLog.create({
     data: {

@@ -1,6 +1,6 @@
 /**
- * Random module
- * @module src/random
+ * IDs module
+ * @module src/id
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
@@ -8,10 +8,10 @@ import { uuidv7obj } from 'uuidv7'
 import { CrockfordBase32 } from 'crockford-base32'
 
 /**
- * Returns unique random string
- * @returns {string} Random string
+ * Returns a new unique ID string, based on uuidv7
+ * @returns {string} New ID
  */
-export function randomId() {
+export function newId() {
   const rand = uuidv7obj().bytes
   const enc = CrockfordBase32.encode(Buffer.from(rand))
   return enc

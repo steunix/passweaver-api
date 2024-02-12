@@ -7,7 +7,7 @@
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { randomId } from '../../../src/random.mjs'
+import { newId } from '../../../src/id.mjs'
 import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
 import * as Config from '../../../src/config.mjs'
@@ -180,7 +180,7 @@ export async function create(req, res, next) {
     }
 
     // Creates user
-    const newid = randomId()
+    const newid = newId()
     const hash = await Crypt.hashPassword(req.body.secret)
     await prisma.users.create({
       data: {
@@ -197,7 +197,7 @@ export async function create(req, res, next) {
     })
 
     // Creates personal folder
-    const newFolderId = randomId()
+    const newFolderId = newId()
     await prisma.folders.create({
       data: {
         id: newFolderId,
@@ -209,7 +209,7 @@ export async function create(req, res, next) {
     })
 
     // Add user to 'Everyone' group
-    const newid2 = randomId()
+    const newid2 = newId()
     await prisma.usersGroups.create({
       data: {
         id: newid2,

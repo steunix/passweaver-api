@@ -7,7 +7,7 @@
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { randomId } from '../../../src/random.mjs'
+import { newId } from '../../../src/id.mjs'
 import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
 import * as Folder from '../../../model/folder.mjs'
@@ -109,7 +109,7 @@ export async function create(req, res, next) {
     }
 
     // Creates the folder
-    const newid = randomId();
+    const newid = newId();
     await prisma.folders.create({
       data: {
         id: newid,
@@ -361,7 +361,7 @@ export async function addGroup(req, res, next) {
     }
 
     // Adds the permission
-    const newId = randomId()
+    const newId = newId()
     await prisma.folderGroupPermission.create({
       data: {
         id: newId,

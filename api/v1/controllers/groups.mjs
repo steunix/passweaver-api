@@ -7,7 +7,7 @@
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { randomId } from '../../../src/random.mjs'
+import { newId } from '../../../src/id.mjs'
 import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
 import * as Group from '../../../model/group.mjs'
@@ -180,7 +180,7 @@ export async function create(req, res, next) {
     }
 
     // Creates group
-    const newid = randomId()
+    const newid = newId()
     await prisma.groups.create({
       data: {
         id: newid,
@@ -407,7 +407,7 @@ export async function addUser(req, res, next) {
       return
     }
 
-    const newid = randomId()
+    const newid = newId()
     await prisma.usersGroups.create({
       data: {
         id: newid,
