@@ -455,8 +455,8 @@ export async function removeUser(req, res, next) {
     }
 
     // Admin cannot be removed from Admins
-    if ( group=="0" && user=="0" ) {
-      res.status(422).send(R.ko("Admin cannot be removed from Adnins group"))
+    if ( group=="A" && user=="0" ) {
+      res.status(422).send(R.ko("Admin cannot be removed from Admins group"))
       return
     }
 
