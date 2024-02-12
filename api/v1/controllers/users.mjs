@@ -109,10 +109,17 @@ export async function list(req, res, next) {
             { firstname: { contains: req.query.search, mode: 'insensitive' } },
             { lastname: { contains: req.query.search, mode: 'insensitive' } }
           ]
+        },
+        orderBy: {
+          lastname: "asc"
         }
       })
     } else {
-      users = await prisma.users.findMany()
+      users = await prisma.users.findMany({
+        orderBy: {
+          lastname: "asc"
+        }
+      })
     }
 
     res.status(200).send(R.ok(users))
