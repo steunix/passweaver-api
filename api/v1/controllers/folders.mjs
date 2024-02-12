@@ -418,6 +418,12 @@ export async function removeGroup(req, res, next) {
       return
     }
 
+    // Admins group cannot be removed from Root group
+    if ( req.params.group=="A" && req.params.folder=="0" ) {
+      res.status(422).send(R.ko("Admins cannot be removed from root folder"))
+      return
+    }
+
     await prisma.folderGroupPermission.deleteMany({
       where: {
         group: req.params.group,
