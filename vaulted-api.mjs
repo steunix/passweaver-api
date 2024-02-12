@@ -8,6 +8,8 @@
  */
 
 import Express from "express"
+import Morgan from "morgan"
+import RFS from "rotating-file-stream"
 
 import * as Config from './src/config.mjs'
 
@@ -19,6 +21,7 @@ import items from "./api/v1/routes/items.mjs"
 import users from "./api/v1/routes/users.mjs"
 import login from "./api/v1/routes/login.mjs"
 import util from "./api/v1/routes/util.mjs"
+
 import * as R from './src/response.mjs'
 
 import rateLimitMiddleware from "./src/ratelimiter.mjs"
@@ -41,12 +44,18 @@ if ( !cfg.listen_port ) {
   process.exit(2)
 }
 
-
 // Rate limiter
 app.use(rateLimitMiddleware)
 
 // Use json middleware
 app.use(Express.json())
+
+// Log requests
+const logStream = RFS.createStream("./logs/vaulted-api.log", {
+  size: "10M",
+  interval: "1d"
+})
+app.use(Morgan('combined', { stream: logStream }))
 
 // Install routers
 app.use("/api/v1/items", items)
