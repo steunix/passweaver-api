@@ -24,4 +24,6 @@ router.patch("/:id", itemsController.update)
 
 router.delete("/:id", itemsController.remove)
 
+router.post("/:id/clone", itemsController.clone)
+
 export default router

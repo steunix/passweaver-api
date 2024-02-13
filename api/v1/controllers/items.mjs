@@ -43,7 +43,7 @@ export async function get(req, res, next) {
     // Search item
     const item = await prisma.items.findUnique({
       where: { id: id }
-    });
+    })
 
     if ( item===null ) {
       res.status(404).send(R.ko("Item not found"))
@@ -51,7 +51,7 @@ export async function get(req, res, next) {
     }
 
     // Check read permissions on folder
-    const perm = await Folder.permissions(item.folder, req.user);
+    const perm = await Folder.permissions(item.folder, req.user)
     if ( !perm.read ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
@@ -102,7 +102,7 @@ export async function list(req, res, next) {
       }
 
       // Check read permissions on folder
-      const perm = await Folder.permissions(folder, req.user);
+      const perm = await Folder.permissions(folder, req.user)
       if ( !perm.read ) {
         res.status(403).send(R.ko("Unauthorized"))
         return
@@ -195,7 +195,7 @@ export async function create(req, res, next) {
     const encData = Crypt.encrypt(req.body.data)
 
     // Creates the item
-    const newid = newId();
+    const newid = newId()
     await prisma.items.create({
       data: {
         id: newid,
@@ -234,7 +234,7 @@ export async function update(req, res, next) {
     // Search item
     const item = await prisma.items.findUnique({
       where: { id: id }
-    });
+    })
 
     if ( item===null ) {
       res.status(404).send(R.ko("Item not found"))
@@ -257,7 +257,7 @@ export async function update(req, res, next) {
         return
       }
 
-      const perm2 = await Folder.permissions(folderFromURL, req.user);
+      const perm2 = await Folder.permissions(folderFromURL, req.user)
       if ( !perm2.write ) {
         res.status(401).send(R.ko("Unauthorized"))
         return
@@ -306,7 +306,7 @@ export async function remove(req, res, next) {
     // Search item
     const item = await prisma.items.findUnique({
       where: { id: id }
-    });
+    })
 
     if ( item===null ) {
       res.status(404).send(R.ko("Item not found"))
@@ -316,7 +316,7 @@ export async function remove(req, res, next) {
     // Search folder
     const folder = await prisma.folders.findUnique({
       where: { id: item.folder }
-    });
+    })
 
     if ( folder===null ) {
       res.status(404).send(R.ko("Folder not found"))
@@ -324,7 +324,7 @@ export async function remove(req, res, next) {
     }
 
     // Check write permissions on folder
-    const perm = await Folder.permissions(item.folder, req.user);
+    const perm = await Folder.permissions(item.folder, req.user)
     if ( !perm.write ) {
       res.status(401).send(R.ko("Unauthorized"))
       return
@@ -339,6 +339,60 @@ export async function remove(req, res, next) {
 
     actions.log(req.user, "delete", "item", id)
     res.status(200).send(R.ok('Done'))
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Clone an item
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @returns
+ */
+export async function clone(req, res, next) {
+  try {
+    const id = req.params.id
+
+    // Search item
+    const item = await prisma.items.findUnique({
+      where: { id: id }
+    })
+
+    if ( item===null ) {
+      res.status(404).send(R.ko("Item not found"))
+      return
+    }
+
+    // Check write permissions on folder
+    const perm = await Folder.permissions(item.folder, req.user)
+    if ( !perm.write ) {
+      res.status(401).send(R.ko("Unauthorized"))
+      return
+    }
+
+    // Reencrypt data
+    var oldData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    var newData = Crypt.encrypt(oldData)
+
+    // Creates the item
+    const newid = newId()
+    var newItem = {
+      id: newid,
+      folder: item.folder,
+      title: `${item.title} - Copy`,
+      data: newData.encrypted,
+      dataiv: newData.iv,
+      dataauthtag: newData.authTag
+    }
+
+    await prisma.items.create({
+      data: newItem
+    })
+
+    actions.log(req.user, "clone", "item", id)
+    actions.log(req.user, "create", "item", newid)
+    res.status(201).send(R.ok({id: newid}))
   } catch (err) {
     next(err)
   }
