@@ -51,7 +51,7 @@ app.use(rateLimitMiddleware)
 app.use(Express.json())
 
 // Log requests
-const logStream = RFS.createStream("./logs/vaulted-api.log", {
+const logStream = RFS.createStream("./log/vaulted-api.log", {
   interval: "1d",
   rotate: 14
 })

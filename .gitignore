@@ -5,4 +5,4 @@ node_modules
 vaulted-api.code-workspace
 config.json
 prisma/vaulted.db
-logs
+log
