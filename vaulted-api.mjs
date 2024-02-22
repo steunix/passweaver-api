@@ -57,6 +57,12 @@ const logStream = RFS.createStream("./log/vaulted-api.log", {
 })
 app.use(Morgan('combined', { stream: logStream }))
 
+// Log errors
+const logErrors = RFS.createStream("./log/vaulted-api-errors.log", {
+  interval: "1d",
+  rotate: 14
+})
+
 // Install routers
 app.use("/api/v1/items", items)
 app.use("/api/v1/folders", folders)
@@ -67,6 +73,10 @@ app.use("/api/v1/util", util)
 
 // Error handler
 app.use((err, req, res, next)=> {
+  logErrors.write("["+(new Date()).toString()+"]\n")
+  logErrors.write(`${req.method} ${req.originalUrl}\n`)
+  logErrors.write(err.stack+"\n")
+  logErrors.write(err.message+"\n")
   res.status(500).send(R.ko("Internal error"))
 })
 
