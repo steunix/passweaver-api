@@ -184,6 +184,12 @@ export async function create(req, res, next) {
       return
     }
 
+    // No items on personal folders root
+    if ( folder=="P" || folder=="0" ) {
+      res.status(401).send(R.ko("You cannot create items in this folder"))
+      return
+    }
+
     // Check write permissions on folder
     const perm = await Folder.permissions(folder, req.user)
     if ( !perm.write ) {
