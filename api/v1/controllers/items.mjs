@@ -191,6 +191,12 @@ export async function create(req, res, next) {
       return
     }
 
+    // Check if personal
+    var personal = false
+    if ( await Folder.isPersonal(folder) ) {
+      personal = true
+    }
+
     // Encrypt data
     const encData = Crypt.encrypt(req.body.data)
 
@@ -200,6 +206,7 @@ export async function create(req, res, next) {
       data: {
         id: newid,
         folder: folder,
+        personal: personal,
         title: req.body.title,
         data: encData.encrypted,
         dataiv: encData.iv,

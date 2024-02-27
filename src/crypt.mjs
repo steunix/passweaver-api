@@ -8,7 +8,7 @@ import * as crypto from 'crypto'
 import bcrypt from "bcrypt"
 
 /**
- * Hashes a string
+ * Hashes a plain text password
  * @param {string} string String to hash
  * @returns {string} Base64 encoded hash
  */
@@ -69,4 +69,13 @@ export function decrypt(crypted, iv, authTag) {
   decrypted += decipher.final('utf8');
 
   return decrypted;
+}
+
+/**
+ * Create a random string and convert to hex
+ * @param {number} length Length of the string
+ * @returns
+ */
+export function randomString(length) {
+  return crypto.randomBytes(length).toString('hex');
 }

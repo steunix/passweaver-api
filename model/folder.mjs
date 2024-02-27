@@ -14,7 +14,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
 
 /**
  * Returns true if the folder exists
- * @param {string} id
+ * @param {string} id Folder ID
  * @returns
  */
 export async function exists(id) {
@@ -26,6 +26,22 @@ export async function exists(id) {
   } catch ( exc ) {
     return false
   }
+}
+
+/**
+ * Returns true if the folder is personal
+ * @param {string} id Folder ID
+ */
+export async function isPersonal(id) {
+  const folders = await parents(id, true)
+
+  for ( const folder of folders ) {
+    if ( folder.id=="P" ) {
+      return true
+    }
+  }
+
+  return false
 }
 
 /**
