@@ -67,6 +67,7 @@ export async function get(req, res, next) {
         authmethod: true,
         locale: true,
         email: true,
+        personalsecret: true,
         active: true,
         createdat: true,
         updatedat: true
@@ -77,6 +78,10 @@ export async function get(req, res, next) {
       res.status(404).send(R.ko("User not found"))
       return
     }
+
+    // Returns wether a personal password has been set
+    user.haspersonalsecret = user.personalsecret !== null
+    delete(user.personalsecret)
 
     res.status(200).send(R.ok(user))
   } catch (err) {
