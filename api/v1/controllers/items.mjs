@@ -50,6 +50,12 @@ export async function get(req, res, next) {
       return
     }
 
+    // If personal item, ensure access is granted
+    if ( item.personal && !req.personalfolder ) {
+      res.status(412).send(R.ko("Personal folder not yet accessible"))
+      return
+    }
+
     // Check read permissions on folder
     const perm = await Folder.permissions(item.folder, req.user)
     if ( !perm.read ) {
