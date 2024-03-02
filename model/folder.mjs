@@ -220,7 +220,7 @@ export async function tree(user) {
   // Get folders for cache
   const allFolders = await prisma.folders.findMany()
 
-  // Explicitly allowed folders
+  // Explicitly allowed folders, plus personal folder
   const readFolders = await prisma.$queryRaw`
     select f.*
     from   "Folders" f
@@ -231,7 +231,12 @@ export async function tree(user) {
     join   "UsersGroups" ug
     on     ug."group" = g.id
     where  p."read" = true
-    and    ug."user" = ${user}`
+    and    ug."user" = ${user}
+    union
+    select pf.*
+    from   "Folders" pf
+    where  pf."personal" = true
+    and    pf."user" = ${user}`
 
   // For each allowed folder, add all parents and children
   var readable = []
