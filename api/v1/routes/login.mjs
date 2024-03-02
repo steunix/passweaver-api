@@ -12,6 +12,4 @@ const router = Router()
 
 router.post("/", loginController.login)
 
-router.post("/personallogin", loginController.personalFolderLogin)
-
 export default router

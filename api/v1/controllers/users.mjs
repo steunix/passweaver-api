@@ -46,6 +46,23 @@ const updateSchema = {
     "active": { "type": "boolean" }
   }
 }
+const updatePersonalPassword = {
+  "id": "update",
+  "type": "object",
+  "properties": {
+    "personalsecret" : { "type": "string" }
+  },
+  "required": ["personalsecret"]
+}
+
+const personalLogin = {
+  "id": "/login",
+  "type": "object",
+  "properties": {
+    "password" : { "type": "string" }
+  },
+  "required": ["password"]
+}
 
 /**
  * Gets a user
@@ -287,9 +304,6 @@ export async function update(req, res, next) {
       updateStruct.secret = await Crypt.hashPassword(req.body.secret)
       updateStruct.secretexpiresat = new Date(2050,12,31,23,59,59)
     }
-    if ( req.body.personalsecret ) {
-      updateStruct.personalsecret = await Crypt.hashPassword(req.body.personalsecret)
-    }
     if ( req.body.hasOwnProperty("active") ) {
       updateStruct.active = req.body.active
     }
@@ -374,6 +388,78 @@ export async function remove(req, res, next) {
     actions.log(req.user, "delete", "folder", id)
     res.status(200).send(R.ok('Done'))
   } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Set user personal password
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns
+ */
+export async function setPersonalSecret(req, res, next) {
+  try {
+    const validate = jsonschema.validate(req.body, updatePersonalPassword)
+    if ( !validate.valid ) {
+      res.status(400).send(R.ko("Bad request"))
+      return
+    }
+
+    const pwd = await Crypt.hashPassword(req.body.personalsecret)
+    await prisma.users.update({
+      where: { id: req.user },
+      data: {
+        personalsecret: pwd
+      }
+    })
+
+    actions.log(req.user, "personalpasswordcreate", "user", req.user)
+    res.status(200).send(R.ok('Done'))
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Personal folder login
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @returns
+ */
+export async function personalFolderLogin(req, res, next) {
+  try {
+    // Validate payload
+    const validate = jsonschema.validate(req.body, personalLogin)
+    if ( !validate.valid ) {
+      res.status(400).send(R.ko("Bad request"))
+      return
+    }
+
+    // Check user
+    const user = await prisma.users.findUnique({
+      where: { id: req.user }
+    })
+    if ( user===null ) {
+      actions.log(req.body.username, "personalloginnotfound", "user", req.user)
+      res.status(401).send(R.ko("Bad user or wrong password"))
+      return
+    }
+
+    // Check password
+    if ( !await( Crypt.checkPassword(req.body.password, user.personalsecret) ) ) {
+      actions.log(null, "personalloginfail", "user", req.user)
+      res.status(401).send(R.ko("Wrong password"))
+      return
+    }
+
+    // Creates JWT token
+    const token = await Auth.createToken(user.id, true)
+
+    actions.log(user.id,"personallogin", "user", user.id)
+    res.status(200).send(R.ok({jwt:token}))
+  } catch(err) {
     next(err)
   }
 }

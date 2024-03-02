@@ -16,6 +16,10 @@ router.use(auth.validateJWT)
 
 router.get("/", usersController.list)
 
+router.post("/personalsecret", usersController.setPersonalSecret)
+
+router.post("/personalfolderlogin", usersController.personalFolderLogin)
+
 router.get('/:id', usersController.get)
 
 router.post("/", usersController.create)
