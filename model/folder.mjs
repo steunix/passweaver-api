@@ -14,7 +14,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
 
 /**
  * Returns true if the folder exists
- * @param {string} id
+ * @param {string} id Folder ID
  * @returns
  */
 export async function exists(id) {
@@ -26,6 +26,22 @@ export async function exists(id) {
   } catch ( exc ) {
     return false
   }
+}
+
+/**
+ * Returns true if the folder is personal
+ * @param {string} id Folder ID
+ */
+export async function isPersonal(id) {
+  const folders = await parents(id, true)
+
+  for ( const folder of folders ) {
+    if ( folder.id=="P" ) {
+      return true
+    }
+  }
+
+  return false
 }
 
 /**
@@ -204,7 +220,7 @@ export async function tree(user) {
   // Get folders for cache
   const allFolders = await prisma.folders.findMany()
 
-  // Explicitly allowed folders
+  // Explicitly allowed folders, plus personal folder
   const readFolders = await prisma.$queryRaw`
     select f.*
     from   "Folders" f
@@ -215,7 +231,12 @@ export async function tree(user) {
     join   "UsersGroups" ug
     on     ug."group" = g.id
     where  p."read" = true
-    and    ug."user" = ${user}`
+    and    ug."user" = ${user}
+    union
+    select pf.*
+    from   "Folders" pf
+    where  pf."personal" = true
+    and    pf."user" = ${user}`
 
   // For each allowed folder, add all parents and children
   var readable = []

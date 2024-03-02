@@ -95,6 +95,7 @@ model FolderGroupPermission {
 model Items {
   id          String @id
   folder      String
+  personal    Boolean @default(false)
   title       String
   data        String
   dataiv      String

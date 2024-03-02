@@ -14,14 +14,15 @@ const prisma = new PrismaClient(Config.get().prisma_options)
 
 /**
  * Creates a JWT token
- * @param {string} user
+ * @param {string} user User ID
+ * @param {boolean} personalfolder Grant access to personal folder
  * @returns {string} A JWT
  */
-export async function createToken(user) {
+export async function createToken(user, personalfolder) {
   const isadmin = await isAdmin(user)
 
   return jsonwebtoken.sign(
-    { user: user, admin: isadmin  },
+    { user: user, admin: isadmin, personalfolder: personalfolder },
     Config.get().jwt_key, {
       algorithm: "HS512",
       expiresIn: Config.get().jwt_duration
@@ -47,6 +48,7 @@ export function validateJWT(req, res, next) {
     const decoded = jsonwebtoken.verify(token, Config.get().jwt_key)
     req.jwt = decoded
     req.user = decoded.user
+    req.personalfolder = decoded.personalfolder
   } catch (err) {
     var msg = "Invalid token"
     if ( err.name=='TokenExpiredError' ) {

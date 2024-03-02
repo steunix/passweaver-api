@@ -15,7 +15,7 @@ import * as Crypt from '../../../src/crypt.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
-const schema = {
+const schemaLogin = {
   "id": "/login",
   "type": "object",
   "properties": {
@@ -34,7 +34,7 @@ const schema = {
 export async function login(req, res, next) {
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, schema)
+    const validate = jsonschema.validate(req.body, schemaLogin)
     if ( !validate.valid ) {
       res.status(400).send(R.ko("Bad request"))
       return
@@ -51,7 +51,6 @@ export async function login(req, res, next) {
     }
 
     // Check password
-    const hash = await Crypt.hashPassword(req.body.password)
     if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
       actions.log(null, "loginfail", "user", req.body.username)
       res.status(401).send(R.ko("Bad user or wrong password"))
@@ -59,7 +58,7 @@ export async function login(req, res, next) {
     }
 
     // Creates JWT token
-    const token = await Auth.createToken(user.id)
+    const token = await Auth.createToken(user.id, false)
 
     actions.log(user.id,"login", "user", user.id)
     res.status(200).send(R.ok({jwt:token}))

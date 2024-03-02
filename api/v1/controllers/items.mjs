@@ -50,6 +50,20 @@ export async function get(req, res, next) {
       return
     }
 
+    // If personal item, ensure personal password has been set and activated
+    if ( item.personal && !req.personalfolder ) {
+      const user = await prisma.users.findUnique({
+        where: { id: req.user }
+      })
+
+      var retcode = 417
+      if ( user.personalsecret===null ) {
+        retcode = 412
+      }
+      res.status(retcode).send(R.ko("Personal folder not accessible"))
+      return
+    }
+
     // Check read permissions on folder
     const perm = await Folder.permissions(item.folder, req.user)
     if ( !perm.read ) {
@@ -105,6 +119,24 @@ export async function list(req, res, next) {
       const perm = await Folder.permissions(folder, req.user)
       if ( !perm.read ) {
         res.status(403).send(R.ko("Unauthorized"))
+        return
+      }
+
+      const fld = await prisma.folders.findUnique({
+        where: { id: folder }
+      })
+
+      // If personal folder, ensure personal password has been set and activated
+      if ( fld.personal && !req.personalfolder ) {
+        const user = await prisma.users.findUnique({
+          where: { id: req.user }
+        })
+
+        var retcode = 417
+        if ( user.personalsecret===null ) {
+          retcode = 412
+        }
+        res.status(retcode).send(R.ko("Personal folder not accessible"))
         return
       }
 
@@ -184,11 +216,37 @@ export async function create(req, res, next) {
       return
     }
 
+    // No items on root or personal folders root
+    if ( folder=="P" || folder=="0" ) {
+      res.status(401).send(R.ko("You cannot create items in this folder"))
+      return
+    }
+
     // Check write permissions on folder
     const perm = await Folder.permissions(folder, req.user)
     if ( !perm.write ) {
       res.status(401).send(R.ko("Unauthorized"))
       return
+    }
+
+    // Check if personal
+    var personal = false
+    if ( await Folder.isPersonal(folder) ) {
+      // If personal folder, ensure personal password has been set and activated
+      if ( !req.personalfolder ) {
+        const user = await prisma.users.findUnique({
+          where: { id: req.user }
+        })
+
+        var retcode = 417
+        if ( user.personalsecret===null ) {
+          retcode = 412
+        }
+        res.status(retcode).send(R.ko("Personal folder not accessible"))
+        return
+      }
+
+      personal = true
     }
 
     // Encrypt data
@@ -200,6 +258,7 @@ export async function create(req, res, next) {
       data: {
         id: newid,
         folder: folder,
+        personal: personal,
         title: req.body.title,
         data: encData.encrypted,
         dataiv: encData.iv,
@@ -250,7 +309,7 @@ export async function update(req, res, next) {
       return
     }
 
-    // If a folder is given through path or payload, check for existanace and permissions
+    // If a folder is given through path or payload, check for existance and permissions
     if ( folderFromURL ) {
       if ( !await Folder.exists(folderFromURL) ) {
         res.status(404).send(R.ko("Folder not found"))
@@ -262,7 +321,20 @@ export async function update(req, res, next) {
         res.status(401).send(R.ko("Unauthorized"))
         return
       }
+    }
 
+    // If personal item, ensure personal password has been set and activated
+    if ( item.personal && !req.personalfolder ) {
+      const user = await prisma.users.findUnique({
+        where: { id: req.user }
+      })
+
+      var retcode = 417
+      if ( user.personalsecret===null ) {
+        retcode = 412
+      }
+      res.status(retcode).send(R.ko("Personal folder not accessible"))
+      return
     }
 
     // Updates
@@ -330,7 +402,21 @@ export async function remove(req, res, next) {
       return
     }
 
-    // Deletes folder
+    // If personal item, ensure personal password has been set and activated
+    if ( item.personal && !req.personalfolder ) {
+      const user = await prisma.users.findUnique({
+        where: { id: req.user }
+      })
+
+      var retcode = 417
+      if ( user.personalsecret===null ) {
+        retcode = 412
+      }
+      res.status(retcode).send(R.ko("Personal folder not accessible"))
+      return
+    }
+
+    // Deletes item
     await prisma.items.delete({
       where: {
         id: id
@@ -368,6 +454,20 @@ export async function clone(req, res, next) {
     const perm = await Folder.permissions(item.folder, req.user)
     if ( !perm.write ) {
       res.status(401).send(R.ko("Unauthorized"))
+      return
+    }
+
+    // If personal item, ensure personal password has been set and activated
+    if ( item.personal && !req.personalfolder ) {
+      const user = await prisma.users.findUnique({
+        where: { id: req.user }
+      })
+
+      var retcode = 417
+      if ( user.personalsecret===null ) {
+        retcode = 412
+      }
+      res.status(retcode).send(R.ko("Personal folder not accessible"))
       return
     }
 
