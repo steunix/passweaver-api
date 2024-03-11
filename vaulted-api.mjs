@@ -10,6 +10,7 @@
 import Express from "express"
 import Morgan from "morgan"
 import RFS from "rotating-file-stream"
+import FS from "fs"
 
 import * as Config from './src/config.mjs'
 
@@ -50,15 +51,19 @@ app.use(rateLimitMiddleware)
 // Use json middleware
 app.use(Express.json())
 
+if ( !FS.existsSync(cfg.log_dir) ) {
+  FS.mkdirSync(cfg.log_dir)
+}
+
 // Log requests
-const logStream = RFS.createStream("./log/vaulted-api.log", {
+const logStream = RFS.createStream(`${cfg.log_dir}/vaulted-api.log`, {
   interval: "1d",
   rotate: 14
 })
 app.use(Morgan('combined', { stream: logStream }))
 
 // Log errors
-const logErrors = RFS.createStream("./log/vaulted-api-errors.log", {
+const logErrors = RFS.createStream(`${cfg.log_dir}/vaulted-api-errors.log`, {
   interval: "1d",
   rotate: 14
 })
