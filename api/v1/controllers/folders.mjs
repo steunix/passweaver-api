@@ -109,7 +109,7 @@ export async function create(req, res, next) {
     }
 
     // Creates the folder
-    const newid = newId();
+    const newid = newId()
     await prisma.folders.create({
       data: {
         id: newid,
@@ -361,10 +361,10 @@ export async function addGroup(req, res, next) {
     }
 
     // Adds the permission
-    const newId = newId()
+    const newid = newId()
     await prisma.folderGroupPermission.create({
       data: {
-        id: newId,
+        id: newid,
         group: req.params.group,
         folder: req.params.folder,
         read: req.body.read,
