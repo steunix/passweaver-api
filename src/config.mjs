@@ -19,7 +19,7 @@ const configSchema = {
     "listen_port": { "type": "integer", "minimum": 1, "maximum": 65535 },
     "log_dir": { "type": "string" }
   },
-  "required": ["master_key_env", "jwt_key_env", "jwt_duration", "listen_port", "log_dir"]
+  "required": ["master_key_env", "jwt_duration", "listen_port", "log_dir"]
 }
 
 // Reads package.json
