@@ -180,7 +180,6 @@ Edit `config-skel.json` and save it as `config.json`.
 Your environment must expose these 3 variables (these are the default names, they can be changed in config.json):
 
 - `VAULTED_MASTER_KEY`: the AES-256-GCM key used for encryption
-- `VAULTED_JWT_KEY`: the key used to sign JWT tokens for API authorization
 - `VAULTED_PRISMA_URL`: the database connection string
 
 ### Database

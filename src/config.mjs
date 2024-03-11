@@ -7,13 +7,14 @@
 import { readFile } from 'fs/promises'
 import jsonschema from 'jsonschema'
 
+import * as Crypt from "./crypt.mjs"
+
 // Config validation schema
 const configSchema = {
   "id": "config",
   "type": "object",
   "properties": {
     "master_key_env" : { "type": "string" },
-    "jwt_key_env" : { "type": "string" },
     "jwt_duration" : { "type": "string" },
     "listen_port": { "type": "integer", "minimum": 1, "maximum": 65535 },
     "log_dir": { "type": "string" }
@@ -55,9 +56,9 @@ let config = json
 console.log("Reading master key from environment ("+config.master_key_env+")")
 config.master_key = process.env[config.master_key_env]
 
-// Retreives the JWT key from environment
-console.log("Reading JWT key from environment ("+config.jwt_key_env+")")
-config.jwt_key = process.env[config.jwt_key_env]
+// Sets the JWT key
+console.log("Generating JWT key")
+config.jwt_key = Crypt.randomString(32)
 
 /**
  * Returns the configuration stored in config.json
