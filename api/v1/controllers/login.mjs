@@ -50,6 +50,13 @@ export async function login(req, res, next) {
       return
     }
 
+    // Check if user is valid
+    if ( !user.active ) {
+      actions.log(req.body.username, "loginnotvalid", "user", req.body.username)
+      res.status(401).send(R.ko("Bad user or wrong password"))
+      return
+    }
+
     // Check password
     if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
       actions.log(null, "loginfail", "user", req.body.username)
