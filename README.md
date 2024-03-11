@@ -8,7 +8,7 @@ Vaulted API is an enterprise-scale, collaborative secrets manager API. It allows
 
 It's **collaborative**, meaning that users are organized in groups and protected items are organized in folders: different permissions can be defined for each folder for each user group.
 
-## What is it
+## What is it?
 
 Vaulted API is "only" a full API, there is no GUI or CLI: you can easily integrate it with your systems and let it act as a Password Centralized Vault. For a ready to use, simple yet complete Web GUI, have a look at https://github.com/steunix/vaulted-gui
 
@@ -19,7 +19,7 @@ Vaulted API is a NodeJS application, released under MIT license, and it uses the
 ## How it works
 
 ### Items
-An 'item' is an entity with a (unecrypted) title, a metadata field, and some encrypted data. Vaulted API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
+An 'item' is an entity with a (unecrypted) title, a metadata field, and some encrypted `data`. Vaulted API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
 
 For example, in one item you may store a JSON object that identifies a login:
 ```
@@ -43,13 +43,13 @@ and in another item you may have just only a flat string.
 
 It's up to the consumer to decode and handle the data.
 
-An item has also a mandatory "title" field, that can be searched for and is NOT encrypted: do not use it for storing sensitive information.
+An item has also a mandatory `title` field, that can be searched for and is NOT encrypted: do not use it for storing sensitive information.
 
-The metadata field is NOT encrypted as well but not mandatory, and it allows to store any additional info for a given item (e.g. the item type, a list of tags and so on).
+The `metadata` field is NOT encrypted as well but not mandatory, and it allows to store any additional info for a given item (e.g. the item type, a list of tags and so on).
 
 ### Folders
 
-Folders, just like in a file system, holds a collection of items and/or subfolders. Each folder may hold specific persmissions for a given group, but will inherit parent's credentials (see 'Permissions' below).
+Folders, just like in a file system, holds a collection of items and/or subfolders. Each folder may hold specific persmissions for a given group, and will inherit parent's credentials (see 'Permissions' below).
 
 Vaulted API has 2 predefined folders that cannot be modified:
 - Root folder
@@ -57,7 +57,7 @@ Vaulted API has 2 predefined folders that cannot be modified:
 
 ### Personal folders
 
-Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Not even 'admin' user can read these items since items are encrypted using a different key: each user will set a personal password and it will be used for encrypting/decrypting personal items.
+Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Not even 'admin' user can read these items since items are encrypted using a different key: each user will have to set a personal password that will be used for encrypting/decrypting personal items.
 
 ### Users and groups
 
@@ -65,7 +65,9 @@ Users are assigned to groups, and groups have read/write permissions for a given
 
 There is only one built-in 'superuser', namely **admin**, who can create users and groups. And **admin** is part of **Admins** built-in group: admin cannot be removed from Admins, but other users can join it.
 
-Finally, users can join several groups simultaneously.
+Another built-in group is 'Everyone', quite self-explanatory.
+
+Users can join several groups.
 
 ### Permissions
 
@@ -124,7 +126,7 @@ Vaulted API logs every call in a 'combined', Apache-like format. Errors are trac
 
 ### Authorization
 
-Vaulted API uses JWTs for authorization with a SHA-512 algorythm. No sensitive data is stored within the token, just the user id.
+Vaulted API uses JWTs for authorization with a SHA-512 algorithm. No sensitive data is stored within the token, just the user id.
 
 A JWT is returned on successful login, and it must be provided in all subsequent calls - until it expires - in requests header as an "Authorization bearer".
 
@@ -136,6 +138,8 @@ Vaulted API endpoints respond with JSON payloads using standard HTTP response co
 - 401: Unauthorized: you haven't logged in yet, or your JWT is not valid/expired
 - 403: Forbidden: you do not have permissions to do what you're asking for
 - 404: Not found: what you are looking for does not exist
+- 412: Personal secret not set: user hasn't set a password for personal folder yet
+- 417: Personal secret not specified: user hasn't specified a personal password when accessing a personal item
 - 422: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
 
 Along with HTTP response code, you'll always get this minimum payload:
@@ -163,11 +167,13 @@ If any data is returned by the endpoint, it will be always encapsulated in a "da
 
 Download the source, and install all dependencies with npm:
 
+```
 npm install
+```
 
 ## Configure
 
-Edit config-skel.json and save it as config.json.
+Edit `config-skel.json` and save it as `config.json`.
 
 ### Environment
 
@@ -185,13 +191,13 @@ LIMITATION: ATM Prisma does not allow to specify a column length for text column
 
 To initialize the db:
 
-- ensure `VAULTED_PRISMA_URL` variable is set and points to a valid PostgreSQL database
-- npx prisma db push
+- ensure `VAULTED_PRISMA_URL` variable is set and that it points to a valid PostgreSQL database
+- run `npx prisma db push`
 
 To feed initial built-in data:
 
-- npx prisma db feed
+- run `npx prisma db feed`
 
 ## Run
 
-npm vaulted.mjs
+run `npm vaulted.mjs`
