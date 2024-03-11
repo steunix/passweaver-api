@@ -4,7 +4,22 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { readFile } from 'fs/promises';
+import { readFile } from 'fs/promises'
+import jsonschema from 'jsonschema'
+
+// Config validation schema
+const configSchema = {
+  "id": "config",
+  "type": "object",
+  "properties": {
+    "master_key_env" : { "type": "string" },
+    "jwt_key_env" : { "type": "string" },
+    "jwt_duration" : { "type": "string" },
+    "listen_port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+    "log_dir": { "type": "string" }
+  },
+  "required": ["master_key_env", "jwt_key_env", "jwt_duration", "listen_port", "log_dir"]
+}
 
 // Reads package.json
 const packagejson = JSON.parse(
@@ -22,7 +37,15 @@ try {
     )
   )
 } catch(err) {
-  console.error("config.json not found or invalid")
+  console.error("config.json not found or not a valid JSON file")
+  process.exit(1)
+}
+
+// Validate config against schema
+const validate = jsonschema.validate(json, configSchema)
+if ( !validate.valid ) {
+  console.error("config.json is invalid, please verify the following:")
+  console.error(validate.toString())
   process.exit(1)
 }
 
