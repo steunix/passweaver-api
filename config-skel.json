@@ -4,5 +4,6 @@
   "listen_port": 3000,
   "ldap_enabled": false,
   "ldap_options": {},
-  "prisma_options": {}
+  "prisma_options": {},
+  "log_dir": "./log"
 }
