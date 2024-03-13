@@ -6,6 +6,7 @@
 
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
+import * as LDAP from 'ldap-authentication'
 
 import * as R from '../../../src/response.mjs'
 import * as actions from '../../../src/action.mjs'
@@ -57,11 +58,31 @@ export async function login(req, res, next) {
       return
     }
 
-    // Check password
-    if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
-      actions.log(null, "loginfail", "user", req.body.username)
-      res.status(401).send(R.ko("Bad user or wrong password"))
-      return
+    // Validate user password
+    if ( user.authmethod=="ldap" ) {
+      const ldap = Config.get().ldap
+
+      // LDAP authentication
+      try {
+        await LDAP.authenticate({
+          ldapOpts: {
+            url: `ldap://${ldap.url}:${ldap.port}`
+          },
+          userDn: `${ldap.userDn}=${req.body.username},${ldap.baseDn}`,
+          userPassword: req.body.password
+        })
+      } catch (err) {
+        actions.log(null, "loginfail", "user", req.body.username)
+        res.status(401).send(R.ko("Bad user or wrong password"))
+        return
+      }
+    } else {
+      // Local authentication
+      if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
+        actions.log(null, "loginfail", "user", req.body.username)
+        res.status(401).send(R.ko("Bad user or wrong password"))
+        return
+      }
     }
 
     // Creates JWT token

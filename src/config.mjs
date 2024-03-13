@@ -17,7 +17,19 @@ const configSchema = {
     "master_key_env" : { "type": "string" },
     "jwt_duration" : { "type": "string" },
     "listen_port": { "type": "integer", "minimum": 1, "maximum": 65535 },
-    "log_dir": { "type": "string" }
+    "log_dir": { "type": "string" },
+    "ldap": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "baseDn": { "type": "string" },
+        "userDn": { "type": "string" }
+      },
+      "dependencies": {
+        "url": [ "port", "baseDn", "userDn"]
+      }
+    }
   },
   "required": ["master_key_env", "jwt_duration", "listen_port", "log_dir"]
 }

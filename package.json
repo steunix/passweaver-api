@@ -19,7 +19,8 @@
     "node-cache": "^5.1.2",
     "prisma": "^5.9.1",
     "rotating-file-stream": "^3.2.1",
-    "uuidv7": "^0.6.3"
+    "uuidv7": "^0.6.3",
+    "ldap-authentication": ""
   },
   "prisma": {
     "seed": "node prisma/seed.js"

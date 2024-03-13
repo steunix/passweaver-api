@@ -39,7 +39,7 @@ const updateSchema = {
     "login" : { "type": "string" },
     "firstname" : { "type": "string" },
     "lastname": { "type": "string" },
-    "authmethod": { "type": "string" },
+    "authmethod": { "type": "string", "pattern": /local|ldap/ },
     "locale": { "type": "string" },
     "email" : { "type": "string" },
     "secret" : { "type": "string" },
