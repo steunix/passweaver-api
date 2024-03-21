@@ -158,10 +158,11 @@ export async function list(req, res, next) {
     }
 
     // Search folder
+    const folderList = folders.map(folders=>folders)
     items = await prisma.items.findMany({
       where: {
         AND: [
-          { folder: { in: folders.map(folders => folders) } },
+          { folder: { in: folderList } },
           { AND: contains }
         ]
       },

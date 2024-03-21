@@ -239,12 +239,14 @@ export async function tree(user) {
     and    pf."user" = ${user}`
 
   // For each allowed folder, add all parents and children
-  var readable = []
+  var readable = new Map()
   var data = []
   var added = new Map()
   for ( const folder of readFolders ) {
     const achildren = await children(folder.id, allFolders)
     const aparents  = await parents(folder.id, true, allFolders)
+
+    readable.set(folder.id, folder.id)
 
     // Each children is also added to read-permitted folders for caching
     for ( const el of achildren ) {
@@ -252,7 +254,7 @@ export async function tree(user) {
         data.push(el)
         added.set(el.id,el.id)
 
-        readable.push(el.id)
+        readable.set(el.id, el.id)
       }
     }
     for ( const el of aparents ) {
@@ -284,6 +286,6 @@ export async function tree(user) {
   })
 
   Cache.set(user, Cache.foldersTreeKey, tree)
-  Cache.set(user, Cache.foldersReadableKey, readable)
+  Cache.set(user, Cache.foldersReadableKey, Array.from(readable.keys()))
   return tree
 }
