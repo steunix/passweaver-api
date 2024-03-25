@@ -381,6 +381,74 @@ export async function addGroup(req, res, next) {
 }
 
 /**
+ * Set group permissions
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @returns
+ */
+export async function setGroup(req, res, next) {
+  try {
+    // Must be admin
+    if ( !await Auth.isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
+    // Checks for valid payload
+    const validate = jsonschema.validate(req.body, groupSchema)
+    if ( !validate.valid ) {
+      res.status(400).send(R.ko("Bad request"))
+      return
+    }
+
+    // Check for permissions
+    if ( req.body.write && !req.body.read) {
+      res.status(400).send(R.ko("If write is true, also read must be true"))
+      return
+    }
+
+    // Checks the group
+    if ( !await Group.exists(req.params.group) ) {
+      res.status(404).send(R.ko("Group not found"))
+      return
+    }
+
+    // Checks the folder
+    if ( !await Folder.exists(req.params.folder) ) {
+      res.status(404).send(R.ko("Folder not found"))
+      return
+    }
+
+    // Checks is group is alread assigned
+    const perm = await prisma.folderGroupPermission.findFirst({
+      where: {
+        folder: req.params.folder,
+        group: req.params.group
+      }
+    })
+    if ( perm.length==0 ) {
+      res.status(422).send(R.ko("Group is not associated to folder"))
+      return
+    }
+
+    // Adds the permission
+    await prisma.folderGroupPermission.update({
+      where: { id: perm.id },
+      data: {
+        read: req.body.read,
+        write: req.body.write
+      }
+    })
+
+    actions.log(req.user, "set", "foldergroup", req.params.folder)
+    Cache.resetFoldersTree()
+    res.status(200).send(R.ok('Done'))
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
  * Deletes a group from a folder
  * @param {Object} req Express request
  * @param {Object} res Express response

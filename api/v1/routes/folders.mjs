@@ -35,4 +35,6 @@ router.post("/:folder/groups/:group", foldersController.addGroup)
 
 router.delete("/:folder/groups/:group", foldersController.removeGroup)
 
+router.patch("/:folder/groups/:group", foldersController.setGroup)
+
 export default router
