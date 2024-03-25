@@ -22,15 +22,17 @@ const createSchema = {
   "id": "create",
   "properties": {
     "title" : { "type": "string" },
-    "data" : { "type": "string" }
+    "data" : { "type": "string" },
+    "metadata": { "type": "string" }
   },
-  "required": ["title","data"]
+  "required": ["title","data","metadata"]
 }
 const updateSchema = {
   "id": "update",
   "properties": {
     "title" : { "type": "string" },
     "data" : { "type": "string" },
+    "metadata": { "type": "string" },
     "folder" : { "type": "string" }
   }
 }
@@ -155,6 +157,7 @@ export async function list(req, res, next) {
     let contains = []
     for ( const token of searchTokens ) {
       contains.push( { title: { contains: token, mode: 'insensitive'} } )
+      contains.push( { metadata: { contains: token, mode: 'insensitive'} } )
     }
 
     // Search folder
@@ -163,7 +166,7 @@ export async function list(req, res, next) {
       where: {
         AND: [
           { folder: { in: folderList } },
-          { AND: contains }
+          { OR: contains }
         ]
       },
       select: {
@@ -263,7 +266,8 @@ export async function create(req, res, next) {
         title: req.body.title,
         data: encData.encrypted,
         dataiv: encData.iv,
-        dataauthtag: encData.authTag
+        dataauthtag: encData.authTag,
+        metadata: req.body.metadata
       }
     })
 
@@ -351,6 +355,9 @@ export async function update(req, res, next) {
     }
     if ( req.body.title ) {
       updateStruct.title = req.body.title
+    }
+    if ( req.body.metadata ) {
+      updateStruct.metadata = req.body.metadata
     }
     await prisma.items.update({
       data: updateStruct,
@@ -484,7 +491,8 @@ export async function clone(req, res, next) {
       title: `${item.title} - Copy`,
       data: newData.encrypted,
       dataiv: newData.iv,
-      dataauthtag: newData.authTag
+      dataauthtag: newData.authTag,
+      metadata: item.metadata
     }
 
     await prisma.items.create({

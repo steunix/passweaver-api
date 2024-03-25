@@ -101,6 +101,7 @@ model Items {
   data        String
   dataiv      String
   dataauthtag String
+  metadata    String?
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
   accessedat  DateTime?
