@@ -81,7 +81,7 @@ export function get(user, key) {
  */
 export function set(user, key, data) {
   const k = "vaulted."+key+"."+user
-  _set(k, data)
+  return _set(k, data)
 }
 
 /**
