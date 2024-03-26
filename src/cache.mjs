@@ -36,7 +36,7 @@ function _set(key, data) {
  * @param {string} keyStart
  */
 export function reset(keyStart) {
-  const k = "vaulted."+keyStart
+  const k = `vaulted.${keyStart}`
   const keys = Cache.keys()
   for ( const key of keys ) {
     if ( key.startsWith(k)!==null ) {
@@ -49,10 +49,10 @@ export function reset(keyStart) {
  * Resets folders tree cache
  */
 export function resetFoldersTree() {
-  var k = "vaulted."+foldersTreeKey
+  var k = `vaulted.${foldersTreeKey}`
   reset(k)
 
-  k = "vaulted."+foldersReadableKey
+  k = `vaulted.${foldersReadableKey}`
   reset(k)
 }
 
@@ -60,27 +60,27 @@ export function resetFoldersTree() {
  * Reset groups tree cache
  */
 export function resetGroupsTree() {
-  const k = "vaulted."+groupsTreeKey
+  const k = `vaulted.${groupsTreeKey}`
   reset(k)
 }
 
 /**
- * Gets a key from cache
+ * Gets a user key from cache
  * @param {string} user
  * @param {string} key
  */
 export function get(user, key) {
-  const k = "vaulted."+key+"."+user
+  const k = `vaulted.${key}.${user}`
   return _get(k)
 }
 
 /**
- * Stores a key
+ * Stores a user key in cache
  * @param {string} user
  * @param {string} key
  */
 export function set(user, key, data) {
-  const k = "vaulted."+key+"."+user
+  const k = `vaulted.${key}.${user}`
   return _set(k, data)
 }
 
