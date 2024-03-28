@@ -61,16 +61,19 @@ export function validateJWT(req, res, next) {
 
 /**
  * Check if current user is an admin
- * @param {Object} req
+ * @param {any} entity User (string) or request (object)
  * @returns {boolean} Whether current request user has admin privileges or not
  */
-export async function isAdmin(req) {
-  const perm = await prisma.usersGroups.findMany({
-    where: {
-      group: "A",
-      user: typeof(req)==="string" ? req : req.user
-    }
-  })
-
-  return perm.length>0
+export async function isAdmin(entity) {
+  if ( typeof(entity)==="string" ) {
+    const perm = await prisma.usersGroups.findMany({
+      where: {
+        group: "A",
+        user: entity
+      }
+    })
+    return perm.length>0
+  } else {
+    return entity.jwt.admin
+  }
 }

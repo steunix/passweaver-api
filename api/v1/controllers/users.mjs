@@ -241,8 +241,6 @@ export async function create(req, res, next) {
     })
 
     actions.log(req.user, "create", "user", newid)
-    Cache.resetGroupsTree()
-    Cache.resetFoldersTree()
     res.status(201).send(R.ok({id: newid}))
   } catch (err) {
     next(err)

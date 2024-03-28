@@ -27,7 +27,7 @@ import * as R from './src/response.mjs'
 
 import rateLimitMiddleware from "./src/ratelimiter.mjs"
 
-console.log("Vaulted "+Config.packageJson().version+" starting...")
+console.log(`Vaulted ${Config.packageJson().version} starting...`)
 
 // Checks for config
 const cfg = Config.get()
@@ -56,11 +56,11 @@ if ( !FS.existsSync(cfg.log_dir) ) {
 }
 
 // Log requests
-const logStream = RFS.createStream(`${cfg.log_dir}/vaulted-api.log`, {
+const logAccess = RFS.createStream(`${cfg.log_dir}/vaulted-api-access.log`, {
   interval: "1d",
   rotate: 14
 })
-app.use(Morgan('combined', { stream: logStream }))
+app.use(Morgan('combined', { stream: logAccess }))
 
 // Log errors
 const logErrors = RFS.createStream(`${cfg.log_dir}/vaulted-api-errors.log`, {
