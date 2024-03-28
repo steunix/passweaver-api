@@ -173,6 +173,7 @@ export async function list(req, res, next) {
         id: true,
         folder: true,
         title: true,
+        metadata: true,
         createdat: true,
         updatedat: true,
         folderInfo: {
