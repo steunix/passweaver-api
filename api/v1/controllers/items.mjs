@@ -156,8 +156,10 @@ export async function list(req, res, next) {
     let searchTokens = search.split(' ')
     let contains = []
     for ( const token of searchTokens ) {
-      contains.push( { title: { contains: token, mode: 'insensitive'} } )
-      contains.push( { metadata: { contains: token, mode: 'insensitive'} } )
+      contains.push( { OR: [
+        { title: { contains: token, mode: 'insensitive'} },
+        { metadata: { contains: token, mode: 'insensitive'} }
+      ]})
     }
 
     // Search folder
@@ -166,7 +168,7 @@ export async function list(req, res, next) {
       where: {
         AND: [
           { folder: { in: folderList } },
-          { OR: contains }
+          { AND: contains }
         ]
       },
       select: {
