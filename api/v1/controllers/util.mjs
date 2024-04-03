@@ -63,7 +63,8 @@ export async function stats(req, res, next) {
       items: items,
       folders: folders,
       version: version,
-      cacheSize: cache
+      cacheSize: cache,
+      startup: Config.get().startuptime
     }
 
     res.status(200).send(R.ok(data))

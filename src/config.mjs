@@ -72,6 +72,8 @@ config.master_key = process.env[config.master_key_env]
 console.log("Generating JWT key")
 config.jwt_key = Crypt.randomString(32)
 
+config.startuptime = (new Date()).toISOString()
+
 /**
  * Returns the configuration stored in config.json
  * @returns {Object} The configuration
