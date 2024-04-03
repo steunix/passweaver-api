@@ -1,8 +1,8 @@
 {
-  "name": "vaulted",
+  "name": "vaulted-api",
   "version": "0.0.1",
-  "description": "Collaborative password manager",
-  "main": "vaulted.mjs",
+  "description": "Collaborative password manager API",
+  "main": "vaulted-api.mjs",
   "scripts": {},
   "author": "Stefano Rivoir",
   "license": "MIT",
