@@ -21,6 +21,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
 const createSchema = {
   "id": "create",
   "properties": {
+    "type" : { "type": "string"},
     "title" : { "type": "string" },
     "data" : { "type": "string" },
     "metadata": { "type": "string" }
@@ -30,6 +31,7 @@ const createSchema = {
 const updateSchema = {
   "id": "update",
   "properties": {
+    "type" : { "type": "string"},
     "title" : { "type": "string" },
     "data" : { "type": "string" },
     "metadata": { "type": "string" },
@@ -174,6 +176,7 @@ export async function list(req, res, next) {
       select: {
         id: true,
         folder: true,
+        type: true,
         title: true,
         metadata: true,
         createdat: true,
@@ -267,6 +270,7 @@ export async function create(req, res, next) {
         folder: folder,
         personal: personal,
         title: req.body.title,
+        type: req?.body?.type,
         data: encData.encrypted,
         dataiv: encData.iv,
         dataauthtag: encData.authTag,
@@ -361,6 +365,9 @@ export async function update(req, res, next) {
     }
     if ( req.body.metadata ) {
       updateStruct.metadata = req.body.metadata
+    }
+    if ( req.body.type ) {
+      updateStruct.type = req.body.type
     }
     await prisma.items.update({
       data: updateStruct,
@@ -492,6 +499,7 @@ export async function clone(req, res, next) {
       id: newid,
       folder: item.folder,
       title: `${item.title} - Copy`,
+      type: item.type,
       data: newData.encrypted,
       dataiv: newData.iv,
       dataauthtag: newData.authTag,

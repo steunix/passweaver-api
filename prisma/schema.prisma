@@ -97,6 +97,7 @@ model Items {
   id          String @id
   folder      String
   personal    Boolean @default(false)
+  type        String?
   title       String
   data        String
   dataiv      String
