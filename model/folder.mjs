@@ -243,6 +243,7 @@ export async function tree(user) {
   var data = []
   var added = new Map()
   for ( const folder of readFolders ) {
+
     const achildren = await children(folder.id, allFolders)
     const aparents  = await parents(folder.id, true, allFolders)
 
@@ -250,6 +251,11 @@ export async function tree(user) {
 
     // Each children is also added to read-permitted folders for caching
     for ( const el of achildren ) {
+      // Only 'admin' user can see all personal folders
+      if ( el.personal==true && el.user!=user && user!='0' ) {
+        continue
+      }
+
       if ( !added.get(el.id) ) {
         data.push(el)
         added.set(el.id,el.id)

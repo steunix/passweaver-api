@@ -130,6 +130,12 @@ export async function list(req, res, next) {
         where: { id: folder }
       })
 
+      // Admin can see all folders, but cannot access any personal folder
+      if ( fld.personal && req.user==="0" ) {
+        res.status(403).send(R.ko("Unauthorized"))
+        return
+      }
+
       // If personal folder, ensure personal password has been set and activated
       if ( fld.personal && !req.personalfolder ) {
         const user = await prisma.users.findUnique({
