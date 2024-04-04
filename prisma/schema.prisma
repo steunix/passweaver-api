@@ -13,11 +13,11 @@ datasource db {
 
 // Folders of item
 model Folders {
-  id          String @id
-  parent      String?
-  description String
+  id          String @db.VarChar(30) @id
+  parent      String? @db.VarChar(30)
+  description String @db.VarChar(100)
   personal    Boolean @default(false)
-  user        String?
+  user        String? @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -30,9 +30,9 @@ model Folders {
 }
 
 model Groups {
-  id          String @id
-  description String
-  parent      String?
+  id          String @db.VarChar(30) @id
+  description String @db.VarChar(100)
+  parent      String? @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -43,16 +43,16 @@ model Groups {
 }
 
 model Users {
-  id          String @id
-  login       String
-  lastname    String
-  firstname   String?
-  authmethod  String
-  locale      String
-  email       String
-  secret      String
+  id          String @db.VarChar(30) @id
+  login       String @db.VarChar(50)
+  lastname    String @db.VarChar(100)
+  firstname   String? @db.VarChar(100)
+  authmethod  String @db.VarChar(10)
+  locale      String @db.VarChar(10)
+  email       String @db.VarChar(50)
+  secret      String @db.VarChar(100)
   secretexpiresat DateTime
-  personalsecret String?
+  personalsecret String? @db.VarChar(100)
   active      Boolean @default(true)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
@@ -64,9 +64,9 @@ model Users {
 }
 
 model UsersGroups {
-  id          String @id
-  user        String
-  group       String
+  id          String @db.VarChar(30) @id
+  user        String @db.VarChar(30)
+  group       String @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -78,9 +78,9 @@ model UsersGroups {
 }
 
 model FolderGroupPermission {
-  id          String @id
-  folder      String
-  group       String
+  id          String @db.VarChar(30) @id
+  folder      String @db.VarChar(30)
+  group       String @db.VarChar(30)
   read        Boolean
   write       Boolean
   createdat   DateTime @default(now())
@@ -94,11 +94,11 @@ model FolderGroupPermission {
 }
 
 model Items {
-  id          String @id
-  folder      String
+  id          String @db.VarChar(30) @id
+  folder      String @db.VarChar(30)
   personal    Boolean @default(false)
-  type        String?
-  title       String
+  type        String? @db.VarChar(10)
+  title       String @db.VarChar(200)
   data        String
   dataiv      String
   dataauthtag String
@@ -113,12 +113,12 @@ model Items {
 }
 
 model ActionLog {
-  id          String @id
+  id          String @db.VarChar(30) @id
   timestamp   DateTime @default(now())
-  action      String
-  itemtype    String
-  itemid      String
-  user        String?
+  action      String @db.VarChar(20)
+  itemtype    String @db.VarChar(20)
+  itemid      String @db.VarChar(50)
+  user        String? @db.VarChar(30)
 
   @@index([timestamp])
   @@index([itemid])
