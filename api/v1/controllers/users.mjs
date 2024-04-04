@@ -241,6 +241,8 @@ export async function create(req, res, next) {
     })
 
     actions.log(req.user, "create", "user", newid)
+    Cache.resetFoldersTree()
+
     res.status(201).send(R.ok({id: newid}))
   } catch (err) {
     next(err)
@@ -384,6 +386,9 @@ export async function remove(req, res, next) {
     })
 
     actions.log(req.user, "delete", "folder", id)
+    Cache.resetFoldersTree()
+    Cache.resetGroupsTree()
+
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)
