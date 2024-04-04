@@ -40,6 +40,7 @@ export function encrypt(string) {
     iv
   );
 
+  ret.algo = "aes-256-gcm"
   ret.iv = iv.toString("base64")
   ret.encrypted = cipher.update(string, 'utf8', 'base64');
   ret.encrypted += cipher.final('base64');

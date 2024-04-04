@@ -277,6 +277,7 @@ export async function create(req, res, next) {
         personal: personal,
         title: req.body.title,
         type: req?.body?.type,
+        algo: encData.algo,
         data: encData.encrypted,
         dataiv: encData.iv,
         dataauthtag: encData.authTag,
@@ -359,6 +360,7 @@ export async function update(req, res, next) {
     let updateStruct = {}
     if ( req.body.data ) {
       const encData = Crypt.encrypt(req.body.data)
+      updateStruct.algo = encData.algo,
       updateStruct.data = encData.encrypted
       updateStruct.dataiv = encData.iv
       updateStruct.dataauthtag = encData.authTag
@@ -506,6 +508,7 @@ export async function clone(req, res, next) {
       folder: item.folder,
       title: `${item.title} - Copy`,
       type: item.type,
+      algo: newData.algo,
       data: newData.encrypted,
       dataiv: newData.iv,
       dataauthtag: newData.authTag,
