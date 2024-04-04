@@ -273,6 +273,8 @@ export async function tree(user) {
 
   // Sort by description
   data.sort( (a,b)=>{
+    if ( a.id=="P" && b.id!="0" ) { return -1 }
+    if ( b.id=="P" && a.id!="0" ) { return 1 }
     if ( a.description<b.description ) { return -1 }
     if ( a.description>b.description ) { return 1 }
     return 0
