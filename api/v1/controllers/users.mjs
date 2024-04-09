@@ -397,9 +397,9 @@ export async function remove(req, res, next) {
 
 /**
  * Set user personal password
- * @param {*} req
- * @param {*} res
- * @param {*} next
+ * @param {*} req Express request
+ * @param {*} res Express response
+ * @param {*} next Next
  * @returns
  */
 export async function setPersonalSecret(req, res, next) {
