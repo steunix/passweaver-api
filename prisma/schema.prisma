@@ -116,9 +116,9 @@ model Items {
 model ActionLog {
   id          String @db.VarChar(30) @id
   timestamp   DateTime @default(now())
-  action      String @db.VarChar(20)
+  action      String @db.VarChar(50)
   itemtype    String @db.VarChar(20)
-  itemid      String @db.VarChar(50)
+  itemid      String @db.VarChar(100)
   user        String? @db.VarChar(30)
 
   @@index([timestamp])
