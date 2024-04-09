@@ -509,11 +509,12 @@ export async function removeGroup(req, res, next) {
 
 /**
  * Get groups associated to a folder
- * @param {Object} req
- * @param {Object} res
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Next
  * @returns
  */
-export async function groups(req,res) {
+export async function groups(req,res,next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
@@ -532,7 +533,7 @@ export async function groups(req,res) {
     const perms = new Map()
     const canmodify = !parents[0].personal && parents[0].id!="P"
 
-    // For each folder, group permissions are or'ed
+    // For each folder, group permissions are OR'ed
     for ( const folder of parents ) {
       const groups = await prisma.folderGroupPermission.findMany({
         where: {
@@ -556,7 +557,15 @@ export async function groups(req,res) {
       }
     }
 
-    const groups = Array.from(perms.values())
+    // Create array from map
+    var groups = Array.from(perms.values())
+
+    // Filter unique inherited values
+    groups = groups.filter( (obj,index)=>{
+      let idx = groups.findIndex( (item)=> { return item.inherited===obj.inherited && item.description===obj.description && item.read===obj.read && item.write===obj.write } )
+      return idx === index
+    })
+
     groups.sort((a,b)=>{
       if ( a.description<b.description ) { return -1 }
       if ( a.description>b.description ) { return 1 }
