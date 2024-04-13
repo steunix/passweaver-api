@@ -1,6 +1,6 @@
 {
   "name": "vaulted-api",
-  "version": "0.9.0",
+  "version": "1.0.0-beta1",
   "description": "Collaborative password manager API",
   "main": "vaulted-api.mjs",
   "scripts": {},
