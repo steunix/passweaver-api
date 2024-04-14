@@ -41,10 +41,6 @@ if ( !cfg.jwt_key ) {
   console.error("JWT key cannot be found: verify environment variable name and value")
   process.exit(2)
 }
-if ( !cfg.listen_port ) {
-  console.error("Listen port is not defined, verify config.json")
-  process.exit(2)
-}
 
 // Rate limiter
 app.use(rateLimitMiddleware)
