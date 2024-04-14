@@ -196,3 +196,7 @@ To feed initial built-in data:
 ## Run
 
 run `npm vaulted.mjs`
+
+# API documentation
+
+See [this page](apidoc/index.html)
