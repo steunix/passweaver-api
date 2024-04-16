@@ -16,9 +16,9 @@ const createSchema = {
   "id": "create",
   "type": "object",
   "properties": {
-    "event" : { "type": "string" },
-    "itemtype" : { "type": "string" },
-    "itemid": { "type": "string" }
+    "event" : { "type": "string", "maxLength": 50 },
+    "itemtype" : { "type": "string", "maxLength": 20 },
+    "itemid": { "type": "string", "maxLength": 100 }
   },
   "required": ["event", "itemtype", "itemid"]
 }

@@ -20,8 +20,8 @@ const schemaLogin = {
   "id": "/login",
   "type": "object",
   "properties": {
-    "username" : { "type": "string" },
-    "password" : { "type": "string" }
+    "username" : { "type": "string", "maxLength": 50 },
+    "password" : { "type": "string", "maxLength": 100 }
   },
   "required": ["username", "password"]
 }

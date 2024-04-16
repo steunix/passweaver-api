@@ -22,13 +22,13 @@ const createSchema = {
   "id": "create",
   "type": "object",
   "properties": {
-    "login" : { "type": "string" },
-    "firstname" : { "type": "string" },
-    "lastname": { "type": "string" },
-    "authmethod": { "type": "string" },
-    "locale": { "type": "string" },
-    "email" : { "type": "string" },
-    "secret" : { "type": "string" }
+    "login" : { "type": "string", "maxLength": 50 },
+    "firstname" : { "type": "string", "maxLength": 100 },
+    "lastname": { "type": "string", "maxLength": 100 },
+    "authmethod": { "type": "string", "pattern": /local|ldap/, "maxLength": 10 },
+    "locale": { "type": "string", "maxLength": 10 },
+    "email" : { "type": "string", "maxLength": 50 },
+    "secret" : { "type": "string", "maxLength": 100 }
   },
   "required": ["login", "firstname","email","secret"]
 }
@@ -36,13 +36,13 @@ const updateSchema = {
   "id": "update",
   "type": "object",
   "properties": {
-    "login" : { "type": "string" },
-    "firstname" : { "type": "string" },
-    "lastname": { "type": "string" },
-    "authmethod": { "type": "string", "pattern": /local|ldap/ },
-    "locale": { "type": "string" },
-    "email" : { "type": "string" },
-    "secret" : { "type": "string" },
+    "login" : { "type": "string", "maxLength": 50 },
+    "firstname" : { "type": "string", "maxLength": 100 },
+    "lastname": { "type": "string", "maxLength": 100 },
+    "authmethod": { "type": "string", "pattern": /local|ldap/, "maxLength": 10 },
+    "locale": { "type": "string", "maxLength": 10 },
+    "email" : { "type": "string", "maxLength": 50 },
+    "secret" : { "type": "string", "maxLength": 100 },
     "active": { "type": "boolean" }
   }
 }

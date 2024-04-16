@@ -23,7 +23,7 @@ const createSchema = {
   "id": "create",
   "type": "object",
   "properties": {
-    "description" : { "type": "string" }
+    "description" : { "type": "string", "maxLength": 100 }
   },
   "required": ["description"]
 }
@@ -31,8 +31,8 @@ const updateSchema = {
   "id": "update",
   "type": "object",
   "properties": {
-    "description" : { "type": "string" },
-    "parent" : { "type": "string" }
+    "description" : { "type": "string", "maxLength": 100 },
+    "parent" : { "type": "string", "maxLength": 30 }
   }
 }
 const groupSchema = {
