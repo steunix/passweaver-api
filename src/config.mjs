@@ -68,6 +68,8 @@ let config = json
 console.log("Reading master key from environment ("+config.master_key_env+")")
 config.master_key = process.env[config.master_key_env]
 
+config.master_key = "(=Y!t&0E(c%pFet@Y_LLMp0zvFLj4&57"
+
 // Sets the JWT key
 console.log("Generating JWT key")
 config.jwt_key = Crypt.randomString(32)

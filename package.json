@@ -3,10 +3,14 @@
   "version": "1.0.0-beta1",
   "description": "Collaborative password manager API",
   "main": "vaulted-api.mjs",
-  "scripts": {},
+  "scripts": {
+    "test": "mocha test/",
+    "start": "node vaulted-api.mjs"
+  },
   "author": "Stefano Rivoir",
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^5.10.2",
     "bcrypt": "^5.1.1",
     "crockford-base32": "^2.0.0",
     "express": "^4.19.2",
@@ -14,13 +18,14 @@
     "generate-password": "^1.7.1",
     "jsonschema": "^1.4.1",
     "jsonwebtoken": "^9.0.2",
+    "ldap-authentication": "",
+    "mocha": "^10.4.0",
     "morgan": "^1.10.0",
     "node-cache": "^5.1.2",
     "prisma": "^5.10.2",
-    "@prisma/client": "^5.10.2",
     "rotating-file-stream": "^3.2.1",
-    "uuidv7": "^0.6.3",
-    "ldap-authentication": ""
+    "superagent": "^8.1.2",
+    "uuidv7": "^0.6.3"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
