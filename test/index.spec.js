@@ -10,10 +10,18 @@ before((done)=>{
     .post(`${host}/api/v1/login`)
     .send({"username":"admin", "password": "0"})
     .then(res=>{
-      adminJWT = res?.body?.data?.jwt
-      done()
+      adminJWT = res.body.data.jwt
+      agent
+        .post(`${host}/api/v1/login`)
+        .send({"username":"user1", "password": "0"})
+        .then(res=>{
+          userJWT = res.body.data.jwt
+          done()
+        })
     })
 })
+
+describe("Vaulted API tests", function() {
 
 // Successful login
 describe("Login endpoint", function() {
@@ -45,22 +53,31 @@ describe("Login endpoint", function() {
       .end(function(err, res){
         assert.equal( res.status, "200")
         assert.notEqual( res?.body?.data?.jwt, undefined)
-        jwt = res?.body?.data?.jwt
         done()
       })
   })
 })
 
 describe("Users endpoint", function() {
-  it("Get user list", function(done) {
-    console.log(adminJWT)
+  it("Unauthorized", function(done) {
     agent
       .get(`${host}/api/v1/users`)
-      .set("Authorization","Bearer "+adminJWT)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "403")
+        done()
+      })
+  })
+
+  it("Get user list", function(done) {
+    agent
+      .get(`${host}/api/v1/users`)
+      .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
         assert.equal( res.status, "200")
         done()
       })
-
   })
+})
+
 })
