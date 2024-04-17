@@ -1,11 +1,23 @@
-const agent = require("superagent");
-const assert = require('assert');
+const agent = require("superagent")
+const assert = require('assert')
+const fs = require('fs')
 
 var adminJWT, userJWT
-
-const host = "http://localhost:3000"
+var host
 
 before((done)=>{
+  console.log("Vaulted API test before hook")
+  // Read listen port from config
+  console.log("Reading port from config")
+  var port = JSON.parse(
+    fs.readFileSync(
+      'config.json'
+    )
+  ).listen_port
+  host = `http://localhost:${port}`
+  console.log(`Running tests on ${host}`)
+
+  // Get both admin jwt and user jwt
   agent
     .post(`${host}/api/v1/login`)
     .send({"username":"admin", "password": "0"})
@@ -59,24 +71,38 @@ describe("Login endpoint", function() {
 })
 
 describe("Users endpoint", function() {
-  it("Unauthorized", function(done) {
-    agent
-      .get(`${host}/api/v1/users`)
-      .set("Authorization",`Bearer ${userJWT}`)
-      .end(function(err, res){
-        assert.equal( res.status, "403")
-        done()
-      })
-  })
 
-  it("Get user list", function(done) {
-    agent
-      .get(`${host}/api/v1/users`)
-      .set("Authorization",`Bearer ${adminJWT}`)
-      .end(function(err, res){
-        assert.equal( res.status, "200")
-        done()
-      })
+  describe("Users get", function() {
+    it("Unauthorized", function(done) {
+      agent
+        .get(`${host}/api/v1/users`)
+        .set("Authorization",`Bearer ${userJWT}`)
+        .end(function(err, res){
+          assert.equal( res.status, "403")
+          done()
+        })
+    })
+
+    it("Get user list", function(done) {
+      agent
+        .get(`${host}/api/v1/users`)
+        .set("Authorization",`Bearer ${adminJWT}`)
+        .end(function(err, res){
+          assert.equal( res.status, "200")
+          done()
+        })
+    })
+
+    it("Get user", function(done) {
+      agent
+        .get(`${host}/api/v1/users/0`)
+        .set("Authorization",`Bearer ${adminJWT}`)
+        .end(function(err, res){
+          assert.equal( res.status, "200")
+          done()
+        })
+    })
+
   })
 })
 
