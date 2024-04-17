@@ -175,13 +175,15 @@ export async function list(req, res, next) {
     }
 
     // Split search string and create array for later AND
-    let searchTokens = search.split(' ')
     let contains = []
-    for ( const token of searchTokens ) {
-      contains.push( { OR: [
-        { title: { contains: token, mode: 'insensitive'} },
-        { metadata: { contains: token, mode: 'insensitive'} }
-      ]})
+    if ( search!='' ) {
+      let searchTokens = search.split(' ')
+      for ( const token of searchTokens ) {
+        contains.push( { OR: [
+          { title: { contains: token, mode: 'insensitive'} },
+          { metadata: { contains: token, mode: 'insensitive'} }
+        ]})
+      }
     }
 
     // Search folder
