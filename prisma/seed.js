@@ -70,7 +70,7 @@ async function main() {
   })
 
   /** USERS */
-  // User admin
+  // Admin
   id = "0"
   const admin = await prisma.users.upsert({
     where: { id: id },
@@ -83,14 +83,15 @@ async function main() {
         locale: "en_US",
         authmethod: "local",
         email: "admin",
-        secret: "$2a$12$aSf1yr1F2cxiiz8oA28zLeInQ4bcKwdLhOEHnjytaPlA0Suh7wYh.",
+        secret: "$2a$12$YIWFVQ9cU6Xv9Jf4jOz9VeyS7APLpAqmXqKM7ap8CybvJSc7ldLba",
         secretexpiresat: new Date(2050,1,1),
-        personalsecret: "$2a$12$aSf1yr1F2cxiiz8oA28zLeInQ4bcKwdLhOEHnjytaPlA0Suh7wYh.",
+        personalsecret: null,
         active: true
     }
   })
 
   /** USERS GROUP ASSOCIATION */
+  // Admin in Admins
   id = "gu0"
   const gu1 = await prisma.usersGroups.upsert({
     where: { id: id },
@@ -102,6 +103,7 @@ async function main() {
     }
   })
 
+  // Admin in Everyone
   id = "gu1"
   const gu2 = await prisma.usersGroups.upsert({
     where: { id: id },
@@ -114,7 +116,7 @@ async function main() {
   })
 
   /** FOLDER GROUP PERMISSIONS */
-  // Folder group permission
+  // Admins r/w to root
   id = "fg0"
   const fg0 = await prisma.folderGroupPermission.upsert({
     where: { id: id},
