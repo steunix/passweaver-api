@@ -38,7 +38,7 @@ export async function generatePassword(req, res, next) {
 }
 
 /**
- * Returns statistics about Vaulted-API
+ * Returns statistics about PassWeaver-API
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Next

@@ -1,5 +1,5 @@
 {
-  "master_key_env": "VAULTED_MASTER_KEY",
+  "master_key_env": "PASSWEAVER_MASTER_KEY",
   "listen_port": 3000,
   "ldap_enabled": false,
   "ldap_options": {},

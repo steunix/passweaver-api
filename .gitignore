@@ -2,7 +2,7 @@
 .env
 .vscode
 node_modules
-vaulted-api.code-workspace
+passweaver-api.code-workspace
 config.json
-prisma/vaulted.db
+prisma/passweaver.db
 log

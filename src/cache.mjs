@@ -36,7 +36,7 @@ function _set(key, data) {
  * @param {string} keyStart
  */
 export function reset(keyStart) {
-  const k = `vaulted.${keyStart}`
+  const k = `passweaver.${keyStart}`
   const keys = Cache.keys()
   for ( const key of keys ) {
     if ( key.startsWith(k)!==null ) {
@@ -49,10 +49,10 @@ export function reset(keyStart) {
  * Resets folders tree cache
  */
 export function resetFoldersTree() {
-  var k = `vaulted.${foldersTreeKey}`
+  var k = `passweaver.${foldersTreeKey}`
   reset(k)
 
-  k = `vaulted.${foldersReadableKey}`
+  k = `passweaver.${foldersReadableKey}`
   reset(k)
 }
 
@@ -60,7 +60,7 @@ export function resetFoldersTree() {
  * Reset groups tree cache
  */
 export function resetGroupsTree() {
-  const k = `vaulted.${groupsTreeKey}`
+  const k = `passweaver.${groupsTreeKey}`
   reset(k)
 }
 
@@ -70,7 +70,7 @@ export function resetGroupsTree() {
  * @param {string} key
  */
 export function get(user, key) {
-  const k = `vaulted.${key}.${user}`
+  const k = `passweaver.${key}.${user}`
   return _get(k)
 }
 
@@ -80,7 +80,7 @@ export function get(user, key) {
  * @param {string} key
  */
 export function set(user, key, data) {
-  const k = `vaulted.${key}.${user}`
+  const k = `passweaver.${key}.${user}`
   return _set(k, data)
 }
 

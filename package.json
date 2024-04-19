@@ -1,11 +1,11 @@
 {
-  "name": "vaulted-api",
+  "name": "passweaver-api",
   "version": "1.0.0-beta1",
   "description": "Collaborative password manager API",
-  "main": "vaulted-api.mjs",
+  "main": "passweaver-api.mjs",
   "scripts": {
     "test": "mocha test/",
-    "start": "node vaulted-api.mjs"
+    "start": "node passweaver-api.mjs"
   },
   "author": "Stefano Rivoir",
   "license": "MIT",

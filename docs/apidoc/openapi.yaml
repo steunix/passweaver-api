@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: Vaulted API
+  title: PassWeaver API
   version: v1
-  description: Vaulted API documentation
+  description: PassWeaver API documentation
   license:
     name: MIT
     url: me

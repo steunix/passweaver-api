@@ -1,5 +1,5 @@
 /**
- * Vaulted, a collaborative password manager
+ * PassWeaver, a collaborative password manager
  *
  * (c) 2023 - Stefano Rivoir <rs4000@gmail.com>
  *
@@ -28,7 +28,7 @@ import * as R from './src/response.mjs'
 
 import rateLimitMiddleware from "./src/ratelimiter.mjs"
 
-console.log(`Vaulted ${Config.packageJson().version} starting...`)
+console.log(`PassWeaver API ${Config.packageJson().version} starting...`)
 
 // Checks for config
 const cfg = Config.get()
@@ -53,14 +53,14 @@ if ( !FS.existsSync(cfg.log_dir) ) {
 }
 
 // Log requests
-const logAccess = RFS.createStream(`${cfg.log_dir}/vaulted-api-access.log`, {
+const logAccess = RFS.createStream(`${cfg.log_dir}/passweaver-api-access.log`, {
   interval: "1d",
   rotate: 14
 })
 app.use(Morgan('combined', { stream: logAccess }))
 
 // Log errors
-const logErrors = RFS.createStream(`${cfg.log_dir}/vaulted-api-errors.log`, {
+const logErrors = RFS.createStream(`${cfg.log_dir}/passweaver-api-errors.log`, {
   interval: "1d",
   rotate: 14
 })

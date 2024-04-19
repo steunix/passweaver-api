@@ -6,7 +6,7 @@ var adminJWT, userJWT
 var host
 
 before((done)=>{
-  console.log("Vaulted API test before hook")
+  console.log("Passweaver API test before hook")
   // Read listen port from config
   console.log("Reading port from config")
   var port = JSON.parse(
@@ -33,7 +33,7 @@ before((done)=>{
     })
 })
 
-describe("Vaulted API tests", function() {
+describe("PassWeaver API tests", function() {
 
 // Successful login
 describe("Login endpoint", function() {
