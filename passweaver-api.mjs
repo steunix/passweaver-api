@@ -92,6 +92,6 @@ app.all("*", (_req, res, _next) => {
   })
 })
 
-console.log("Listening on port "+cfg.listen_port)
+console.log(`Listening on port ${cfg.listen_port}`)
 
 app.listen(cfg.listen_port)

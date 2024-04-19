@@ -416,7 +416,7 @@ export async function addUser(req, res, next) {
       }
     })
 
-    actions.log(req.user, "add", "usergroups", group+"/"+user)
+    actions.log(req.user, "add", "usergroups", `${group}/${user}`)
     Cache.resetFoldersTree()
     Cache.resetGroupsTree()
     res.status(200).send(R.ok())
@@ -484,7 +484,7 @@ export async function removeUser(req, res, next) {
       }
     })
 
-    actions.log(req.user, "delete", "usergroups", group+"/"+user)
+    actions.log(req.user, "delete", "usergroups", `${group}/${user}`)
     Cache.resetFoldersTree()
     Cache.resetGroupsTree()
     res.status(200).send(R.ok())
