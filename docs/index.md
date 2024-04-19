@@ -15,7 +15,7 @@ PassWeaver API is a NodeJS application, released under MIT license, and it uses 
 ## How it works
 
 ### Items
-An 'item' is an entity with a (unecrypted) title, a metadata field, and some encrypted `data`. PassWeaver API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
+An 'item' is an entity with a (unecrypted) title, a `type` field, `metadata` field, and some encrypted `data`. PassWeaver API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
 
 For example, in one item you may store a JSON object that identifies a login:
 ```
@@ -37,11 +37,11 @@ and in another item you may have something that represents an API credentials se
 ```
 and in another item you may have just only a flat string.
 
-It's up to the consumer to decode and handle the data.
+It's up to the consumer to decode and handle the data, based on the `type` field.
 
 An item has also a mandatory `title` field, that can be searched for and is NOT encrypted: do not use it for storing sensitive information.
 
-The `metadata` field is NOT encrypted as well but not mandatory, and it allows to store any additional info for a given item (e.g. the item type, a list of tags and so on).
+The `metadata` field is NOT encrypted as well but not mandatory, and it allows to store any additional uncrypted info for a given item.
 
 ### Folders
 
@@ -61,7 +61,7 @@ Users are assigned to groups, and groups have read/write permissions for a given
 
 There is only one built-in 'superuser', namely **admin**, who can create users and groups. And **admin** is part of **Admins** built-in group: admin cannot be removed from Admins, but other users can join it.
 
-Another built-in group is 'Everyone', quite self-explanatory.
+Another built-in group is 'Everyone', quite self-explanatory: all users will be automatically added to this group, and they can't be removed.
 
 Users can join several groups.
 
@@ -104,7 +104,7 @@ That is indeed **exactly** how user 'Admin' in PassWeaver API works: it's part o
 
 User passwords are hashed using bcrypt algorythm.
 
-Items are encrypted and stored in the database using a master key that is read **from the environment variable `PASSWEAVER_MASTER_KEY`**: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
+Items are encrypted and stored in the database using a master key that is read **from the environment variable `PASSWEAVERAPI_MASTER_KEY`**: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
 
 Items are encrypted using AES-GCM algorithm with the master key, and are stored along with IV and auth tag.
 
@@ -173,10 +173,10 @@ Edit `config-skel.json` and save it as `config.json`.
 
 ### Environment
 
-Your environment must expose these 2 variables (these are the default names, they can be changed in config.json):
+Your environment must expose these 2 variables:
 
-- `PASSWEAVER_MASTER_KEY`: the AES-256-GCM key used for encryption
-- `PASSWEAVER_PRISMA_URL`: the database connection string
+- `PASSWEAVERAPI_MASTER_KEY`: the AES-256-GCM key used for encryption
+- `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
 
 ### Database
 
@@ -186,7 +186,7 @@ LIMITATION: ATM Prisma does not allow to specify a column length for text column
 
 To initialize the db:
 
-- ensure `PASSWEAVER_PRISMA_URL` variable is set and that it points to a valid PostgreSQL database
+- ensure `PASSWEAVERAPI_PRISMA_URL` variable is set and that it points to a valid PostgreSQL database
 - run `npx prisma db push`
 
 To feed initial built-in data:
@@ -199,4 +199,4 @@ run `npm passweaver-api.mjs`
 
 # API documentation
 
-See [this page](apidoc/index.html)
+For a full API documentation you can refer to [this page](apidoc/index.html)
