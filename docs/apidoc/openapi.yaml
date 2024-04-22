@@ -4,9 +4,9 @@ info:
   contact:
     name: Stefano Rivoir
     email: rs4000@gmail.com
-  title: Vaulted API
+  title: Passweaver API
   version: v1
-  description: Vaulted API documentation
+  description: Passweaver API documentation
   license:
     name: MIT
     url: https://mit-license.org/
