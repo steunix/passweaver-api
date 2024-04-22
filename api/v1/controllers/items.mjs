@@ -39,6 +39,11 @@ const updateSchema = {
   }
 }
 
+/**
+ * Check if a personal secret has been set or used in a given session
+ * @param {*} req Express request
+ * @returns
+ */
 async function checkPersonalAccess(req) {
   // User has used its personal secret
   if ( req?.personalfolderenabled ) {
@@ -62,7 +67,13 @@ async function checkPersonalAccess(req) {
   return 500
 }
 
-// Get an item
+/**
+ *
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Function} next Error callback
+ * @returns
+ */
 export async function get(req, res, next) {
   try {
     const id = req.params.id
