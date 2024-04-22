@@ -10,12 +10,12 @@ get:
     - $ref: '..\parameters\folders.yaml#/folderid'
   responses:
     "200":
-      description: Groups are returned
       $ref: '..\responsebodies\folders.yaml#/groupslistsuccess'
+      description: Groups are returned
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found

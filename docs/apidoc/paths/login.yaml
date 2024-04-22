@@ -16,8 +16,8 @@ post:
       $ref: '..\responsebodies\login.yaml#/success'
       description: Successfully logged in. JWT is available in 'data' object.
     "400":
-      description: Request body is not correct or unreadable
       $ref: '..\responsebodies\default.yaml#/badrequest'
+      description: Request body is not correct or unreadable
     "401":
-      description: User cannot be logged in, wrong credentials
       $ref: '..\responsebodies\default.yaml#/unauthorized'
+      description: User cannot be logged in, wrong credentials

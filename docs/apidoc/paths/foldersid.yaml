@@ -10,15 +10,15 @@ get:
     - $ref: '..\parameters\folders.yaml#/folderid'
   responses:
     "200":
-      description: Folder found
       $ref: '..\responsebodies\folders.yaml#/getsuccess'
+      description: Folder found
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":
@@ -41,15 +41,15 @@ patch:
           $ref: '..\requestbodies\folders.yaml#/folderUpdateBody'
   responses:
     "200":
-      description: Folder updated
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Folder updated
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found
 
 delete:
   tags:
@@ -63,16 +63,16 @@ delete:
     - $ref: '..\parameters\folders.yaml#/folderid'
   responses:
     "200":
-      description: Folder deleted
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Folder deleted
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found
     "422":
-      description: Folder is not empty
       $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: Folder is not empty
 

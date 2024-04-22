@@ -59,16 +59,16 @@ delete:
     - $ref: '..\parameters\users.yaml#/userid'
   responses:
     "200":
-      description: User deleted
       $ref: '..\responsebodies\default.yaml#/success'
+      description: User deleted
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: User not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: User not found
     "422":
-      description: User cannot be deleted
       $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: User cannot be deleted
 

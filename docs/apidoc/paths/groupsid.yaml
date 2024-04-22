@@ -10,15 +10,15 @@ get:
     - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
     "200":
-      description: Group found
       $ref: '..\responsebodies\groups.yaml#/getsuccess'
+      description: Group found
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Group not found
 
 patch:
   tags:
@@ -37,15 +37,15 @@ patch:
           $ref: '..\requestbodies\groups.yaml#/groupUpdateBody'
   responses:
     "200":
-      description: Group updated
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Group updated
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Group not found
 
 delete:
   tags:
@@ -59,16 +59,16 @@ delete:
     - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
     "200":
-      description: Group deleted
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Group deleted
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Group not found
     "422":
-      description: Group is not empty
       $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: Group is not empty
 

@@ -10,15 +10,15 @@ get:
     - $ref: '..\parameters\items.yaml#/itemid'
   responses:
     "200":
-      description: Item found
       $ref: '..\responsebodies\items.yaml#/getsuccess'
+      description: Item found
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Item not found
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":
@@ -41,15 +41,15 @@ patch:
           $ref: '..\requestbodies\items.yaml#/itemUpdateBody'
   responses:
     "200":
-      description: Item updated
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Item updated
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Item not found
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":
@@ -67,15 +67,15 @@ delete:
     - $ref: '..\parameters\items.yaml#/itemid'
   responses:
     "200":
-      description: Item deleted
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Item deleted
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Item not found
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":

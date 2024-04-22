@@ -15,15 +15,15 @@ post:
           $ref: '..\requestbodies\items.yaml#/itemCreateBody'
   responses:
     "201":
-      description: Item created, the new id is returned
       $ref: '..\responsebodies\default.yaml#/created'
+      description: Item created, the new id is returned
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found
 
 get:
   tags:
@@ -37,15 +37,15 @@ get:
     - $ref: '..\parameters\items.yaml#/folderid'
   responses:
     "200":
-      description: Items are returned
       $ref: '..\responsebodies\folders.yaml#/itemslistsuccess'
+      description: Items are returned
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":

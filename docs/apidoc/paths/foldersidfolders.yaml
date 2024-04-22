@@ -15,12 +15,12 @@ post:
           $ref: '..\requestbodies\folders.yaml#/folderCreateBody'
   responses:
     "201":
-      description: Folder created, the new id is returned
       $ref: '..\responsebodies\default.yaml#/created'
+      description: Folder created, the new id is returned
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Parent folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Parent folder not found

@@ -19,15 +19,15 @@ post:
           $ref: '..\requestbodies\folders.yaml#/folderAddGroupBody'
   responses:
     "201":
-      description: Group added to the folder
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Group added to the folder
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Folder not found
 
 patch:
   tags:
@@ -49,16 +49,15 @@ patch:
           $ref: '..\requestbodies\folders.yaml#/folderAddGroupBody'
   responses:
       "200":
-        description: Folder permissions updated
         $ref: '..\responsebodies\default.yaml#/success'
+        description: Folder permissions updated
       "401":
         $ref: '..\responsebodies\default.yaml#/unauthorized'
       "403":
         $ref: '..\responsebodies\default.yaml#/forbidden'
       "404":
-        description: Folder not found
         $ref: '..\responsebodies\default.yaml#/notfound'
-
+        description: Folder not found
 
 delete:
   tags:
@@ -74,8 +73,8 @@ delete:
     - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
     "201":
-      description: Group removed from folder
       $ref: '..\responsebodies\default.yaml#/success'
+      description: Group removed from folder
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":

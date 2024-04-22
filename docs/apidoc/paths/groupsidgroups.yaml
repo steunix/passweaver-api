@@ -15,13 +15,13 @@ post:
           $ref: '..\requestbodies\groups.yaml#/groupCreateBody'
   responses:
     "201":
-      description: Group created, the new id is returned
       $ref: '..\responsebodies\default.yaml#/created'
+      description: Group created, the new id is returned
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Parent group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Parent group not found
 
