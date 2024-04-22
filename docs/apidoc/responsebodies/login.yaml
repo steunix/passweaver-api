@@ -4,7 +4,7 @@ status:
   enum: [ "success", "failed" ]
 
 success:
-  description: dummy
+  description: User successfully logged in
   content:
     application/json:
       schema:

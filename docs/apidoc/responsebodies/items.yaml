@@ -4,7 +4,7 @@ status:
   enum: [ "success" ]
 
 getsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
