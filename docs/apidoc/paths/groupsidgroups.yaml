@@ -1,0 +1,27 @@
+post:
+  tags:
+    -  Groups
+  operationId: "createGroup"
+  summary: Create a sub group
+  description: Create a sub group into parent group
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\groups.yaml#/parentgroupid'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\groups.yaml#/groupCreateBody'
+  responses:
+    "201":
+      description: Group created, the new id is returned
+      $ref: '..\responsebodies\default.yaml#/created'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Parent group not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+

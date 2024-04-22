@@ -12,7 +12,7 @@ statusfailed:
   enum: [ "failed" ]
 
 success:
-  description: dummy
+  description: Operation successful
   content:
     application/json:
       schema:
@@ -87,8 +87,40 @@ unauthorized:
             type: object
             example: {}
 
+personalpwdnotset:
+  description: User has not set a personal password yet
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            $ref: '#/statusfailed'
+          message:
+            type: string
+            example: Unauthorized
+          data:
+            type: object
+            example: {}
+
+personalpwdnotused:
+  description: User has not unlocked personal folders yet
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            $ref: '#/statusfailed'
+          message:
+            type: string
+            example: Unauthorized
+          data:
+            type: object
+            example: {}
+
 created:
-  description: dummy
+  description: Object created
   content:
     application/json:
       schema:
@@ -101,6 +133,7 @@ created:
             properties:
               id:
                 type: string
+                example: "067FQXHD7HZX1340XRYH96340R"
                 description: ID of new object
 
 notfound:

@@ -2,8 +2,12 @@ post:
   tags:
     -  Folders
   operationId: "create"
-  summary: Create a folder
-  description: Create a folder
+  summary: Create a sub folder
+  description: Create a subfolder in given folder
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/parentfolderid'
   requestBody:
     content:
       application/json:
@@ -18,5 +22,5 @@ post:
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: Parent folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'

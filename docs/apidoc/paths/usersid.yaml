@@ -1,78 +1,74 @@
 get:
   tags:
-    -  Folders
-  operationId: "getFolder"
-  summary: Get folder details
-  description: Get folder
+    -  Users
+  operationId: "getUser"
+  summary: Get user details
+  description: Get user
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\users.yaml#/userid'
   responses:
     "200":
-      description: Folder found
-      $ref: '..\responsebodies\folders.yaml#/getsuccess'
+      description: User found
+      $ref: '..\responsebodies\users.yaml#/getsuccess'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: User not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-    "412":
-      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
-    "417":
-      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
 
 patch:
   tags:
-    -  Folders
-  operationId: "updateFolder"
-  summary: Updates a folder
-  description: Updates a folder
+    -  Users
+  operationId: "updateUser"
+  summary: Updates a user
+  description: Updates a user
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\users.yaml#/userid'
   requestBody:
     content:
       application/json:
         schema:
-          $ref: '..\requestbodies\folders.yaml#/folderUpdateBody'
+          $ref: '..\requestbodies\users.yaml#/userUpdateBody'
   responses:
     "200":
-      description: Folder updated
+      description: User deleted
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: User not found
       $ref: '..\responsebodies\default.yaml#/notfound'
 
 delete:
   tags:
-    -  Folders
-  operationId: "deleteFolder"
-  summary: Delete a folder
-  description: The folder must be empty and must not have children folders
+    -  Users
+  operationId: "deleteUser"
+  summary: Delete a user
+  description: The user must be empty and must not have children users
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\users.yaml#/userid'
   responses:
     "200":
-      description: Folder deleted
+      description: User deleted
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: User not found
       $ref: '..\responsebodies\default.yaml#/notfound'
     "422":
-      description: Folder is not empty
+      description: User cannot be deleted
       $ref: '..\responsebodies\default.yaml#/unprocessable'
 

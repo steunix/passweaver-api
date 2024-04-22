@@ -1,28 +1,56 @@
 openapi: 3.0.0
+
 info:
-  title: PassWeaver API
+  contact:
+    name: Stefano Rivoir
+    email: rs4000@gmail.com
+  title: Vaulted API
   version: v1
-  description: PassWeaver API documentation
+  description: Vaulted API documentation
   license:
     name: MIT
-    url: me
+    url: https://mit-license.org/
 
 servers:
   - url: http://yourserver
 
-
-security:
-  - bearerAuth: []
+tags:
+  - name: "Authentication"
+    description: Login
+  - name: "Users"
+    description: Operations on users
+  - name: "Groups"
+    description: Operations on user groups
+  - name: "Folders"
+    description: Operations on folders
+  - name: "Folder permissions"
+    description: Folder permissions
+  - name: "Items"
+    description: Items
 
 paths:
   /login:
     $ref: '.\paths\login.yaml'
-  /folders:
-    $ref: '.\paths\folders.yaml'
+  /users:
+    $ref: '.\paths\users.yaml'
+  /users/{userid}:
+    $ref: '.\paths\usersid.yaml'
+  /groups/{parentgroupid}/groups:
+    $ref: '.\paths\groupsidgroups.yaml'
+  /groups/{groupid}:
+    $ref: '.\paths\groupsid.yaml'
+  /folders/{parentfolderid}/folders:
+    $ref: '.\paths\foldersidfolders.yaml'
   /folders/{folderid}:
     $ref: '.\paths\foldersid.yaml'
+  /folders/{folderid}/groups:
+    $ref: '.\paths\foldersidgroups.yaml'
   /folders/{folderid}/groups/{groupid}:
     $ref: '.\paths\foldersgroupsid.yaml'
+  /folders/{folderid}/items:
+    $ref: '.\paths\foldersiditems.yaml'
+  /items/{itemid}:
+    $ref: '.\paths\itemsid.yaml'
 
 components:
   securitySchemes:

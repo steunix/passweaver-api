@@ -1,78 +1,74 @@
 get:
   tags:
-    -  Folders
-  operationId: "getFolder"
-  summary: Get folder details
-  description: Get folder
+    -  Groups
+  operationId: "getGroup"
+  summary: Get a group details
+  description: Returns a group
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
     "200":
-      description: Folder found
-      $ref: '..\responsebodies\folders.yaml#/getsuccess'
+      description: Group found
+      $ref: '..\responsebodies\groups.yaml#/getsuccess'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-    "412":
-      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
-    "417":
-      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
 
 patch:
   tags:
-    -  Folders
-  operationId: "updateFolder"
-  summary: Updates a folder
-  description: Updates a folder
+    -  Groups
+  operationId: "updateGroup"
+  summary: Updates a group
+  description: Updates a group
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\groups.yaml#/groupid'
   requestBody:
     content:
       application/json:
         schema:
-          $ref: '..\requestbodies\folders.yaml#/folderUpdateBody'
+          $ref: '..\requestbodies\groups.yaml#/groupUpdateBody'
   responses:
     "200":
-      description: Folder updated
+      description: Group updated
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: Group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
 
 delete:
   tags:
-    -  Folders
-  operationId: "deleteFolder"
-  summary: Delete a folder
-  description: The folder must be empty and must not have children folders
+    -  Groups
+  operationId: "deleteGroup"
+  summary: Delete a group
+  description: The group must be empty and must not have children groups
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
     "200":
-      description: Folder deleted
+      description: Group deleted
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: Group not found
       $ref: '..\responsebodies\default.yaml#/notfound'
     "422":
-      description: Folder is not empty
+      description: Group is not empty
       $ref: '..\responsebodies\default.yaml#/unprocessable'
 

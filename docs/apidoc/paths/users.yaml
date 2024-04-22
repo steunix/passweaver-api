@@ -1,0 +1,21 @@
+post:
+  tags:
+    -  Users
+  operationId: "createUser"
+  summary: Create a user
+  description: Create a user
+  security:
+    - bearerAuth: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\users.yaml#/userCreateBody'
+  responses:
+    "201":
+      description: User created, the new id is returned
+      $ref: '..\responsebodies\default.yaml#/created'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'

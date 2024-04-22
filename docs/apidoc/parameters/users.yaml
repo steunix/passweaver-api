@@ -1,0 +1,10 @@
+# Users parameters
+
+userid:
+  name: userid
+  in: path
+  description: User ID
+  required: true
+  schema:
+    type: string
+

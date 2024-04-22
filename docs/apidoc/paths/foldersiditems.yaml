@@ -1,0 +1,52 @@
+post:
+  tags:
+    -  Items
+  operationId: "createItem"
+  summary: Create an item
+  description: Create an item in a folder
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\items.yaml#/folderid'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\items.yaml#/itemCreateBody'
+  responses:
+    "201":
+      description: Item created, the new id is returned
+      $ref: '..\responsebodies\default.yaml#/created'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+
+get:
+  tags:
+    -  Items
+  operationId: "listItems"
+  summary: Get all folder items
+  description: Get all folder items
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\items.yaml#/folderid'
+  responses:
+    "200":
+      description: Items are returned
+      $ref: '..\responsebodies\folders.yaml#/itemslistsuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+    "412":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
+    "417":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'

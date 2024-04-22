@@ -1,0 +1,17 @@
+# Items parameters
+
+itemid:
+  name: itemid
+  in: path
+  description: Item ID
+  required: true
+  schema:
+    type: string
+
+folderid:
+  name: folderid
+  in: path
+  description: Folder ID
+  required: true
+  schema:
+    type: string

@@ -6,6 +6,7 @@ groupCreateBody:
     description:
       type: string
       description: Group description
+      example: New group
   required:
     - description
 
@@ -15,5 +16,9 @@ groupUpdateBody:
     description:
       type: string
       description: Group description
+      example: New group
+    parent:
+      type: string
+      description: Parent body
   required:
     - description

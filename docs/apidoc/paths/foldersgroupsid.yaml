@@ -6,6 +6,8 @@ post:
   description:
     Add a group to a folder, with given permissions. If 'write' is true also 'read' must be true, and
     if 'read' is false, also 'write' must be false
+  security:
+    - bearerAuth: []
   parameters:
     - $ref: '..\parameters\folders.yaml#/folderid'
     - $ref: '..\parameters\groups.yaml#/groupid'
@@ -26,30 +28,16 @@ post:
     "404":
       description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-delete:
-  tags:
-    - Folder permissions
-  operationId: "deletegroup"
-  summary: Remove a group from a folder
-  parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
-    - $ref: '..\parameters\groups.yaml#/groupid'
-  responses:
-    "201":
-      description: Group removed from folder
-      $ref: '..\responsebodies\default.yaml#/success'
-    "401":
-      $ref: '..\responsebodies\default.yaml#/unauthorized'
-    "403":
-      $ref: '..\responsebodies\default.yaml#/forbidden'
-    "404":
-      description: Folder not found
-      $ref: '..\responsebodies\default.yaml#/notfound'
+
 patch:
   tags:
     - Folder permissions
   operationId: "changegroup"
   summary: Change group permissions for a folder
+  description:
+    Changes the permissions of a group on a folder
+  security:
+    - bearerAuth: []
   parameters:
     - $ref: '..\parameters\folders.yaml#/folderid'
     - $ref: '..\parameters\groups.yaml#/groupid'
@@ -59,9 +47,34 @@ patch:
       application/json:
         schema:
           $ref: '..\requestbodies\folders.yaml#/folderAddGroupBody'
-responses:
-    "200":
-      description: Group permissions updated
+  responses:
+      "200":
+        description: Folder permissions updated
+        $ref: '..\responsebodies\default.yaml#/success'
+      "401":
+        $ref: '..\responsebodies\default.yaml#/unauthorized'
+      "403":
+        $ref: '..\responsebodies\default.yaml#/forbidden'
+      "404":
+        description: Folder not found
+        $ref: '..\responsebodies\default.yaml#/notfound'
+
+
+delete:
+  tags:
+    - Folder permissions
+  operationId: "deletegroup"
+  summary: Remove a group from a folder
+  description:
+    Delete a group from a folder
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\groups.yaml#/groupid'
+  responses:
+    "201":
+      description: Group removed from folder
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'

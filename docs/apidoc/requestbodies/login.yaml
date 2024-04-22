@@ -9,3 +9,6 @@ loginBody:
     password:
       type: string
       example: mypassword
+  required:
+    - username
+    - password

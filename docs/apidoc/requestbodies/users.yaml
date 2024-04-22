@@ -1,0 +1,74 @@
+# Request bodies for users
+
+userCreateBody:
+  type: object
+  properties:
+    login:
+      type: string
+      description: Login
+      example: user1
+    firstname:
+      type: string
+      description: First name
+      example: John
+    lastname:
+      type: string
+      description: Last name
+      example: Doe
+    authmethod:
+      type: string
+      description: Authentication method
+      example: local
+    locale:
+      type: string
+      description: Locale
+      example: en_US
+    email:
+      type: string
+      description: Email address
+      example: me@me.com
+    secret:
+      type: string
+      description: Password
+      example: "123456789"
+  required:
+    - login
+    - firstname
+    - email
+    - secret
+
+userUpdateBody:
+  type: object
+  properties:
+    login:
+      type: string
+      description: Login
+      example: user1
+    firstname:
+      type: string
+      description: First name
+      example: John
+    lastname:
+      type: string
+      description: Last name
+      example: Doe
+    authmethod:
+      type: string
+      description: Authentication method
+      example: local
+    locale:
+      type: string
+      description: Locale
+      example: en_US
+    email:
+      type: string
+      description: Email address
+      example: me@me.com
+    secret:
+      type: string
+      description: Password
+      example: "123456789"
+    active:
+      type: boolean
+      description: User is active
+      example: true

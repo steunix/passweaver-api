@@ -1,23 +1,23 @@
 get:
   tags:
-    -  Folders
-  operationId: "getFolder"
-  summary: Get folder details
-  description: Get folder
+    -  Items
+  operationId: "getItem"
+  summary: Get item
+  description: Get item
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\items.yaml#/itemid'
   responses:
     "200":
-      description: Folder found
-      $ref: '..\responsebodies\folders.yaml#/getsuccess'
+      description: Item found
+      $ref: '..\responsebodies\items.yaml#/getsuccess'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
@@ -26,53 +26,58 @@ get:
 
 patch:
   tags:
-    -  Folders
-  operationId: "updateFolder"
-  summary: Updates a folder
-  description: Updates a folder
+    -  Items
+  operationId: "updateItem"
+  summary: Updates an item
+  description: Updates an item
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\items.yaml#/itemid'
   requestBody:
     content:
       application/json:
         schema:
-          $ref: '..\requestbodies\folders.yaml#/folderUpdateBody'
+          $ref: '..\requestbodies\items.yaml#/itemUpdateBody'
   responses:
     "200":
-      description: Folder updated
+      description: Item updated
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+    "412":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
+    "417":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
 
 delete:
   tags:
-    -  Folders
-  operationId: "deleteFolder"
-  summary: Delete a folder
-  description: The folder must be empty and must not have children folders
+    -  Items
+  operationId: "deleteItem"
+  summary: Delete an item
+  description: Delete an item
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\folders.yaml#/folderid'
+    - $ref: '..\parameters\items.yaml#/itemid'
   responses:
     "200":
-      description: Folder deleted
+      description: Item deleted
       $ref: '..\responsebodies\default.yaml#/success'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Folder not found
+      description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-    "422":
-      description: Folder is not empty
-      $ref: '..\responsebodies\default.yaml#/unprocessable'
+    "412":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
+    "417":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
 

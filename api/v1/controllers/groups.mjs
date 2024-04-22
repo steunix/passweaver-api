@@ -337,14 +337,21 @@ export async function remove(req, res, next) {
       return
     }
 
-    // Deletes user/groups
+    // Delete user/groups
     await prisma.usersGroups.deleteMany({
       where: {
         group: id
       }
     })
 
-    // Deletes group
+    // Delete folder/groups
+    await prisma.folderGroupPermission.deleteMany({
+      where: {
+        group: id
+      }
+    })
+
+    // Delete group
     await prisma.groups.delete({
       where: {
         id: id

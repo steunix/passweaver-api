@@ -1,0 +1,48 @@
+# Request bodies for items
+
+itemCreateBody:
+  type: object
+  properties:
+    type:
+      type: string
+      description: Item type
+      example: db
+    title:
+      type: string
+      description: Item title
+      example: Database accout
+    data:
+      type: string
+      description: Item content data
+    metadata:
+      type: string
+      description: Item metadata
+  required:
+    - title
+    - data
+    - metadata
+
+itemUpdateBody:
+  type: object
+  properties:
+    type:
+      type: string
+      description: Item type
+      example: db
+    title:
+      type: string
+      description: Item title
+      example: Database accout
+    data:
+      type: string
+      description: Item content data
+    metadata:
+      type: string
+      description: Item metadata
+    folder:
+      type: string
+      description: Item folder
+  required:
+    - title
+    - data
+    - metadata

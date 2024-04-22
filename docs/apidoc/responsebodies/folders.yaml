@@ -47,3 +47,68 @@ getsuccess:
                   write:
                     type: boolean
                     description: Write permission
+
+itemslistsuccess:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Item type
+                  example: db
+                title:
+                  type: string
+                  description: Item title
+                  example: Database accout
+                data:
+                  type: string
+                  description: Item content data
+                metadata:
+                  type: string
+                  description: Item metadata
+                folder:
+                  type: string
+                  description: Item folder
+
+groupslistsuccess:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Group ID
+                description:
+                  type: string
+                  description: Group description
+                canmodify:
+                  type: boolean
+                  description: True if permissions can be modified, false otherwise
+                inherited:
+                  type: string
+                  description: True if permissions are inherited from a parent folder
+                read:
+                  type: boolean
+                  description: Read permission
+                write:
+                  type: boolean
+                  description: Write permission

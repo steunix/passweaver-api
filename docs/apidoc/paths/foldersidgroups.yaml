@@ -1,0 +1,21 @@
+get:
+  tags:
+    -  Folder permissions
+  operationId: "listGroups"
+  summary: Get all groups that can access a folder
+  description: Get all groups that can access a folder
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+  responses:
+    "200":
+      description: Groups are returned
+      $ref: '..\responsebodies\folders.yaml#/groupslistsuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Folder not found
+      $ref: '..\responsebodies\default.yaml#/notfound'

@@ -1,6 +1,6 @@
 post:
   tags:
-    - Login
+    - Authentication
   operationId: login
   summary: Login a user
   description: Login in a user and return a JWT token
@@ -9,7 +9,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '..\components\login.yaml#/loginBody'
+          $ref: '..\requestbodies\login.yaml#/loginBody'
 
   responses:
     "200":

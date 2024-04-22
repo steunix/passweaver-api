@@ -6,6 +6,7 @@ folderCreateBody:
     description:
       type: string
       description: Folder description
+      example: New folder
   required:
     - description
 
@@ -15,6 +16,11 @@ folderUpdateBody:
     description:
       type: string
       description: Folder description
+      example: New description
+    parent:
+      type: string
+      description: Parent folder
+      example: 067FQXHD7HZX1340XRYH96340R
   required:
     - description
 
