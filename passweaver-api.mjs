@@ -37,10 +37,6 @@ if ( !cfg.master_key ) {
   console.error("Master key cannot be found: verify environment variable name and value")
   process.exit(1)
 }
-if ( !cfg.jwt_key ) {
-  console.error("JWT key cannot be found: verify environment variable name and value")
-  process.exit(2)
-}
 
 // Rate limiter
 app.use(rateLimitMiddleware)
