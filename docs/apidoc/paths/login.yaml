@@ -13,8 +13,8 @@ post:
 
   responses:
     "200":
-      description: Successfully logged in. JWT is available in 'data' object.
       $ref: '..\responsebodies\login.yaml#/success'
+      description: Successfully logged in. JWT is available in 'data' object.
     "400":
       description: Request body is not correct or unreadable
       $ref: '..\responsebodies\default.yaml#/badrequest'
