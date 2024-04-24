@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "^10.4.0",
-    "superagent": "^8.1.2"
+    "superagent": "^9.0.0"
   },
   "dependencies": {
     "@prisma/client": "^5.10.2",
