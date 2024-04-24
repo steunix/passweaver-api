@@ -9,6 +9,7 @@ import * as User from './user.mjs'
 import * as Cache from '../lib/cache.mjs'
 import * as Config from '../lib/config.mjs'
 import * as Auth from '../lib/auth.mjs'
+import * as Const from '../lib/const.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -36,7 +37,7 @@ export async function isPersonal(id) {
   const folders = await parents(id, true)
 
   for ( const folder of folders ) {
-    if ( folder.id=="P" ) {
+    if ( folder.id==Const.PW_FOLDER_PERSONALROOTID ) {
       return true
     }
   }
@@ -69,7 +70,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
   }
 
   // If root, don't look any further
-  if ( id=="0") {
+  if ( id==Const.PW_FOLDER_ROOTID ) {
     return array
   }
 
@@ -86,7 +87,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
       folder.tree_level = level++
       array.push(folder)
 
-      if ( folder.id=="0" ) {
+      if ( folder.id==Const.PW_FOLDER_ROOTID ) {
         search = false;
       }
     } catch ( exc ) {
@@ -128,7 +129,7 @@ export async function children(id, foldersRecordset) {
   function addChildren(id) {
     let items = folders.filter(elem => elem.parent == id)
     for ( const child of items ) {
-      if ( child.id!="0" ) {
+      if ( child.id!=Const.PW_FOLDER_ROOTID ) {
         ret.push(child)
         addChildren(child.id)
       }
@@ -273,8 +274,8 @@ export async function tree(user) {
 
   // Sort by description
   data.sort( (a,b)=>{
-    if ( a.id=="P" && b.id!="0" ) { return -1 }
-    if ( b.id=="P" && a.id!="0" ) { return 1 }
+    if ( a.id==Const.PW_FOLDER_PERSONALROOTID && b.id!=Const.PW_FOLDER_ROOTID ) { return -1 }
+    if ( b.id==Const.PW_FOLDER_PERSONALROOTID && a.id!=Const.PW_FOLDER_ROOTID ) { return 1 }
     if ( a.description<b.description ) { return -1 }
     if ( a.description>b.description ) { return 1 }
     return 0

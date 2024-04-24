@@ -7,6 +7,7 @@
 import { PrismaClient } from '@prisma/client'
 import * as Cache from '../lib/cache.mjs'
 import * as Config from '../lib/config.mjs'
+import * as Const from '../lib/const.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -30,7 +31,7 @@ export async function exists(id) {
 export async function parents(id, includeSelf) {
   let array = [];
 
-  if ( id=="0" ) {
+  if ( id==Const.PW_GROUP_ROOTID ) {
     return array
   }
 
@@ -58,7 +59,7 @@ export async function parents(id, includeSelf) {
       group.tree_level = level++
       array.push(group)
 
-      if ( group.id=="0" ) {
+      if ( group.id==Const.PW_GROUP_ROOTID ) {
         search = false;
       }
     } catch ( exc ) {
@@ -99,7 +100,7 @@ export async function children(id) {
   function addChildren(id) {
     let items = groups.filter(elem => elem.parent == id)
     for ( const child of items ) {
-      if ( child.id!="0" ) {
+      if ( child.id!=Const.PW_GROUP_ROOTID ) {
         ret.push(child)
         addChildren(child.id)
       }

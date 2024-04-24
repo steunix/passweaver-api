@@ -15,6 +15,7 @@ import * as User from '../../../model/user.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Auth from '../../../lib/auth.mjs'
+import * as Const from '../../../lib/const.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -174,7 +175,7 @@ export async function create(req, res, next) {
       return
     }
 
-    if ( req.params.parent=="E" ) {
+    if ( req.params.parent==Const.PW_GROUP_EVERYONEID ) {
       res.status(422).send(R.ko("Cannot create groups in Everyone group"))
       return
     }
@@ -224,19 +225,19 @@ export async function update(req, res, next) {
     const id = req.params.id
 
     // Check for root group
-    if ( id=="0" ) {
+    if ( id==Const.PW_GROUP_ROOTID ) {
       res.status(422).send(R.ko("Root group cannot be modified"))
       return;
     }
 
     // Check for Admins group
-    if ( id=="A" ) {
+    if ( id==Const.PW_GROUP_ADMINSID ) {
       res.status(422).send(R.ko("Admins group cannot be modified"))
       return;
     }
 
     // Check for Everyone group
-    if ( id=="E" ) {
+    if ( id==Const.PW_GROUP_EVERYONEID ) {
       res.status(422).send(R.ko("Everyone group cannot be modified"))
       return;
     }
@@ -311,13 +312,13 @@ export async function remove(req, res, next) {
     const id = req.params.id
 
     // Root group cannot be deleted
-    if ( id=="0" ) {
+    if ( id==Const.PW_GROUP_ROOTID ) {
       res.status(422).send(R.ko("Root group cannot be deleted"))
       return
     }
 
     // Everyone group cannot be deleted
-    if ( id=="E" ) {
+    if ( id==Const.PW_GROUP_EVERYONEID ) {
       res.status(422).send(R.ko("Root group cannot be deleted"))
       return
     }
@@ -391,7 +392,7 @@ export async function addUser(req, res, next) {
     }
 
     // Cannot add user to Everyone
-    if ( group=="E" ) {
+    if ( group==Const.PW_GROUP_EVERYONEID ) {
       res.status(422).send(R.ko("Cannot add users to Everyone group"))
       return
     }
@@ -462,13 +463,13 @@ export async function removeUser(req, res, next) {
     }
 
     // Admin cannot be removed from Admins
-    if ( group=="A" && user=="0" ) {
+    if ( group==Const.PW_GROUP_ADMINSID && user==Const.PW_USER_ADMINID ) {
       res.status(422).send(R.ko("Admin cannot be removed from Admins group"))
       return
     }
 
     // Cannot remove user from Everyone
-    if ( group=="E" ) {
+    if ( group==Const.PW_GROUP_EVERYONEID ) {
       res.status(422).send(R.ko("Cannot remove users from Everyone group"))
       return
     }

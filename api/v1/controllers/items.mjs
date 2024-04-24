@@ -14,6 +14,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
+import * as Const from '../../../lib/const.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -161,7 +162,7 @@ export async function list(req, res, next) {
       })
 
       // Admin can see all folders, but cannot access any personal folder
-      if ( fld.personal && req.user==="0" ) {
+      if ( fld.personal && req.user===Const.PW_USER_ADMINID ) {
         res.status(403).send(R.ko("Unauthorized"))
         return
       }
@@ -260,7 +261,7 @@ export async function create(req, res, next) {
     }
 
     // No items on root or personal folders root
-    if ( folder=="P" || folder=="0" ) {
+    if ( folder==Const.PW_FOLDER_PERSONALROOTID || folder==Const.PW_FOLDER_ROOTID ) {
       res.status(401).send(R.ko("You cannot create items in this folder"))
       return
     }

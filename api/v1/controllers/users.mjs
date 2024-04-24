@@ -14,6 +14,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
+import * as Const from '../../../lib/const.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -224,7 +225,7 @@ export async function create(req, res, next) {
       data: {
         id: newFolderId,
         description: req.body.login,
-        parent: "P",
+        parent: Const.PW_FOLDER_PERSONALROOTID,
         personal: true,
         user: newid
       }
@@ -235,7 +236,7 @@ export async function create(req, res, next) {
     await prisma.usersGroups.create({
       data: {
         id: newid2,
-        group: "E",
+        group: Const.PW_GROUP_EVERYONEID,
         user: newid
       }
     })
@@ -349,7 +350,7 @@ export async function remove(req, res, next) {
     }
 
     // Admin user cannot be removed
-    if ( id=="0" ) {
+    if ( id==Const.PW_USER_ADMINID ) {
       res.status(422).send(R.ko("Admin user cannot be removed"))
       return
     }

@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+import * as Const from '../lib/const.mjs'
 
 /**
  * Database default initialization
@@ -9,7 +10,7 @@ async function main() {
 
   /** FOLDERS  */
   // Root
-  id = "0"
+  id = Const.PW_FOLDER_ROOTID
   const rootFolder = await prisma.folders.upsert({
       where: { id: id },
       update: {},
@@ -21,7 +22,7 @@ async function main() {
   })
 
   // Personal folders root
-  id = "P"
+  id = Const.PW_FOLDER_PERSONALROOTID
   const personalFolders = await prisma.folders.upsert({
       where: { id: id },
       update: {},
@@ -34,7 +35,7 @@ async function main() {
 
   /** GROUPS */
   // Root
-  id = "0"
+  id = Const.PW_GROUP_ROOTID
   const rootGroup = await prisma.groups.upsert({
     where: { id: id },
     update: {},
@@ -46,7 +47,7 @@ async function main() {
   })
 
   // Admins
-  id = "A"
+  id = Const.PW_GROUP_ADMINSID
   const adminsGroup = await prisma.groups.upsert({
     where: { id: id },
     update: {},
@@ -58,7 +59,7 @@ async function main() {
   })
 
   // Everyone
-  id = "E"
+  id = Const.PW_GROUP_EVERYONEID
   const everyoneGroup = await prisma.groups.upsert({
     where: { id: id },
     update: {},
@@ -71,7 +72,7 @@ async function main() {
 
   /** USERS */
   // Admin
-  id = "0"
+  id = Const.PW_USER_ADMINID
   const admin = await prisma.users.upsert({
     where: { id: id },
     update: {},
@@ -98,8 +99,8 @@ async function main() {
     update: {},
     create: {
       id: id,
-      group: "A",
-      user: "0"
+      group: Const.PW_GROUP_ADMINSID,
+      user: Const.PW_USER_ADMINID
     }
   })
 
@@ -110,8 +111,8 @@ async function main() {
     update: {},
     create: {
       id: id,
-      group: "E",
-      user: "0"
+      group: Const.PW_GROUP_EVERYONEID,
+      user: Const.PW_USER_ADMINID
     }
   })
 
@@ -123,8 +124,8 @@ async function main() {
     update: {},
     create: {
       id: id,
-      folder: "0",
-      group: "A",
+      folder: Const.PW_FOLDER_ROOTID,
+      group: Const.PW_GROUP_ADMINSID,
       read: true,
       write: true
     }

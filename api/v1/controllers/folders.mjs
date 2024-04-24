@@ -15,6 +15,7 @@ import * as Group from '../../../model/group.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Auth from '../../../lib/auth.mjs'
+import * as Const from '../../../lib/const.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -144,13 +145,13 @@ export async function update (req, res, next) {
     const id = req.params.id
 
     // Check for root folder
-    if ( id=="0" ) {
+    if ( id==Const.PW_FOLDER_ROOTID ) {
       res.status(422).send(R.ko("Root folder cannot be updated"))
       return
     }
 
     // Check for Personal root folder
-    if ( id=="P" ) {
+    if ( id==Const.PW_FOLDER_PERSONALROOTID ) {
       res.status(422).send(R.ko("Personal root folder cannot be updated"))
       return
     }
@@ -241,13 +242,13 @@ export async function remove(req, res, next) {
     const id = req.params.id
 
     // Root folder cannot be deleted
-    if ( id=="0" ) {
+    if ( id==Const.PW_ROOTFOLDERID ) {
       res.status(422).send(R.ko("Root folder cannot be deleted"))
       return
     }
 
     // Personal folder root cannot be deleted
-    if ( id=="P" ) {
+    if ( id==Const.PW_FOLDER_PERSONALROOTID ) {
       res.status(422).send(R.ko("Personal folders root cannot be deleted"))
       return
     }
@@ -487,7 +488,7 @@ export async function removeGroup(req, res, next) {
     }
 
     // Admins group cannot be removed from Root group
-    if ( req.params.group=="A" && req.params.folder=="0" ) {
+    if ( req.params.group==Const.PW_GROUP_ADMINSID && req.params.folder==Const.PW_FOLDER_ROOTID ) {
       res.status(422).send(R.ko("Admins cannot be removed from root folder"))
       return
     }
@@ -531,7 +532,7 @@ export async function groups(req,res,next) {
     // Get folders parents
     const parents = await Folder.parents(req.params.id, true)
     const perms = new Map()
-    const canmodify = !parents[0].personal && parents[0].id!="P"
+    const canmodify = !parents[0].personal && parents[0].id!=Const.PW_FOLDER_PERSONALROOTID
 
     // For each folder, group permissions are OR'ed
     for ( const folder of parents ) {
