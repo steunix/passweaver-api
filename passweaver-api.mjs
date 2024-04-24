@@ -12,7 +12,7 @@ import Morgan from "morgan"
 import RFS from "rotating-file-stream"
 import FS from "fs"
 
-import * as Config from './src/config.mjs'
+import * as Config from './lib/config.mjs'
 
 export const app = Express()
 
@@ -24,9 +24,9 @@ import login from "./api/v1/routes/login.mjs"
 import util from "./api/v1/routes/util.mjs"
 import events from "./api/v1/routes/events.mjs"
 
-import * as R from './src/response.mjs'
+import * as R from './lib/response.mjs'
 
-import rateLimitMiddleware from "./src/ratelimiter.mjs"
+import rateLimitMiddleware from "./lib/ratelimiter.mjs"
 
 console.log(`PassWeaver API ${Config.packageJson().version} starting...`)
 

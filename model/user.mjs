@@ -5,7 +5,7 @@
  */
 
 import { PrismaClient } from '@prisma/client'
-import * as Config from '../src/config.mjs'
+import * as Config from '../lib/config.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 

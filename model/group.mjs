@@ -5,8 +5,8 @@
  */
 
 import { PrismaClient } from '@prisma/client'
-import * as Cache from '../src/cache.mjs'
-import * as Config from '../src/config.mjs'
+import * as Cache from '../lib/cache.mjs'
+import * as Config from '../lib/config.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 

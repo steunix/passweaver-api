@@ -7,14 +7,14 @@
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../src/id.mjs'
-import * as R from '../../../src/response.mjs'
-import * as actions from '../../../src/action.mjs'
+import { newId } from '../../../lib/id.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as actions from '../../../lib/action.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Group from '../../../model/group.mjs'
-import * as Cache from '../../../src/cache.mjs'
-import * as Config from '../../../src/config.mjs'
-import * as Auth from '../../../src/auth.mjs'
+import * as Cache from '../../../lib/cache.mjs'
+import * as Config from '../../../lib/config.mjs'
+import * as Auth from '../../../lib/auth.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 

@@ -7,9 +7,9 @@
 import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import * as R from '../../../src/response.mjs'
-import * as Action from '../../../src/action.mjs'
-import * as Config from '../../../src/config.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as Action from '../../../lib/action.mjs'
+import * as Config from '../../../lib/config.mjs'
 
 // Payload schema
 const createSchema = {

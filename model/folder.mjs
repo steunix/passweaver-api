@@ -6,9 +6,9 @@
 
 import { PrismaClient } from '@prisma/client'
 import * as User from './user.mjs'
-import * as Cache from '../src/cache.mjs'
-import * as Config from '../src/config.mjs'
-import * as Auth from '../src/auth.mjs'
+import * as Cache from '../lib/cache.mjs'
+import * as Config from '../lib/config.mjs'
+import * as Auth from '../lib/auth.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 

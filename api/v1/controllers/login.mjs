@@ -8,11 +8,11 @@ import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 import * as LDAP from 'ldap-authentication'
 
-import * as R from '../../../src/response.mjs'
-import * as actions from '../../../src/action.mjs'
-import * as Auth from '../../../src/auth.mjs'
-import * as Config from '../../../src/config.mjs'
-import * as Crypt from '../../../src/crypt.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as actions from '../../../lib/action.mjs'
+import * as Auth from '../../../lib/auth.mjs'
+import * as Config from '../../../lib/config.mjs'
+import * as Crypt from '../../../lib/crypt.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 

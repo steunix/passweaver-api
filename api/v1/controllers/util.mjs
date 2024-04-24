@@ -7,10 +7,10 @@
 import { PrismaClient } from '@prisma/client'
 import generator from 'generate-password'
 
-import * as R from '../../../src/response.mjs'
-import * as Config from '../../../src/config.mjs'
-import * as Cache from '../../../src/cache.mjs'
-import * as Auth from '../../../src/auth.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as Config from '../../../lib/config.mjs'
+import * as Cache from '../../../lib/cache.mjs'
+import * as Auth from '../../../lib/auth.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
