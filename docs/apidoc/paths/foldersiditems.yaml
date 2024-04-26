@@ -35,6 +35,7 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: '..\parameters\items.yaml#/folderid'
+    - $ref: '..\parameters\items.yaml#/search'
   responses:
     "200":
       description: Items are returned

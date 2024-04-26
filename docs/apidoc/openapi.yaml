@@ -51,6 +51,8 @@ paths:
     $ref: '.\paths\foldersiditems.yaml'
   /items/{itemid}:
     $ref: '.\paths\itemsid.yaml'
+  /items:
+    $ref: '.\paths\items.yaml'
 
 components:
   securitySchemes:

@@ -1,0 +1,25 @@
+get:
+  tags:
+    -  Items
+  operationId: "searchItem"
+  summary: Search items in all allowed folders
+  description: Search items in all allowed folders
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\items.yaml#/search'
+  responses:
+    "200":
+      description: Item found
+      $ref: '..\responsebodies\folders.yaml#/itemslistsuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Item not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+    "412":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
+    "417":
+      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
