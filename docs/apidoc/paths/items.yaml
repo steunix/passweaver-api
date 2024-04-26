@@ -19,7 +19,3 @@ get:
     "404":
       description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-    "412":
-      $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
-    "417":
-      $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
