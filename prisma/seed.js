@@ -1,6 +1,14 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-import * as Const from '../lib/const.mjs'
+
+const Const = {
+  PW_USER_ADMINID: "0",
+  PW_FOLDER_ROOTID: "0",
+  PW_FOLDER_PERSONALROOTID: "P",
+  PW_GROUP_ROOTID: "0",
+  PW_GROUP_ADMINSID: "A",
+  PW_GROUP_EVERYONEID: "E"
+}
 
 /**
  * Database default initialization
@@ -30,6 +38,42 @@ async function main() {
           id: id,
           description: "Personal folders",
           parent: "0"
+      }
+  })
+
+  // Sample folder 1
+  id = "sample1"
+  const sampleFolder1 = await prisma.folders.upsert({
+      where: { id: id },
+      update: {},
+      create: {
+          id: id,
+          description: "Sample folder 1",
+          parent: null
+      }
+  })
+
+  // Sample folder 2
+  id = "sample2"
+  const sampleFolder2 = await prisma.folders.upsert({
+      where: { id: id },
+      update: {},
+      create: {
+          id: id,
+          description: "Sample folder 2",
+          parent: null
+      }
+  })
+
+  // Sample folder 3
+  id = "sample3"
+  const sampleFolder3 = await prisma.folders.upsert({
+      where: { id: id },
+      update: {},
+      create: {
+          id: id,
+          description: "Sample folder 3",
+          parent: 'sample2'
       }
   })
 
