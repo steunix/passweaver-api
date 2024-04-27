@@ -49,7 +49,7 @@ async function main() {
       create: {
           id: id,
           description: "Sample folder 1",
-          parent: null
+          parent: 0
       }
   })
 
@@ -61,7 +61,7 @@ async function main() {
       create: {
           id: id,
           description: "Sample folder 2",
-          parent: null
+          parent: 0
       }
   })
 
