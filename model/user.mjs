@@ -4,10 +4,8 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
-import * as Config from '../lib/config.mjs'
+import DB from '../lib/db.mjs'
 
-const prisma = new PrismaClient(Config.get().prisma_options)
 
 /**
  * Returns true if the user exists
@@ -16,7 +14,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  */
 export async function exists(id) {
   try {
-    const folder = await prisma.users.findUniqueOrThrow({
+    const folder = await DB.users.findUniqueOrThrow({
       where: { id: id}
     })
     return true
@@ -27,7 +25,7 @@ export async function exists(id) {
 
 // Returns the groups of a user
 export async function groups(user) {
-  const groups = await prisma.usersGroups.findMany({
+  const groups = await DB.usersGroups.findMany({
     where: { user: user },
     include: {
       Groups: {}

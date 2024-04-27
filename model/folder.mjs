@@ -4,14 +4,11 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import * as User from './user.mjs'
 import * as Cache from '../lib/cache.mjs'
-import * as Config from '../lib/config.mjs'
 import * as Auth from '../lib/auth.mjs'
 import * as Const from '../lib/const.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import DB from '../lib/db.mjs'
 
 /**
  * Returns true if the folder exists
@@ -20,7 +17,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  */
 export async function exists(id) {
   try {
-    const folder = await prisma.folders.findUniqueOrThrow({
+    const folder = await DB.folders.findUniqueOrThrow({
       where: { id: id}
     })
     return true
@@ -55,7 +52,7 @@ export async function isPersonal(id) {
 export async function parents(id, includeSelf, foldersRecordset) {
   let array = [];
 
-  const folders = foldersRecordset ?? await prisma.folders.findMany({
+  const folders = foldersRecordset ?? await DB.folders.findMany({
     orderBy: {
       description: "asc"
     }
@@ -119,7 +116,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
 export async function children(id, foldersRecordset) {
   let ret = []
 
-  const folders = foldersRecordset ?? await prisma.folders.findMany({
+  const folders = foldersRecordset ?? await DB.folders.findMany({
     orderBy: {
       description: "asc"
     }
@@ -188,7 +185,7 @@ export async function permissions(id,user,foldersRecordset) {
   // Scans all parent folders and OR's all the found permissions
   for ( const folder of folders ) {
     for ( const group of groups ) {
-      const prm = await prisma.FolderGroupPermission.findMany({
+      const prm = await DB.FolderGroupPermission.findMany({
         where: { folder: folder.id, group: group.id }
       })
 
@@ -219,10 +216,10 @@ export async function tree(user) {
   }
 
   // Get folders for cache
-  const allFolders = await prisma.folders.findMany()
+  const allFolders = await DB.folders.findMany()
 
   // Explicitly allowed folders, plus personal folder
-  const readFolders = await prisma.$queryRaw`
+  const readFolders = await DB.$queryRaw`
     select f.*
     from   "Folders" f
     join   "FolderGroupPermission" p

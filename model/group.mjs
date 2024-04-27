@@ -4,12 +4,9 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import * as Cache from '../lib/cache.mjs'
-import * as Config from '../lib/config.mjs'
 import * as Const from '../lib/const.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import DB from '../lib/db.mjs'
 
 /**
  * Returns true if group exists
@@ -18,7 +15,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  */
 export async function exists(id) {
   try {
-    const group = await prisma.groups.findUniqueOrThrow({
+    const group = await DB.groups.findUniqueOrThrow({
       where: { id: id}
     })
     return true
@@ -35,7 +32,7 @@ export async function parents(id, includeSelf) {
     return array
   }
 
-  let group = await prisma.groups.findUnique({
+  let group = await DB.groups.findUnique({
     where: {id:id}
   })
 
@@ -53,7 +50,7 @@ export async function parents(id, includeSelf) {
   // Search parents
   while ( search ) {
     try {
-      group = await prisma.groups.findUnique({
+      group = await DB.groups.findUnique({
         where: {id:parentid}
       })
       group.tree_level = level++
@@ -90,7 +87,7 @@ export async function parents(id, includeSelf) {
 export async function children(id) {
   let ret = []
 
-  const groups = await prisma.groups.findMany({
+  const groups = await DB.groups.findMany({
     orderBy: {
       description: "asc"
     }
@@ -134,7 +131,7 @@ export async function tree(user) {
   }
 
   // Get groups
-  const data = await prisma.groups.findMany({
+  const data = await DB.groups.findMany({
     orderBy: {
       description: "asc"
     }

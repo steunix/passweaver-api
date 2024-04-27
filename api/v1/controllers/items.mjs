@@ -4,20 +4,17 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as actions from '../../../lib/action.mjs'
-import * as Config from '../../../lib/config.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Const from '../../../lib/const.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import DB from '../../../lib/db.mjs'
 
 // Payload schema
 const createSchema = {
@@ -52,7 +49,7 @@ async function checkPersonalAccess(req) {
     return 0
   }
 
-  const user = await prisma.users.findUnique({
+  const user = await DB.users.findUnique({
     where: { id: req.user }
   })
 
@@ -87,7 +84,7 @@ export async function get(req, res, next) {
     }
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -120,7 +117,7 @@ export async function get(req, res, next) {
     delete(item.dataiv)
 
     // Update last accessed on item
-    await prisma.items.update({
+    await DB.items.update({
       data: {
         accessedat: new Date()
       },
@@ -169,7 +166,7 @@ export async function list(req, res, next) {
         return
       }
 
-      const fld = await prisma.folders.findUnique({
+      const fld = await DB.folders.findUnique({
         where: { id: folder }
       })
 
@@ -212,7 +209,7 @@ export async function list(req, res, next) {
 
     // Search folder
     const folderList = folders.map(folders=>folders)
-    items = await prisma.items.findMany({
+    items = await DB.items.findMany({
       where: {
         AND: [
           { folder: { in: folderList } },
@@ -308,7 +305,7 @@ export async function create(req, res, next) {
 
     // Creates the item
     const newid = newId()
-    await prisma.items.create({
+    await DB.items.create({
       data: {
         id: newid,
         folder: folder,
@@ -354,7 +351,7 @@ export async function update(req, res, next) {
     const id = req.params.id
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -416,7 +413,7 @@ export async function update(req, res, next) {
     if ( req.body.type ) {
       updateStruct.type = req.body.type
     }
-    await prisma.items.update({
+    await DB.items.update({
       data: updateStruct,
       where: {
         id: id
@@ -447,7 +444,7 @@ export async function remove(req, res, next) {
     const id = req.params.id
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -457,7 +454,7 @@ export async function remove(req, res, next) {
     }
 
     // Search folder
-    const folder = await prisma.folders.findUnique({
+    const folder = await DB.folders.findUnique({
       where: { id: item.folder }
     })
 
@@ -483,7 +480,7 @@ export async function remove(req, res, next) {
     }
 
     // Deletes item
-    await prisma.items.delete({
+    await DB.items.delete({
       where: {
         id: id
       }
@@ -513,7 +510,7 @@ export async function clone(req, res, next) {
     const id = req.params.id
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -556,7 +553,7 @@ export async function clone(req, res, next) {
       metadata: item.metadata
     }
 
-    await prisma.items.create({
+    await DB.items.create({
       data: newItem
     })
 

@@ -4,15 +4,13 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import generator from 'generate-password'
 
 import * as R from '../../../lib/response.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import DB from '../../../lib/db.mjs'
 
 /**
  * Generate a password
@@ -51,9 +49,9 @@ export async function stats(req, res, next) {
       return
     }
 
-    const users = await prisma.users.count()
-    const items = await prisma.items.count()
-    const folders = await prisma.folders.count()
+    const users = await DB.users.count()
+    const items = await DB.items.count()
+    const folders = await DB.folders.count()
 
     const version = Config.packageJson().version
     const cache = Cache.size()

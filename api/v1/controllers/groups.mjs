@@ -4,7 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
@@ -13,11 +12,9 @@ import * as actions from '../../../lib/action.mjs'
 import * as Group from '../../../model/group.mjs'
 import * as User from '../../../model/user.mjs'
 import * as Cache from '../../../lib/cache.mjs'
-import * as Config from '../../../lib/config.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Const from '../../../lib/const.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import DB from '../../../lib/db.mjs'
 
 // Payload schemas
 const createSchema = {
@@ -48,7 +45,7 @@ export async function get(req, res, next) {
     const id = req.params.id
 
     // Search folder
-    const group = await prisma.groups.findUnique({
+    const group = await DB.groups.findUnique({
       where: { id: id }
     });
 
@@ -81,7 +78,7 @@ export async function list(req, res, next) {
     // Search group
     var groups
     if ( req.query?.search ) {
-      groups = await prisma.groups.findMany({
+      groups = await DB.groups.findMany({
         where: {
           description: { contains: req.query.search, mode: 'insensitive' }
         },
@@ -90,7 +87,7 @@ export async function list(req, res, next) {
         }
       })
     } else {
-      groups = await prisma.groups.findMany({
+      groups = await DB.groups.findMany({
         orderBy: {
           description: "asc"
         }
@@ -115,7 +112,7 @@ export async function getUsers(req, res, next) {
     var data = []
 
     // Search group members
-    const users = await prisma.usersGroups.findMany({
+    const users = await DB.usersGroups.findMany({
       where: { group: id },
       select: {
         Users: {
@@ -182,7 +179,7 @@ export async function create(req, res, next) {
 
     // Creates group
     const newid = newId()
-    await prisma.groups.create({
+    await DB.groups.create({
       data: {
         id: newid,
         description: req.body.description,
@@ -258,7 +255,7 @@ export async function update(req, res, next) {
       }
 
       // New parent cannot be one of its current children, otherwise it would break the tree
-      const group = await prisma.groups.findUnique({
+      const group = await DB.groups.findUnique({
         where: { id: id}
       })
 
@@ -278,7 +275,7 @@ export async function update(req, res, next) {
     }
 
     // Update group
-    await prisma.groups.update({
+    await DB.groups.update({
       data: updateStruct,
       where: {
         id: id
@@ -330,7 +327,7 @@ export async function remove(req, res, next) {
     }
 
     // Looks for children groups
-    const children = await prisma.groups.findFirst({
+    const children = await DB.groups.findFirst({
       where: { parent: id }
     })
     if ( children!==null ) {
@@ -339,21 +336,21 @@ export async function remove(req, res, next) {
     }
 
     // Delete user/groups
-    await prisma.usersGroups.deleteMany({
+    await DB.usersGroups.deleteMany({
       where: {
         group: id
       }
     })
 
     // Delete folder/groups
-    await prisma.folderGroupPermission.deleteMany({
+    await DB.folderGroupPermission.deleteMany({
       where: {
         group: id
       }
     })
 
     // Delete group
-    await prisma.groups.delete({
+    await DB.groups.delete({
       where: {
         id: id
       }
@@ -404,7 +401,7 @@ export async function addUser(req, res, next) {
     }
 
     // Checks if already associated
-    const ex = await prisma.usersGroups.findFirst({
+    const ex = await DB.usersGroups.findFirst({
       where: {
         group: group,
         user: user
@@ -416,7 +413,7 @@ export async function addUser(req, res, next) {
     }
 
     const newid = newId()
-    await prisma.usersGroups.create({
+    await DB.usersGroups.create({
       data: {
         id: newid,
         group: group,
@@ -475,7 +472,7 @@ export async function removeUser(req, res, next) {
     }
 
     // Checks if associated
-    const ex = await prisma.usersGroups.findFirst({
+    const ex = await DB.usersGroups.findFirst({
       where: {
         group: group,
         user: user
@@ -486,7 +483,7 @@ export async function removeUser(req, res, next) {
       return
     }
 
-    await prisma.usersGroups.delete({
+    await DB.usersGroups.delete({
       where: {
         id: ex.id
       }

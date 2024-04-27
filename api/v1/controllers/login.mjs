@@ -4,7 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 import * as LDAP from 'ldap-authentication'
 
@@ -13,8 +12,7 @@ import * as actions from '../../../lib/action.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import DB from '../../../lib/db.mjs'
 
 const schemaLogin = {
   "id": "/login",
@@ -42,7 +40,7 @@ export async function login(req, res, next) {
     }
 
     // Check user
-    const user = await prisma.users.findFirst({
+    const user = await DB.users.findFirst({
       where: { login: req.body.username }
     })
     if ( user===null ) {
