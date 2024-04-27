@@ -81,7 +81,7 @@ export async function get(req, res, next) {
     const id = req.params.id
 
     // Admins have no access to items
-    if ( isAdmin(req) ) {
+    if ( await isAdmin(req) ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
     }
@@ -145,7 +145,7 @@ export async function get(req, res, next) {
 export async function list(req, res, next) {
   try {
     // Admins have no access to items
-    if ( isAdmin(req) ) {
+    if ( await isAdmin(req) ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
     }
@@ -258,7 +258,7 @@ export async function list(req, res, next) {
 export async function create(req, res, next) {
   try {
       // Admins have no access to items
-      if ( isAdmin(req) ) {
+      if ( await isAdmin(req) ) {
         res.status(403).send(R.ko("Unauthorized"))
         return
       }
@@ -339,7 +339,7 @@ export async function create(req, res, next) {
 export async function update(req, res, next) {
   try {
     // Admins have no access to items
-    if ( isAdmin(req) ) {
+    if ( await isAdmin(req) ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
     }
@@ -439,7 +439,7 @@ export async function update(req, res, next) {
 export async function remove(req, res, next) {
   try {
     // Admins have no access to items
-    if ( isAdmin(req) ) {
+    if ( await isAdmin(req) ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
     }
@@ -505,7 +505,7 @@ export async function remove(req, res, next) {
 export async function clone(req, res, next) {
   try {
     // Admins have no access to items
-    if ( isAdmin(req) ) {
+    if ( await isAdmin(req) ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
     }
