@@ -59,11 +59,17 @@ Each user has a 'personal' folder for storing private, not-shared-with-anyone it
 
 Users are assigned to groups, and groups have read/write permissions for a given folder.
 
-There is only one built-in 'superuser', namely **admin**, who can create users and groups. And **admin** is part of **Admins** built-in group: admin cannot be removed from Admins, but other users can join it.
+Users can join any number of groups.
 
-Another built-in group is 'Everyone', quite self-explanatory: all users will be automatically added to this group, and they can't be removed.
+#### Admins
 
-Users can join several groups.
+The **Admins** built-in group, which built-in user **admin** is part of, is targeted at creating users and groups, and assigning permissions to folders. Both Admins group and admin user cannot be updated or removed.
+
+> A limitation of **Admins** group is that its members have **NO** access to any items in any folder: this is intentional... no implicit permissions on secreted data.
+
+#### Everyone
+
+Another built-in group is 'Everyone', quite self-explanatory: all created users will be automatically added to this group, and they can't be removed from it.
 
 ### Permissions
 

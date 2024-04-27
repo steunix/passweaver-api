@@ -15,6 +15,7 @@ import * as Folder from '../../../model/folder.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Const from '../../../lib/const.mjs'
+import { isAdmin } from '../../../lib/auth.mjs'
 
 const prisma = new PrismaClient(Config.get().prisma_options)
 
@@ -79,6 +80,12 @@ export async function get(req, res, next) {
   try {
     const id = req.params.id
 
+    // Admins have no access to items
+    if ( isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     // Search item
     const item = await prisma.items.findUnique({
       where: { id: id }
@@ -97,7 +104,6 @@ export async function get(req, res, next) {
         return
       }
     }
-
 
     // Check read permissions on folder
     const perm = await Folder.permissions(item.folder, req.user)
@@ -138,6 +144,12 @@ export async function get(req, res, next) {
  */
 export async function list(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     const folder = req.params?.folder
     const search = req.query?.search ?? ''
 
@@ -245,6 +257,12 @@ export async function list(req, res, next) {
  */
 export async function create(req, res, next) {
   try {
+      // Admins have no access to items
+      if ( isAdmin(req) ) {
+        res.status(403).send(R.ko("Unauthorized"))
+        return
+      }
+
     // Validate payload
     const validate = jsonschema.validate(req.body, createSchema)
     if ( !validate.valid ) {
@@ -320,6 +338,12 @@ export async function create(req, res, next) {
  */
 export async function update(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     // Validate payload
     const validate = jsonschema.validate(req.body, updateSchema)
     if ( !validate.valid ) {
@@ -414,6 +438,12 @@ export async function update(req, res, next) {
  */
 export async function remove(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     const id = req.params.id
 
     // Search item
@@ -474,6 +504,12 @@ export async function remove(req, res, next) {
  */
 export async function clone(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     const id = req.params.id
 
     // Search item
