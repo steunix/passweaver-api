@@ -4,5 +4,4 @@
 node_modules
 passweaver-api.code-workspace
 config.json
-prisma/passweaver.db
 log

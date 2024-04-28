@@ -4,18 +4,16 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../src/id.mjs'
-import * as R from '../../../src/response.mjs'
-import * as actions from '../../../src/action.mjs'
-import * as Config from '../../../src/config.mjs'
-import * as Auth from '../../../src/auth.mjs'
-import * as Crypt from '../../../src/crypt.mjs'
-import * as Cache from '../../../src/cache.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import { newId } from '../../../lib/id.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as actions from '../../../lib/action.mjs'
+import * as Auth from '../../../lib/auth.mjs'
+import * as Crypt from '../../../lib/crypt.mjs'
+import * as Cache from '../../../lib/cache.mjs'
+import * as Const from '../../../lib/const.mjs'
+import DB from '../../../lib/db.mjs'
 
 // Payload schema
 const createSchema = {
@@ -74,7 +72,7 @@ export async function get(req, res, next) {
     const id = req.params.id
 
     // Search user
-    const user = await prisma.users.findUnique({
+    const user = await DB.users.findUnique({
       where: { id: id },
       select: {
         id: true,
@@ -124,7 +122,7 @@ export async function list(req, res, next) {
     // Search user
     var users
     if ( req.query?.search ) {
-      users = await prisma.users.findMany({
+      users = await DB.users.findMany({
         where: {
           OR: [
             { login: { contains: req.query.search, mode: 'insensitive' } },
@@ -137,7 +135,7 @@ export async function list(req, res, next) {
         }
       })
     } else {
-      users = await prisma.users.findMany({
+      users = await DB.users.findMany({
         orderBy: {
           lastname: "asc"
         }
@@ -162,7 +160,7 @@ export async function getGroups(req, res, next) {
     var data = []
 
     // Search user's groups
-    const groups = await prisma.usersGroups.findMany({
+    const groups = await DB.usersGroups.findMany({
       where: { user: id },
       include: { Groups: true },
       orderBy: {
@@ -204,7 +202,7 @@ export async function create(req, res, next) {
     // Creates user
     const newid = newId()
     const hash = await Crypt.hashPassword(req.body.secret)
-    await prisma.users.create({
+    await DB.users.create({
       data: {
         id: newid,
         login: req.body.login,
@@ -220,11 +218,11 @@ export async function create(req, res, next) {
 
     // Creates personal folder
     const newFolderId = newId()
-    await prisma.folders.create({
+    await DB.folders.create({
       data: {
         id: newFolderId,
         description: req.body.login,
-        parent: "P",
+        parent: Const.PW_FOLDER_PERSONALROOTID,
         personal: true,
         user: newid
       }
@@ -232,10 +230,10 @@ export async function create(req, res, next) {
 
     // Add user to 'Everyone' group
     const newid2 = newId()
-    await prisma.usersGroups.create({
+    await DB.usersGroups.create({
       data: {
         id: newid2,
-        group: "E",
+        group: Const.PW_GROUP_EVERYONEID,
         user: newid
       }
     })
@@ -272,7 +270,7 @@ export async function update(req, res, next) {
     const id = req.params.id
 
     // Search user
-    const user = await prisma.users.findUnique({
+    const user = await DB.users.findUnique({
       where: { id: id }
     });
 
@@ -309,7 +307,7 @@ export async function update(req, res, next) {
     }
 
     // Updates
-    await prisma.users.update({
+    await DB.users.update({
       data: updateStruct,
       where: {
         id: id
@@ -339,7 +337,7 @@ export async function remove(req, res, next) {
     const id = req.params.id
 
     // Search user
-    const user = await prisma.users.findUnique({
+    const user = await DB.users.findUnique({
       where: { id: id }
     })
 
@@ -349,37 +347,37 @@ export async function remove(req, res, next) {
     }
 
     // Admin user cannot be removed
-    if ( id=="0" ) {
+    if ( id==Const.PW_USER_ADMINID ) {
       res.status(422).send(R.ko("Admin user cannot be removed"))
       return
     }
 
     // Search user personal folders
-    const personal = await prisma.folders.findMany({
+    const personal = await DB.folders.findMany({
       where: { personal: true, user: id }
     })
     const personalId = personal.length ? personal[0].id : ""
 
-    await prisma.$transaction(async(tx)=> {
+    await DB.$transaction(async(tx)=> {
       // Deletes user groups
-      await prisma.usersGroups.deleteMany({
+      await DB.usersGroups.deleteMany({
         where: { user: id }
       })
 
       if ( personalId ) {
         // Deletes items in personal folder
-        await prisma.items.deleteMany({
+        await DB.items.deleteMany({
           where: { folder: personalId }
         })
 
         // Deletes personal folder
-        await prisma.folders.delete({
+        await DB.folders.delete({
           where: { id: personalId }
         })
       }
 
       // Deletes user
-      await prisma.users.delete({
+      await DB.users.delete({
         where: { id: id }
       })
 
@@ -411,7 +409,7 @@ export async function setPersonalSecret(req, res, next) {
     }
 
     const pwd = await Crypt.hashPassword(req.body.personalsecret)
-    await prisma.users.update({
+    await DB.users.update({
       where: { id: req.user },
       data: {
         personalsecret: pwd
@@ -441,7 +439,7 @@ export async function personalFolderLogin(req, res, next) {
     }
 
     // Check user
-    const user = await prisma.users.findUnique({
+    const user = await DB.users.findUnique({
       where: { id: req.user }
     })
     if ( user===null ) {

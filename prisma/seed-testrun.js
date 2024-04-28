@@ -41,6 +41,42 @@ async function main() {
       }
   })
 
+  // Sample folder 1
+  id = "sample1"
+  const sampleFolder1 = await prisma.folders.upsert({
+      where: { id: id },
+      update: {},
+      create: {
+          id: id,
+          description: "Sample folder 1",
+          parent: 0
+      }
+  })
+
+  // Sample folder 2
+  id = "sample2"
+  const sampleFolder2 = await prisma.folders.upsert({
+      where: { id: id },
+      update: {},
+      create: {
+          id: id,
+          description: "Sample folder 2",
+          parent: 0
+      }
+  })
+
+  // Sample folder 3
+  id = "sample3"
+  const sampleFolder3 = await prisma.folders.upsert({
+      where: { id: id },
+      update: {},
+      create: {
+          id: id,
+          description: "Sample folder 3",
+          parent: 'sample2'
+      }
+  })
+
   /** GROUPS */
   // Root
   id = Const.PW_GROUP_ROOTID

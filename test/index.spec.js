@@ -106,4 +106,16 @@ describe("Users endpoint", function() {
   })
 })
 
+describe ("Items endpoints", ()=> {
+  it("List items", function(done) {
+    agent
+    .get(`${host}/api/v1/items?search`)
+    .set("Authorization",`Bearer ${userJWT}`)
+    .end(function(err, res){
+      assert.equal( res.status, "200")
+      done()
+    })
+  })
+})
+
 })

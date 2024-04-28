@@ -4,18 +4,17 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../src/id.mjs'
-import * as R from '../../../src/response.mjs'
-import * as actions from '../../../src/action.mjs'
-import * as Config from '../../../src/config.mjs'
+import { newId } from '../../../lib/id.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as actions from '../../../lib/action.mjs'
 import * as Folder from '../../../model/folder.mjs'
-import * as Crypt from '../../../src/crypt.mjs'
-import * as Cache from '../../../src/cache.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import * as Crypt from '../../../lib/crypt.mjs'
+import * as Cache from '../../../lib/cache.mjs'
+import * as Const from '../../../lib/const.mjs'
+import { isAdmin } from '../../../lib/auth.mjs'
+import DB from '../../../lib/db.mjs'
 
 // Payload schema
 const createSchema = {
@@ -50,7 +49,7 @@ async function checkPersonalAccess(req) {
     return 0
   }
 
-  const user = await prisma.users.findUnique({
+  const user = await DB.users.findUnique({
     where: { id: req.user }
   })
 
@@ -78,8 +77,14 @@ export async function get(req, res, next) {
   try {
     const id = req.params.id
 
+    // Admins have no access to items
+    if ( await isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -97,7 +102,6 @@ export async function get(req, res, next) {
       }
     }
 
-
     // Check read permissions on folder
     const perm = await Folder.permissions(item.folder, req.user)
     if ( !perm.read ) {
@@ -113,7 +117,7 @@ export async function get(req, res, next) {
     delete(item.dataiv)
 
     // Update last accessed on item
-    await prisma.items.update({
+    await DB.items.update({
       data: {
         accessedat: new Date()
       },
@@ -137,6 +141,12 @@ export async function get(req, res, next) {
  */
 export async function list(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( await isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     const folder = req.params?.folder
     const search = req.query?.search ?? ''
 
@@ -156,12 +166,12 @@ export async function list(req, res, next) {
         return
       }
 
-      const fld = await prisma.folders.findUnique({
+      const fld = await DB.folders.findUnique({
         where: { id: folder }
       })
 
       // Admin can see all folders, but cannot access any personal folder
-      if ( fld.personal && req.user==="0" ) {
+      if ( fld.personal && req.user===Const.PW_USER_ADMINID ) {
         res.status(403).send(R.ko("Unauthorized"))
         return
       }
@@ -199,7 +209,7 @@ export async function list(req, res, next) {
 
     // Search folder
     const folderList = folders.map(folders=>folders)
-    items = await prisma.items.findMany({
+    items = await DB.items.findMany({
       where: {
         AND: [
           { folder: { in: folderList } },
@@ -244,6 +254,12 @@ export async function list(req, res, next) {
  */
 export async function create(req, res, next) {
   try {
+      // Admins have no access to items
+      if ( await isAdmin(req) ) {
+        res.status(403).send(R.ko("Unauthorized"))
+        return
+      }
+
     // Validate payload
     const validate = jsonschema.validate(req.body, createSchema)
     if ( !validate.valid ) {
@@ -260,7 +276,7 @@ export async function create(req, res, next) {
     }
 
     // No items on root or personal folders root
-    if ( folder=="P" || folder=="0" ) {
+    if ( folder==Const.PW_FOLDER_PERSONALROOTID || folder==Const.PW_FOLDER_ROOTID ) {
       res.status(401).send(R.ko("You cannot create items in this folder"))
       return
     }
@@ -289,7 +305,7 @@ export async function create(req, res, next) {
 
     // Creates the item
     const newid = newId()
-    await prisma.items.create({
+    await DB.items.create({
       data: {
         id: newid,
         folder: folder,
@@ -319,6 +335,12 @@ export async function create(req, res, next) {
  */
 export async function update(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( await isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     // Validate payload
     const validate = jsonschema.validate(req.body, updateSchema)
     if ( !validate.valid ) {
@@ -329,7 +351,7 @@ export async function update(req, res, next) {
     const id = req.params.id
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -391,7 +413,7 @@ export async function update(req, res, next) {
     if ( req.body.type ) {
       updateStruct.type = req.body.type
     }
-    await prisma.items.update({
+    await DB.items.update({
       data: updateStruct,
       where: {
         id: id
@@ -413,10 +435,16 @@ export async function update(req, res, next) {
  */
 export async function remove(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( await isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     const id = req.params.id
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -426,7 +454,7 @@ export async function remove(req, res, next) {
     }
 
     // Search folder
-    const folder = await prisma.folders.findUnique({
+    const folder = await DB.folders.findUnique({
       where: { id: item.folder }
     })
 
@@ -452,7 +480,7 @@ export async function remove(req, res, next) {
     }
 
     // Deletes item
-    await prisma.items.delete({
+    await DB.items.delete({
       where: {
         id: id
       }
@@ -473,10 +501,16 @@ export async function remove(req, res, next) {
  */
 export async function clone(req, res, next) {
   try {
+    // Admins have no access to items
+    if ( await isAdmin(req) ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     const id = req.params.id
 
     // Search item
-    const item = await prisma.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: id }
     })
 
@@ -519,7 +553,7 @@ export async function clone(req, res, next) {
       metadata: item.metadata
     }
 
-    await prisma.items.create({
+    await DB.items.create({
       data: newItem
     })
 

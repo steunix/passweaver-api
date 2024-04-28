@@ -4,19 +4,18 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../src/id.mjs'
-import * as R from '../../../src/response.mjs'
-import * as actions from '../../../src/action.mjs'
+import { newId } from '../../../lib/id.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as actions from '../../../lib/action.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Group from '../../../model/group.mjs'
-import * as Cache from '../../../src/cache.mjs'
-import * as Config from '../../../src/config.mjs'
-import * as Auth from '../../../src/auth.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import * as Cache from '../../../lib/cache.mjs'
+import * as Config from '../../../lib/config.mjs'
+import * as Auth from '../../../lib/auth.mjs'
+import * as Const from '../../../lib/const.mjs'
+import DB from '../../../lib/db.mjs'
 
 // Payload schema
 const createSchema = {
@@ -56,7 +55,7 @@ export async function get (req, res, next) {
     const id = req.params.id
 
     // Search folder
-    const folder = await prisma.folders.findFirst({
+    const folder = await DB.folders.findFirst({
       where: { id: id }
     })
     if ( folder===null ) {
@@ -110,7 +109,7 @@ export async function create(req, res, next) {
 
     // Creates the folder
     const newid = newId()
-    await prisma.folders.create({
+    await DB.folders.create({
       data: {
         id: newid,
         description: req.body.description,
@@ -144,19 +143,19 @@ export async function update (req, res, next) {
     const id = req.params.id
 
     // Check for root folder
-    if ( id=="0" ) {
+    if ( id==Const.PW_FOLDER_ROOTID ) {
       res.status(422).send(R.ko("Root folder cannot be updated"))
       return
     }
 
     // Check for Personal root folder
-    if ( id=="P" ) {
+    if ( id==Const.PW_FOLDER_PERSONALROOTID ) {
       res.status(422).send(R.ko("Personal root folder cannot be updated"))
       return
     }
 
     // Search folder
-    const folder = await prisma.folders.findUnique({
+    const folder = await DB.folders.findUnique({
       where: { id: id }
     });
 
@@ -215,7 +214,7 @@ export async function update (req, res, next) {
       updateStruct.parent = req.body.parent
     }
     // Update folder
-    await prisma.folders.update({
+    await DB.folders.update({
       data: updateStruct,
       where: {
         id: id
@@ -241,19 +240,19 @@ export async function remove(req, res, next) {
     const id = req.params.id
 
     // Root folder cannot be deleted
-    if ( id=="0" ) {
+    if ( id==Const.PW_ROOTFOLDERID ) {
       res.status(422).send(R.ko("Root folder cannot be deleted"))
       return
     }
 
     // Personal folder root cannot be deleted
-    if ( id=="P" ) {
+    if ( id==Const.PW_FOLDER_PERSONALROOTID ) {
       res.status(422).send(R.ko("Personal folders root cannot be deleted"))
       return
     }
 
     // Search folder
-    const folder = await prisma.folders.findUnique({
+    const folder = await DB.folders.findUnique({
       where: { id: id }
     })
     if ( !folder ) {
@@ -274,7 +273,7 @@ export async function remove(req, res, next) {
     }
 
     // Search folder items
-    const items = await prisma.items.findFirst({
+    const items = await DB.items.findFirst({
       where: { folder: id }
     });
     if ( items!==null ) {
@@ -283,7 +282,7 @@ export async function remove(req, res, next) {
     }
 
     // Search children folders
-    const children = await prisma.folders.findFirst({
+    const children = await DB.folders.findFirst({
       where: { parent: id }
     });
     if ( children!==null ) {
@@ -292,12 +291,12 @@ export async function remove(req, res, next) {
     }
 
     // Deletes folder permissions
-    await prisma.folderGroupPermission.deleteMany({
+    await DB.folderGroupPermission.deleteMany({
       where: { folder: id }
     })
 
     // Deletes folder
-    await prisma.folders.delete({
+    await DB.folders.delete({
       where: { id: id }
     })
 
@@ -349,7 +348,7 @@ export async function addGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await prisma.folderGroupPermission.findMany({
+    const perm = await DB.folderGroupPermission.findMany({
       where: {
         folder: req.params.folder,
         group: req.params.group
@@ -362,7 +361,7 @@ export async function addGroup(req, res, next) {
 
     // Adds the permission
     const newid = newId()
-    await prisma.folderGroupPermission.create({
+    await DB.folderGroupPermission.create({
       data: {
         id: newid,
         group: req.params.group,
@@ -420,7 +419,7 @@ export async function setGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await prisma.folderGroupPermission.findFirst({
+    const perm = await DB.folderGroupPermission.findFirst({
       where: {
         folder: req.params.folder,
         group: req.params.group
@@ -432,7 +431,7 @@ export async function setGroup(req, res, next) {
     }
 
     // Adds the permission
-    await prisma.folderGroupPermission.update({
+    await DB.folderGroupPermission.update({
       where: { id: perm.id },
       data: {
         read: req.body.read,
@@ -475,7 +474,7 @@ export async function removeGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await prisma.folderGroupPermission.findMany({
+    const perm = await DB.folderGroupPermission.findMany({
       where: {
         folder: req.params.folder,
         group: req.params.group
@@ -487,12 +486,12 @@ export async function removeGroup(req, res, next) {
     }
 
     // Admins group cannot be removed from Root group
-    if ( req.params.group=="A" && req.params.folder=="0" ) {
+    if ( req.params.group==Const.PW_GROUP_ADMINSID && req.params.folder==Const.PW_FOLDER_ROOTID ) {
       res.status(422).send(R.ko("Admins cannot be removed from root folder"))
       return
     }
 
-    await prisma.folderGroupPermission.deleteMany({
+    await DB.folderGroupPermission.deleteMany({
       where: {
         group: req.params.group,
         folder: req.params.folder
@@ -531,11 +530,11 @@ export async function groups(req,res,next) {
     // Get folders parents
     const parents = await Folder.parents(req.params.id, true)
     const perms = new Map()
-    const canmodify = !parents[0].personal && parents[0].id!="P"
+    const canmodify = !parents[0].personal && parents[0].id!=Const.PW_FOLDER_PERSONALROOTID
 
     // For each folder, group permissions are OR'ed
     for ( const folder of parents ) {
-      const groups = await prisma.folderGroupPermission.findMany({
+      const groups = await DB.folderGroupPermission.findMany({
         where: {
           folder: folder.id
         },

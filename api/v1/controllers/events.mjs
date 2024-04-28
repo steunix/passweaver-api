@@ -4,12 +4,10 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import jsonschema from 'jsonschema'
 
-import * as R from '../../../src/response.mjs'
-import * as Action from '../../../src/action.mjs'
-import * as Config from '../../../src/config.mjs'
+import * as R from '../../../lib/response.mjs'
+import * as Action from '../../../lib/action.mjs'
 
 // Payload schema
 const createSchema = {
@@ -22,8 +20,6 @@ const createSchema = {
   },
   "required": ["event", "itemtype", "itemid"]
 }
-
-const prisma = new PrismaClient(Config.get().prisma_options)
 
 /**
  * Generate a password

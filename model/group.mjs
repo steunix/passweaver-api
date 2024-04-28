@@ -4,11 +4,9 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
-import * as Cache from '../src/cache.mjs'
-import * as Config from '../src/config.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import * as Cache from '../lib/cache.mjs'
+import * as Const from '../lib/const.mjs'
+import DB from '../lib/db.mjs'
 
 /**
  * Returns true if group exists
@@ -17,7 +15,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  */
 export async function exists(id) {
   try {
-    const group = await prisma.groups.findUniqueOrThrow({
+    const group = await DB.groups.findUniqueOrThrow({
       where: { id: id}
     })
     return true
@@ -30,11 +28,11 @@ export async function exists(id) {
 export async function parents(id, includeSelf) {
   let array = [];
 
-  if ( id=="0" ) {
+  if ( id==Const.PW_GROUP_ROOTID ) {
     return array
   }
 
-  let group = await prisma.groups.findUnique({
+  let group = await DB.groups.findUnique({
     where: {id:id}
   })
 
@@ -52,13 +50,13 @@ export async function parents(id, includeSelf) {
   // Search parents
   while ( search ) {
     try {
-      group = await prisma.groups.findUnique({
+      group = await DB.groups.findUnique({
         where: {id:parentid}
       })
       group.tree_level = level++
       array.push(group)
 
-      if ( group.id=="0" ) {
+      if ( group.id==Const.PW_GROUP_ROOTID ) {
         search = false;
       }
     } catch ( exc ) {
@@ -89,7 +87,7 @@ export async function parents(id, includeSelf) {
 export async function children(id) {
   let ret = []
 
-  const groups = await prisma.groups.findMany({
+  const groups = await DB.groups.findMany({
     orderBy: {
       description: "asc"
     }
@@ -99,7 +97,7 @@ export async function children(id) {
   function addChildren(id) {
     let items = groups.filter(elem => elem.parent == id)
     for ( const child of items ) {
-      if ( child.id!="0" ) {
+      if ( child.id!=Const.PW_GROUP_ROOTID ) {
         ret.push(child)
         addChildren(child.id)
       }
@@ -133,7 +131,7 @@ export async function tree(user) {
   }
 
   // Get groups
-  const data = await prisma.groups.findMany({
+  const data = await DB.groups.findMany({
     orderBy: {
       description: "asc"
     }

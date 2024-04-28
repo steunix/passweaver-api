@@ -6,7 +6,7 @@
 
 import { Router } from 'express'
 
-import * as auth from '../../../src/auth.mjs'
+import * as auth from '../../../lib/auth.mjs'
 import * as eventsController from '../controllers/events.mjs'
 
 const router = Router()

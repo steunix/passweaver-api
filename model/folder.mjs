@@ -4,13 +4,11 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { PrismaClient } from '@prisma/client'
 import * as User from './user.mjs'
-import * as Cache from '../src/cache.mjs'
-import * as Config from '../src/config.mjs'
-import * as Auth from '../src/auth.mjs'
-
-const prisma = new PrismaClient(Config.get().prisma_options)
+import * as Cache from '../lib/cache.mjs'
+import * as Auth from '../lib/auth.mjs'
+import * as Const from '../lib/const.mjs'
+import DB from '../lib/db.mjs'
 
 /**
  * Returns true if the folder exists
@@ -19,7 +17,7 @@ const prisma = new PrismaClient(Config.get().prisma_options)
  */
 export async function exists(id) {
   try {
-    const folder = await prisma.folders.findUniqueOrThrow({
+    const folder = await DB.folders.findUniqueOrThrow({
       where: { id: id}
     })
     return true
@@ -36,7 +34,7 @@ export async function isPersonal(id) {
   const folders = await parents(id, true)
 
   for ( const folder of folders ) {
-    if ( folder.id=="P" ) {
+    if ( folder.id==Const.PW_FOLDER_PERSONALROOTID ) {
       return true
     }
   }
@@ -54,7 +52,7 @@ export async function isPersonal(id) {
 export async function parents(id, includeSelf, foldersRecordset) {
   let array = [];
 
-  const folders = foldersRecordset ?? await prisma.folders.findMany({
+  const folders = foldersRecordset ?? await DB.folders.findMany({
     orderBy: {
       description: "asc"
     }
@@ -69,7 +67,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
   }
 
   // If root, don't look any further
-  if ( id=="0") {
+  if ( id==Const.PW_FOLDER_ROOTID ) {
     return array
   }
 
@@ -86,7 +84,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
       folder.tree_level = level++
       array.push(folder)
 
-      if ( folder.id=="0" ) {
+      if ( folder.id==Const.PW_FOLDER_ROOTID ) {
         search = false;
       }
     } catch ( exc ) {
@@ -118,7 +116,7 @@ export async function parents(id, includeSelf, foldersRecordset) {
 export async function children(id, foldersRecordset) {
   let ret = []
 
-  const folders = foldersRecordset ?? await prisma.folders.findMany({
+  const folders = foldersRecordset ?? await DB.folders.findMany({
     orderBy: {
       description: "asc"
     }
@@ -128,7 +126,7 @@ export async function children(id, foldersRecordset) {
   function addChildren(id) {
     let items = folders.filter(elem => elem.parent == id)
     for ( const child of items ) {
-      if ( child.id!="0" ) {
+      if ( child.id!=Const.PW_FOLDER_ROOTID ) {
         ret.push(child)
         addChildren(child.id)
       }
@@ -174,7 +172,7 @@ export async function permissions(id,user,foldersRecordset) {
 
   // First folder is itself, so I can check if it's personal
   if ( folders[0].personal ) {
-    const admin = Auth.isAdmin(user)
+    const admin = await Auth.isAdmin(user)
     if ( admin || folders[0].user == id ) {
       perm.read = true
       perm.write = true
@@ -187,7 +185,7 @@ export async function permissions(id,user,foldersRecordset) {
   // Scans all parent folders and OR's all the found permissions
   for ( const folder of folders ) {
     for ( const group of groups ) {
-      const prm = await prisma.FolderGroupPermission.findMany({
+      const prm = await DB.FolderGroupPermission.findMany({
         where: { folder: folder.id, group: group.id }
       })
 
@@ -218,10 +216,10 @@ export async function tree(user) {
   }
 
   // Get folders for cache
-  const allFolders = await prisma.folders.findMany()
+  const allFolders = await DB.folders.findMany()
 
   // Explicitly allowed folders, plus personal folder
-  const readFolders = await prisma.$queryRaw`
+  const readFolders = await DB.$queryRaw`
     select f.*
     from   "Folders" f
     join   "FolderGroupPermission" p
@@ -273,8 +271,8 @@ export async function tree(user) {
 
   // Sort by description
   data.sort( (a,b)=>{
-    if ( a.id=="P" && b.id!="0" ) { return -1 }
-    if ( b.id=="P" && a.id!="0" ) { return 1 }
+    if ( a.id==Const.PW_FOLDER_PERSONALROOTID && b.id!=Const.PW_FOLDER_ROOTID ) { return -1 }
+    if ( b.id==Const.PW_FOLDER_PERSONALROOTID && a.id!=Const.PW_FOLDER_ROOTID ) { return 1 }
     if ( a.description<b.description ) { return -1 }
     if ( a.description>b.description ) { return 1 }
     return 0
