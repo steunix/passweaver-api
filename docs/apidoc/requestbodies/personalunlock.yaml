@@ -1,0 +1,10 @@
+# Personal folder unlock request body
+
+personalunlockBody:
+  type: object
+  properties:
+    password:
+      type: string
+      example: mypassword
+  required:
+    - password

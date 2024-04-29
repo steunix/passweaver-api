@@ -1,0 +1,23 @@
+post:
+  tags:
+    - Authentication
+  operationId: personalunlock
+  summary: Unlock user personal folder
+  description: Unlock user personal folder. The user must already be logged in.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\personalunlock.yaml#/personalunlockBody'
+
+  responses:
+    "200":
+      $ref: '..\responsebodies\personalunlock.yaml#/success'
+      description: Personal folder successfully unlocked.
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+      description: Request body is not correct or unreadable
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+      description: Personal folder has not been unlocked, the password is wrong

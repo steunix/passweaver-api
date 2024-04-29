@@ -1,0 +1,21 @@
+# Event request body
+
+eventCreateBody:
+  type: object
+  properties:
+    event:
+      type: string
+      example: evt
+      description: Event code
+    itemtype:
+      type: string
+      example: item
+      description: Item type
+    itemid:
+      type: string
+      example: 30940898yfd98f
+      description: Item ID
+  required:
+    - event
+    - itemtype
+    - itemid

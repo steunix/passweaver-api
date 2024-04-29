@@ -1,0 +1,20 @@
+# Success response
+status:
+  type: string
+  enum: [ "success", "failed" ]
+
+success:
+  description: Personal folder unlocked
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              jwt:
+                type: string
+                description: The new JWT

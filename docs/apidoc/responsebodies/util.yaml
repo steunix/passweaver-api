@@ -1,0 +1,59 @@
+# Success response
+status:
+  type: string
+  enum: [ "success", "failed" ]
+
+statssuccess:
+  description: Stats are returned
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              users:
+                type: integer
+                example: 100
+                description: Number of users in the database
+              items:
+                type: integer
+                example: 1000
+                description: Number of items in the database
+              folders:
+                type: integer
+                example: 500
+                description: Number of folders in the database
+              version:
+                type: string
+                example: 1.0.0
+                description: Version of PassWeaver API
+              cacheSize:
+                type: string
+                example: 2Mb
+                description: Memory occupied by cache
+              startup:
+                type: string
+                example: 2024-01-01 15:10:10
+                description: PassWeaver API startup
+
+generatepasswordsuccess:
+  description: Stats are returned
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              password:
+                type: string
+                example: 09a8sd0fh
+                description: The generated password
+
