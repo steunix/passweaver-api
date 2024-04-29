@@ -23,6 +23,8 @@ tags:
     description: Operations on user groups
   - name: "Folders"
     description: Operations on folders
+  - name: "Personal folders"
+    description: "Personal folders"
   - name: "Folder permissions"
     description: Folder permissions
   - name: "Items"
@@ -39,8 +41,8 @@ paths:
     $ref: '.\paths\users.yaml'
   /users/{userid}:
     $ref: '.\paths\usersid.yaml'
-  /users/personalunlock:
-    $ref: '.\paths\userspersonalunlock.yaml'
+  /personal/unlock:
+    $ref: '.\paths\personalunlock.yaml'
   /groups/{parentgroupid}/groups:
     $ref: '.\paths\groupsidgroups.yaml'
   /groups/{groupid}:
@@ -49,10 +51,10 @@ paths:
     $ref: '.\paths\foldersidfolders.yaml'
   /folders/{folderid}:
     $ref: '.\paths\foldersid.yaml'
+  /folders/{folderid}/groups/{groupid}:
+    $ref: '.\paths\foldersidgroupsid.yaml'
   /folders/{folderid}/groups:
     $ref: '.\paths\foldersidgroups.yaml'
-  /folders/{folderid}/groups/{groupid}:
-    $ref: '.\paths\foldersgroupsid.yaml'
   /folders/{folderid}/items:
     $ref: '.\paths\foldersiditems.yaml'
   /items/{itemid}:

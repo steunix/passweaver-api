@@ -1,6 +1,6 @@
 post:
   tags:
-    - Authentication
+    - Personal folders
   operationId: personalunlock
   summary: Unlock user personal folder
   description: Unlock user personal folder. The user must already be logged in.
