@@ -44,23 +44,6 @@ const updateSchema = {
     "active": { "type": "boolean" }
   }
 }
-const updatePersonalPassword = {
-  "id": "update",
-  "type": "object",
-  "properties": {
-    "personalsecret" : { "type": "string" }
-  },
-  "required": ["personalsecret"]
-}
-
-const personalLogin = {
-  "id": "/login",
-  "type": "object",
-  "properties": {
-    "password" : { "type": "string" }
-  },
-  "required": ["password"]
-}
 
 /**
  * Gets a user
@@ -393,74 +376,3 @@ export async function remove(req, res, next) {
   }
 }
 
-/**
- * Set user personal password
- * @param {*} req Express request
- * @param {*} res Express response
- * @param {*} next Next
- * @returns
- */
-export async function setPersonalSecret(req, res, next) {
-  try {
-    const validate = jsonschema.validate(req.body, updatePersonalPassword)
-    if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
-      return
-    }
-
-    const pwd = await Crypt.hashPassword(req.body.personalsecret)
-    await DB.users.update({
-      where: { id: req.user },
-      data: {
-        personalsecret: pwd
-      }
-    })
-
-    actions.log(req.user, "personalpasswordcreate", "user", req.user)
-    res.status(200).send(R.ok('Done'))
-  } catch (err) {
-    next(err)
-  }
-}
-
-/**
- * Personal folder login
- * @param {Object} req Express request
- * @param {Object} res Express response
- * @returns
- */
-export async function personalFolderLogin(req, res, next) {
-  try {
-    // Validate payload
-    const validate = jsonschema.validate(req.body, personalLogin)
-    if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
-      return
-    }
-
-    // Check user
-    const user = await DB.users.findUnique({
-      where: { id: req.user }
-    })
-    if ( user===null ) {
-      actions.log(req.body.username, "personalloginnotfound", "user", req.user)
-      res.status(401).send(R.ko("Bad user or wrong password"))
-      return
-    }
-
-    // Check password
-    if ( !await( Crypt.checkPassword(req.body.password, user.personalsecret) ) ) {
-      actions.log(null, "personalloginfail", "user", req.user)
-      res.status(401).send(R.ko("Wrong password"))
-      return
-    }
-
-    // Creates JWT token
-    const token = await Auth.createToken(user.id, true)
-
-    actions.log(user.id,"personallogin", "user", user.id)
-    res.status(200).send(R.ok({jwt:token}))
-  } catch(err) {
-    next(err)
-  }
-}

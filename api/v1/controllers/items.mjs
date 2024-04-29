@@ -45,7 +45,7 @@ const updateSchema = {
  */
 async function checkPersonalAccess(req) {
   // User has used its personal secret
-  if ( req?.personalfolderenabled ) {
+  if ( req?.personalfolderunlocked ) {
     return 0
   }
 
@@ -59,7 +59,7 @@ async function checkPersonalAccess(req) {
   }
 
   // User has not used its personal secret
-  if ( req?.personalfolderenabled === false ) {
+  if ( req?.personalfolderunlocked === false ) {
     return 417
   }
 

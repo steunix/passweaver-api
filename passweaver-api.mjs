@@ -16,6 +16,7 @@ import * as Config from './lib/config.mjs'
 
 export const app = Express()
 
+// Routes
 import folders from "./api/v1/routes/folders.mjs"
 import groups from "./api/v1/routes/groups.mjs"
 import items from "./api/v1/routes/items.mjs"
@@ -23,6 +24,7 @@ import users from "./api/v1/routes/users.mjs"
 import login from "./api/v1/routes/login.mjs"
 import util from "./api/v1/routes/util.mjs"
 import events from "./api/v1/routes/events.mjs"
+import personal from "./api/v1/routes/personal.mjs"
 
 import * as R from './lib/response.mjs'
 
@@ -69,6 +71,7 @@ app.use("/api/v1/users", users)
 app.use("/api/v1/login", login)
 app.use("/api/v1/util", util)
 app.use("/api/v1/events", events)
+app.use("/api/v1/personal", personal)
 
 // Error handler
 app.use((err, req, res, next)=> {
