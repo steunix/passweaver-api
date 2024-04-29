@@ -8,3 +8,10 @@ userid:
   schema:
     type: string
 
+search:
+  name: search
+  in: query
+  description: Search string
+  required: false
+  schema:
+    type: string

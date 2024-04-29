@@ -1,0 +1,18 @@
+get:
+  tags:
+    - Groups
+  operationId: "listGroup"
+  summary: Get group list
+  description: Get group list
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\groups.yaml#/search'
+  responses:
+    "200":
+      $ref: '..\responsebodies\groups.yaml#/listsuccess'
+      description: Group found
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'

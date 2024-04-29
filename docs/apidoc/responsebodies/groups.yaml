@@ -104,3 +104,33 @@ treesuccess:
                 updatedat:
                   type: string
                   description: Update date/time
+
+listsuccess:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              description: Group details
+              properties:
+                id:
+                  type: string
+                  description: Folder id
+                description:
+                  type: string
+                  description: Description
+                parent:
+                  type: string
+                  description: Parent folder id
+                createdat:
+                  type: string
+                  description: Creation date/time
+                updatedat:
+                  type: string
+                  description: Update date/time
