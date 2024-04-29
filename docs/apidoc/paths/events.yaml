@@ -4,6 +4,8 @@ post:
   operationId: addevent
   summary: Add an event
   description: Adds an event to the event log
+  security:
+    - bearerAuth: []
   requestBody:
     required: true
     content:

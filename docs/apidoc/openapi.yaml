@@ -43,6 +43,8 @@ paths:
     $ref: '.\paths\usersid.yaml'
   /personal/unlock:
     $ref: '.\paths\personalunlock.yaml'
+  /personal/password:
+    $ref: '.\paths\personalpassword.yaml'
   /groups/{parentgroupid}/groups:
     $ref: '.\paths\groupsidgroups.yaml'
   /groups/{groupid}:

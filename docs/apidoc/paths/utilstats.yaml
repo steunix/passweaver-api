@@ -4,6 +4,8 @@ get:
   operationId: stats
   summary: Get statistics about PassWeaver
   description: Get statistics about PassWeaver
+  security:
+    - bearerAuth: []
 
   responses:
     "200":
