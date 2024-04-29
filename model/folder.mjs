@@ -173,7 +173,7 @@ export async function permissions(id,user,foldersRecordset) {
   // First folder is itself, so I can check if it's personal
   if ( folders[0].personal ) {
     const admin = await Auth.isAdmin(user)
-    if ( admin || folders[0].user == id ) {
+    if ( admin || folders[0].user == user ) {
       perm.read = true
       perm.write = true
     }
