@@ -31,3 +31,76 @@ getsuccess:
               updatedat:
                 type: string
                 description: Update date/time
+
+userslistsuccess:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: User ID
+                login:
+                  type: string
+                  description: Login
+                firstname:
+                  type: string
+                  description: First name
+                lastname:
+                  type: string
+                  description: Last name
+                authmethod:
+                  type: string
+                  description: Authentication method (local/ldap)
+                locale:
+                  type: string
+                  description: Locale
+                active:
+                  type: boolean
+                  description: User is active
+                createdat:
+                  type: string
+                  description: Creation date/time
+                updatedat:
+                  type: string
+                  description: Update date/time
+
+treesuccess:
+  description: dummy
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              description: Group details
+              properties:
+                id:
+                  type: string
+                  description: Folder id
+                description:
+                  type: string
+                  description: Description
+                parent:
+                  type: string
+                  description: Parent folder id
+                createdat:
+                  type: string
+                  description: Creation date/time
+                updatedat:
+                  type: string
+                  description: Update date/time

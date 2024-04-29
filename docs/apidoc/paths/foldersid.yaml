@@ -1,6 +1,6 @@
 get:
   tags:
-    -  Folders
+    - Folders
   operationId: "getFolder"
   summary: Get folder details
   description: Get folder
@@ -26,7 +26,7 @@ get:
 
 patch:
   tags:
-    -  Folders
+    - Folders
   operationId: "updateFolder"
   summary: Updates a folder
   description: Updates a folder
@@ -53,7 +53,7 @@ patch:
 
 delete:
   tags:
-    -  Folders
+    - Folders
   operationId: "deleteFolder"
   summary: Delete a folder
   description: The folder must be empty and must not have children folders

@@ -1,0 +1,49 @@
+post:
+  tags:
+    - Groups members
+  operationId: "adduserGroup"
+  summary: Add user to a group
+  description: Add user to a group
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\groups.yaml#/groupid'
+    - $ref: '..\parameters\users.yaml#/userid'
+  responses:
+    "200":
+      $ref: '..\responsebodies\default.yaml#/success'
+      description: User added to group
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Group not found
+
+delete:
+  tags:
+    - Groups members
+  operationId: "deleteuserGroup"
+  summary: Delete a user from a group
+  description: Delete a user from a group
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\groups.yaml#/groupid'
+    - $ref: '..\parameters\users.yaml#/userid'
+  responses:
+    "200":
+      $ref: '..\responsebodies\default.yaml#/success'
+      description: User deleted from group
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      $ref: '..\responsebodies\default.yaml#/notfound'
+      description: Group not found
+    "422":
+      $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: Group is not empty
+

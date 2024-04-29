@@ -1,4 +1,4 @@
-openapi: 3.0.0
+openapi: 3.1.0
 
 info:
   contact:
@@ -21,6 +21,8 @@ tags:
     description: Operations on users
   - name: "Groups"
     description: Operations on user groups
+  - name: "Groups members"
+    description: Add and remove users from groups
   - name: "Folders"
     description: Operations on folders
   - name: "Personal folders"
@@ -49,6 +51,12 @@ paths:
     $ref: '.\paths\groupsidgroups.yaml'
   /groups/{groupid}:
     $ref: '.\paths\groupsid.yaml'
+  /groups/{groupid}/users/{userid}:
+    $ref: '.\paths\groupsidusersid.yaml'
+  /groups/{groupid}/users:
+    $ref: '.\paths\groupsidusers.yaml'
+  /groups:
+    $ref: '.\paths\groups.yaml'
   /folders/{parentfolderid}/folders:
     $ref: '.\paths\foldersidfolders.yaml'
   /folders/{folderid}:
@@ -59,6 +67,8 @@ paths:
     $ref: '.\paths\foldersidgroups.yaml'
   /folders/{folderid}/items:
     $ref: '.\paths\foldersiditems.yaml'
+  /folders:
+    $ref: '.\paths\folders.yaml'
   /items/{itemid}:
     $ref: '.\paths\itemsid.yaml'
   /items:
