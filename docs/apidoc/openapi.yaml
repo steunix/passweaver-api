@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 
 info:
   contact:
@@ -55,8 +55,8 @@ paths:
     $ref: '.\paths\groupsidusersid.yaml'
   /groups/{groupid}/users:
     $ref: '.\paths\groupsidusers.yaml'
-  /groups:
-    $ref: '.\paths\groups.yaml'
+  /groups/tree:
+    $ref: '.\paths\groupstree.yaml'
   /folders/{parentfolderid}/folders:
     $ref: '.\paths\foldersidfolders.yaml'
   /folders/{folderid}:
@@ -67,8 +67,8 @@ paths:
     $ref: '.\paths\foldersidgroups.yaml'
   /folders/{folderid}/items:
     $ref: '.\paths\foldersiditems.yaml'
-  /folders:
-    $ref: '.\paths\folders.yaml'
+  /folders/tree:
+    $ref: '.\paths\folderstree.yaml'
   /items/{itemid}:
     $ref: '.\paths\itemsid.yaml'
   /items:
