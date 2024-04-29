@@ -4,7 +4,7 @@ status:
   enum: [ "success" ]
 
 getsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
@@ -49,7 +49,7 @@ getsuccess:
                     description: Write permission
 
 itemslistsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
@@ -81,7 +81,7 @@ itemslistsuccess:
                   description: Item folder
 
 groupslistsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
@@ -114,7 +114,7 @@ groupslistsuccess:
                   description: Write permission
 
 treesuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:

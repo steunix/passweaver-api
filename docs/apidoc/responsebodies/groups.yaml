@@ -4,7 +4,7 @@ status:
   enum: [ "success" ]
 
 getsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
@@ -33,7 +33,7 @@ getsuccess:
                 description: Update date/time
 
 userslistsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
@@ -75,7 +75,7 @@ userslistsuccess:
                   description: Update date/time
 
 treesuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
@@ -106,7 +106,7 @@ treesuccess:
                   description: Update date/time
 
 listsuccess:
-  description: dummy
+  description: Success
   content:
     application/json:
       schema:
