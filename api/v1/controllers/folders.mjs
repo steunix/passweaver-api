@@ -107,13 +107,18 @@ export async function create(req, res, next) {
       return
     }
 
+    // If leaf of a personal folder, it must be personal too
+    const personal = await Folder.isPersonal(req.params.parent)
+
     // Creates the folder
     const newid = newId()
     await DB.folders.create({
       data: {
         id: newid,
         description: req.body.description,
-        parent: req.params.parent
+        personal: personal,
+        parent: req.params.parent,
+        user: personal ? req.user : null
       }
     })
 
