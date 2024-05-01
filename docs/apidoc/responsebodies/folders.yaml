@@ -76,9 +76,15 @@ itemslistsuccess:
                 metadata:
                   type: string
                   description: Item metadata
-                folder:
+                folderid:
                   type: string
                   description: Item folder
+                folder:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      description: Folder description
 
 groupslistsuccess:
   description: Success

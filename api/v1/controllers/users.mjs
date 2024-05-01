@@ -143,18 +143,18 @@ export async function getGroups(req, res, next) {
     var data = []
 
     // Search user's groups
-    const groups = await DB.usersGroups.findMany({
-      where: { user: id },
-      include: { Groups: true },
+    const groups = await DB.groupsmembers.findMany({
+      where: { userid: id },
+      include: { groups: true },
       orderBy: {
-        Groups: {
+        groups: {
           description: "asc"
         }
       }
     })
 
     for ( const group of groups ) {
-      data.push(group.Groups)
+      data.push(group.groups)
     }
     res.status(200).send(R.ok(data))
   } catch (err) {
@@ -183,48 +183,50 @@ export async function create(req, res, next) {
     }
 
     // Creates user
-    const newid = newId()
-    const hash = await Crypt.hashPassword(req.body.secret)
-    await DB.users.create({
-      data: {
-        id: newid,
-        login: req.body.login,
-        firstname: req.body.firstname,
-        lastname: req.body?.lastname,
-        locale: req.body?.locale ?? "en_US",
-        authmethod: req.body?.authmethod ?? "local",
-        email: req.body.email,
-        secret: hash,
-        secretexpiresat: new Date(2050,12,31,23,59,59)
-      }
+    const newUserId = newId()
+    await DB.$transaction(async(tx)=> {
+      const hash = await Crypt.hashPassword(req.body.secret)
+      await DB.users.create({
+        data: {
+          id: newUserId,
+          login: req.body.login,
+          firstname: req.body.firstname,
+          lastname: req.body?.lastname,
+          locale: req.body?.locale ?? "en_US",
+          authmethod: req.body?.authmethod ?? "local",
+          email: req.body.email,
+          secret: hash,
+          secretexpiresat: new Date(2050,12,31,23,59,59)
+        }
+      })
+
+      // Creates personal folder
+      const newFolderId = newId()
+      await DB.folders.create({
+        data: {
+          id: newFolderId,
+          description: req.body.login,
+          parent: Const.PW_FOLDER_PERSONALROOTID,
+          personal: true,
+          userid: newUserId
+        }
+      })
+
+      // Add user to 'Everyone' group
+      const newid2 = newId()
+      await DB.groupsmembers.create({
+        data: {
+          id: newid2,
+          groupid: Const.PW_GROUP_EVERYONEID,
+          userid: newUserId
+        }
+      })
     })
 
-    // Creates personal folder
-    const newFolderId = newId()
-    await DB.folders.create({
-      data: {
-        id: newFolderId,
-        description: req.body.login,
-        parent: Const.PW_FOLDER_PERSONALROOTID,
-        personal: true,
-        user: newid
-      }
-    })
-
-    // Add user to 'Everyone' group
-    const newid2 = newId()
-    await DB.usersGroups.create({
-      data: {
-        id: newid2,
-        group: Const.PW_GROUP_EVERYONEID,
-        user: newid
-      }
-    })
-
-    actions.log(req.user, "create", "user", newid)
+    actions.log(req.user, "create", "user", newUserId)
     Cache.resetFoldersTree()
 
-    res.status(201).send(R.ok({id: newid}))
+    res.status(201).send(R.ok({id: newUserId}))
   } catch (err) {
     next(err)
   }
@@ -337,20 +339,20 @@ export async function remove(req, res, next) {
 
     // Search user personal folders
     const personal = await DB.folders.findMany({
-      where: { personal: true, user: id }
+      where: { personal: true, userid: id }
     })
     const personalId = personal.length ? personal[0].id : ""
 
     await DB.$transaction(async(tx)=> {
       // Deletes user groups
-      await DB.usersGroups.deleteMany({
-        where: { user: id }
+      await DB.groupsmembers.deleteMany({
+        where: { userid: id }
       })
 
       if ( personalId ) {
         // Deletes items in personal folder
         await DB.items.deleteMany({
-          where: { folder: personalId }
+          where: { folderid: personalId }
         })
 
         // Deletes personal folder

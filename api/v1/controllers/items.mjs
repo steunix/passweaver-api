@@ -103,7 +103,7 @@ export async function get(req, res, next) {
     }
 
     // Check read permissions on folder
-    const perm = await Folder.permissions(item.folder, req.user)
+    const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.read ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
@@ -212,19 +212,19 @@ export async function list(req, res, next) {
     items = await DB.items.findMany({
       where: {
         AND: [
-          { folder: { in: folderList } },
+          { folderid: { in: folderList } },
           { AND: contains }
         ]
       },
       select: {
         id: true,
-        folder: true,
+        folderid: true,
         type: true,
         title: true,
         metadata: true,
         createdat: true,
         updatedat: true,
-        folderInfo: {
+        folder: {
           select: {
             description: true
           }
@@ -308,7 +308,7 @@ export async function create(req, res, next) {
     await DB.items.create({
       data: {
         id: newid,
-        folder: folder,
+        folderid: folder,
         personal: personal,
         title: req.body.title,
         type: req?.body?.type,
@@ -363,7 +363,7 @@ export async function update(req, res, next) {
     const folderFromURL = req.params.folder ?? req.body.folder
 
     // Check write permissions on current folder
-    const perm1 = await Folder.permissions(item.folder, req.user)
+    const perm1 = await Folder.permissions(item.folderid, req.user)
     if ( !perm1.write ) {
       res.status(403).send(R.ko("Unauthorized"))
       return
@@ -402,7 +402,7 @@ export async function update(req, res, next) {
       updateStruct.dataauthtag = encData.authTag
     }
     if ( folderFromURL ) {
-      updateStruct.folder = folderFromURL
+      updateStruct.folderid = folderFromURL
     }
     if ( req.body.title ) {
       updateStruct.title = req.body.title
@@ -520,7 +520,7 @@ export async function clone(req, res, next) {
     }
 
     // Check write permissions on folder
-    const perm = await Folder.permissions(item.folder, req.user)
+    const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.write ) {
       res.status(401).send(R.ko("Unauthorized"))
       return
@@ -543,7 +543,7 @@ export async function clone(req, res, next) {
     const newid = newId()
     var newItem = {
       id: newid,
-      folder: item.folder,
+      folderid: item.folderid,
       title: `${item.title} - Copy`,
       type: item.type,
       algo: newData.algo,

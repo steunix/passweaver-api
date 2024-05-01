@@ -75,10 +75,10 @@ app.use("/api/v1/personal", personal)
 
 // Error handler
 app.use((err, req, res, next)=> {
-  logErrors.write("["+(new Date()).toString()+"]\n")
+  logErrors.write(`[${(new Date()).toString()}]\n`)
   logErrors.write(`${req.method} ${req.originalUrl}\n`)
-  logErrors.write(err.stack+"\n")
-  logErrors.write(err.message+"\n")
+  logErrors.write(`${err.stack}\n`)
+  logErrors.write(`err.message\n`)
   res.status(500).send(R.ko("Internal error"))
 })
 

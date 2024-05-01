@@ -118,7 +118,7 @@ export async function create(req, res, next) {
         description: req.body.description,
         personal: personal,
         parent: req.params.parent,
-        user: personal ? req.user : null
+        userid: personal ? req.user : null
       }
     })
 
@@ -245,7 +245,7 @@ export async function remove(req, res, next) {
     const id = req.params.id
 
     // Root folder cannot be deleted
-    if ( id==Const.PW_ROOTFOLDERID ) {
+    if ( id==Const.PW_FOLDER_ROOTID ) {
       res.status(422).send(R.ko("Root folder cannot be deleted"))
       return
     }
@@ -279,7 +279,7 @@ export async function remove(req, res, next) {
 
     // Search folder items
     const items = await DB.items.findFirst({
-      where: { folder: id }
+      where: { folderid: id }
     });
     if ( items!==null ) {
       res.status(422).send(R.ko("Folder not empty, items found"))
@@ -291,13 +291,13 @@ export async function remove(req, res, next) {
       where: { parent: id }
     });
     if ( children!==null ) {
-      res.status(422).send(R.ko("Folder not empty, folders found"))
+      res.status(422).send(R.ko("Folder not empty, subfolders found"))
       return
     }
 
     // Deletes folder permissions
-    await DB.folderGroupPermission.deleteMany({
-      where: { folder: id }
+    await DB.folderspermissions.deleteMany({
+      where: { folderid: id }
     })
 
     // Deletes folder
@@ -353,10 +353,10 @@ export async function addGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await DB.folderGroupPermission.findMany({
+    const perm = await DB.folderspermissions.findMany({
       where: {
-        folder: req.params.folder,
-        group: req.params.group
+        folderid: req.params.folder,
+        groupid: req.params.group
       }
     })
     if ( perm.length>0 ) {
@@ -366,11 +366,11 @@ export async function addGroup(req, res, next) {
 
     // Adds the permission
     const newid = newId()
-    await DB.folderGroupPermission.create({
+    await DB.folderspermissions.create({
       data: {
         id: newid,
-        group: req.params.group,
-        folder: req.params.folder,
+        groupid: req.params.group,
+        folderid: req.params.folder,
         read: req.body.read,
         write: req.body.write
       }
@@ -424,10 +424,10 @@ export async function setGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await DB.folderGroupPermission.findFirst({
+    const perm = await DB.folderspermissions.findFirst({
       where: {
-        folder: req.params.folder,
-        group: req.params.group
+        folderid: req.params.folder,
+        groupid: req.params.group
       }
     })
     if ( perm.length==0 ) {
@@ -436,7 +436,7 @@ export async function setGroup(req, res, next) {
     }
 
     // Adds the permission
-    await DB.folderGroupPermission.update({
+    await DB.folderspermissions.update({
       where: { id: perm.id },
       data: {
         read: req.body.read,
@@ -479,10 +479,10 @@ export async function removeGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await DB.folderGroupPermission.findMany({
+    const perm = await DB.folderspermissions.findMany({
       where: {
-        folder: req.params.folder,
-        group: req.params.group
+        folderid: req.params.folder,
+        groupid: req.params.group
       }
     })
     if ( perm===null ) {
@@ -496,10 +496,10 @@ export async function removeGroup(req, res, next) {
       return
     }
 
-    await DB.folderGroupPermission.deleteMany({
+    await DB.folderspermissions.deleteMany({
       where: {
-        group: req.params.group,
-        folder: req.params.folder
+        groupid: req.params.group,
+        folderid: req.params.folder
       }
     })
 
@@ -539,22 +539,22 @@ export async function groups(req,res,next) {
 
     // For each folder, group permissions are OR'ed
     for ( const folder of parents ) {
-      const groups = await DB.folderGroupPermission.findMany({
+      const groups = await DB.folderspermissions.findMany({
         where: {
-          folder: folder.id
+          folderid: folder.id
         },
         include: {
-          Groups: {},
-          Folders: {}
+          groups: {},
+          folders: {}
         }
       })
 
       for ( const group of groups ) {
         var perm = perms.get(group.id) ?? { id: '', description: '', canmodify: false, inherited: false, read: false, write: false }
-        perm.id = group.Groups.id
+        perm.id = group.groups.id
         perm.canmodify = canmodify
-        perm.description = group.Groups.description
-        perm.inherited = ( group.folder != req.params.id)
+        perm.description = group.groups.description
+        perm.inherited = ( group.folderid != req.params.id)
         perm.read |= group.read
         perm.write |= group.write
         perms.set(group.id, perm)
@@ -588,7 +588,7 @@ export async function groups(req,res,next) {
  * @param {Object} res Express response
  * @returns
  */
-export async function tree(req,res) {
+export async function tree(req,res,next) {
   try {
     const tree = await Folder.tree(req.user);
     res.status(200).send(R.ok(tree))

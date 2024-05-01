@@ -138,7 +138,7 @@ async function main() {
   /** USERS GROUP ASSOCIATION */
   // Admin in Admins
   id = "gu0"
-  const gu1 = await prisma.usersGroups.upsert({
+  const gu1 = await prisma.groupsmembers.upsert({
     where: { id: id },
     update: {},
     create: {
@@ -150,7 +150,7 @@ async function main() {
 
   // Admin in Everyone
   id = "gu1"
-  const gu2 = await prisma.usersGroups.upsert({
+  const gu2 = await prisma.groupsmembers.upsert({
     where: { id: id },
     update: {},
     create: {
@@ -163,7 +163,7 @@ async function main() {
   /** FOLDER GROUP PERMISSIONS */
   // Admins r/w to root
   id = "fg0"
-  const fg0 = await prisma.folderGroupPermission.upsert({
+  const fg0 = await prisma.folderspermissions.upsert({
     where: { id: id},
     update: {},
     create: {

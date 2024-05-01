@@ -29,6 +29,6 @@ getsuccess:
               metadata:
                 type: string
                 description: Item metadata
-              folder:
+              folderid:
                 type: string
                 description: Item folder

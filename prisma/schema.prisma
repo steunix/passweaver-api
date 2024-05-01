@@ -11,38 +11,38 @@ datasource db {
   url      = env("PASSWEAVERAPI_PRISMA_URL")
 }
 
-// Folders of item
-model Folders {
+// Folders
+model folders {
   id          String @db.VarChar(30) @id
   parent      String? @db.VarChar(30)
   description String @db.VarChar(100)
   personal    Boolean @default(false)
-  user        String? @db.VarChar(30)
+  userid      String? @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  relItems    Items[]
-  relFolders  FolderGroupPermission[]
-  relUsers    Users[]
+  items       items[]
+  permissions folderspermissions[]
+  users       users[]
 
   @@index([parent])
-  @@index([user])
+  @@index([userid])
 }
 
-model Groups {
+model groups {
   id          String @db.VarChar(30) @id
   description String @db.VarChar(100)
   parent      String? @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  rel1        UsersGroups[]
-  rel2        FolderGroupPermission[]
+  users       groupsmembers[]
+  folders     folderspermissions[]
 
   @@index([parent])
 }
 
-model Users {
+model users {
   id          String @db.VarChar(30) @id
   login       String @db.VarChar(50)
   lastname    String @db.VarChar(100)
@@ -57,45 +57,45 @@ model Users {
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  Groups      UsersGroups[]
-  Folders     Folders[]
+  groups      groupsmembers[]
+  folders     folders[]
 
   @@index([login])
 }
 
-model UsersGroups {
+model groupsmembers {
   id          String @db.VarChar(30) @id
-  user        String @db.VarChar(30)
-  group       String @db.VarChar(30)
+  userid      String @db.VarChar(30)
+  groupid     String @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  Users       Users @relation(fields:[user], references:[id])
-  Groups      Groups @relation(fields:[group], references:[id])
+  users       users @relation(fields:[userid], references:[id])
+  groups      groups @relation(fields:[groupid], references:[id])
 
-  @@index([user])
-  @@index([group])
+  @@index([userid])
+  @@index([groupid])
 }
 
-model FolderGroupPermission {
+model folderspermissions {
   id          String @db.VarChar(30) @id
-  folder      String @db.VarChar(30)
-  group       String @db.VarChar(30)
+  folderid    String @db.VarChar(30)
+  groupid     String @db.VarChar(30)
   read        Boolean
   write       Boolean
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  Folders     Folders @relation(fields:[folder], references:[id])
-  Groups      Groups @relation(fields:[group], references:[id])
+  folders     folders @relation(fields:[folderid], references:[id])
+  groups      groups @relation(fields:[groupid], references:[id])
 
-  @@index([folder])
-  @@index([group])
+  @@index([folderid])
+  @@index([groupid])
 }
 
-model Items {
+model items {
   id          String @db.VarChar(30) @id
-  folder      String @db.VarChar(30)
+  folderid    String @db.VarChar(30)
   personal    Boolean @default(false)
   type        String? @db.VarChar(10)
   title       String @db.VarChar(200)
@@ -108,12 +108,12 @@ model Items {
   updatedat   DateTime @updatedAt
   accessedat  DateTime?
 
-  folderInfo  Folders @relation(fields: [folder], references: [id])
+  folder      folders @relation(fields: [folderid], references: [id])
 
-  @@index([folder])
+  @@index([folderid])
 }
 
-model ActionLog {
+model events {
   id          String @db.VarChar(30) @id
   timestamp   DateTime @default(now())
   action      String @db.VarChar(50)

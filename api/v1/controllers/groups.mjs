@@ -112,10 +112,10 @@ export async function getUsers(req, res, next) {
     var data = []
 
     // Search group members
-    const users = await DB.usersGroups.findMany({
-      where: { group: id },
+    const users = await DB.groupsmembers.findMany({
+      where: { groupid: id },
       select: {
-        Users: {
+        users: {
           select: {
             id: true,
             login: true,
@@ -130,14 +130,14 @@ export async function getUsers(req, res, next) {
         }
       },
       orderBy: {
-        Users: {
+        users: {
           lastname: "asc"
         }
       }
     })
 
     for ( const user of users ) {
-      data.push(user.Users)
+      data.push(user.users)
     }
     res.status(200).send(R.ok(data))
   } catch (err) {
@@ -336,16 +336,16 @@ export async function remove(req, res, next) {
     }
 
     // Delete user/groups
-    await DB.usersGroups.deleteMany({
+    await DB.groupsmembers.deleteMany({
       where: {
-        group: id
+        groupid: id
       }
     })
 
     // Delete folder/groups
-    await DB.folderGroupPermission.deleteMany({
+    await DB.folderspermissions.deleteMany({
       where: {
-        group: id
+        groupid: id
       }
     })
 
@@ -401,10 +401,10 @@ export async function addUser(req, res, next) {
     }
 
     // Checks if already associated
-    const ex = await DB.usersGroups.findFirst({
+    const ex = await DB.groupsmembers.findFirst({
       where: {
-        group: group,
-        user: user
+        groupid: group,
+        userid: user
       }
     })
     if ( ex!==null ) {
@@ -413,15 +413,15 @@ export async function addUser(req, res, next) {
     }
 
     const newid = newId()
-    await DB.usersGroups.create({
+    await DB.groupsmembers.create({
       data: {
         id: newid,
-        group: group,
-        user: user
+        groupid: group,
+        userid: user
       }
     })
 
-    actions.log(req.user, "add", "usergroups", `${group}/${user}`)
+    actions.log(req.user, "add", "groupsmembers", `${group}/${user}`)
     Cache.resetFoldersTree()
     Cache.resetGroupsTree()
     res.status(200).send(R.ok())
@@ -472,10 +472,10 @@ export async function removeUser(req, res, next) {
     }
 
     // Checks if associated
-    const ex = await DB.usersGroups.findFirst({
+    const ex = await DB.groupsmembers.findFirst({
       where: {
-        group: group,
-        user: user
+        groupid: group,
+        userid: user
       }
     })
     if ( ex==null ) {
@@ -483,13 +483,13 @@ export async function removeUser(req, res, next) {
       return
     }
 
-    await DB.usersGroups.delete({
+    await DB.groupsmembers.delete({
       where: {
         id: ex.id
       }
     })
 
-    actions.log(req.user, "delete", "usergroups", `${group}/${user}`)
+    actions.log(req.user, "delete", "groupsmembers", `${group}/${user}`)
     Cache.resetFoldersTree()
     Cache.resetGroupsTree()
     res.status(200).send(R.ok())

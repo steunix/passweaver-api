@@ -173,7 +173,7 @@ export async function permissions(id,user,foldersRecordset) {
   // First folder is itself, so I can check if it's personal
   if ( folders[0].personal ) {
     const admin = await Auth.isAdmin(user)
-    if ( admin || folders[0].user == user ) {
+    if ( admin || folders[0].userid == user ) {
       perm.read = true
       perm.write = true
     }
@@ -185,8 +185,8 @@ export async function permissions(id,user,foldersRecordset) {
   // Scans all parent folders and OR's all the found permissions
   for ( const folder of folders ) {
     for ( const group of groups ) {
-      const prm = await DB.FolderGroupPermission.findMany({
-        where: { folder: folder.id, group: group.id }
+      const prm = await DB.folderspermissions.findMany({
+        where: { folderid: folder.id, groupid: group.id }
       })
 
       for ( const p of prm ) {
@@ -221,20 +221,20 @@ export async function tree(user) {
   // Explicitly allowed folders, plus personal folder
   const readFolders = await DB.$queryRaw`
     select f.*
-    from   "Folders" f
-    join   "FolderGroupPermission" p
-    on     f.id = p.folder
-    join   "Groups" g
-    on     g.id = p."group"
-    join   "UsersGroups" ug
-    on     ug."group" = g.id
-    where  p."read" = true
-    and    ug."user" = ${user}
+    from   folders f
+    join   folderspermissions p
+    on     f.id = p.folderid
+    join   groups g
+    on     g.id = p.groupid
+    join   groupsmembers ug
+    on     ug.groupid = g.id
+    where  p.read = true
+    and    ug.userid = ${user}
     union
     select pf.*
-    from   "Folders" pf
-    where  pf."personal" = true
-    and    pf."user" = ${user}`
+    from   folders pf
+    where  pf.personal = true
+    and    pf.userid = ${user}`
 
   // For each allowed folder, add all parents and children
   var readable = new Map()

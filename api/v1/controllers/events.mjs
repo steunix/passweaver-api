@@ -44,7 +44,7 @@ export async function create(req, res, next) {
       req.body.itemid
     )
 
-    res.status(200).send(R.ok({password: pwd}))
+    res.status(200).send(R.ok())
   } catch (err) {
     next(err)
   }

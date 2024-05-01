@@ -25,16 +25,16 @@ export async function exists(id) {
 
 // Returns the groups of a user
 export async function groups(user) {
-  const groups = await DB.usersGroups.findMany({
-    where: { user: user },
+  const groups = await DB.groupsmembers.findMany({
+    where: { userid: user },
     include: {
-      Groups: {}
+      groups: {}
     }
   })
 
   let array = []
   for ( const rec of groups ) {
-    array.push(rec.Groups)
+    array.push(rec.groups)
   }
   return array
 }
