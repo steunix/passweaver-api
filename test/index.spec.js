@@ -5,6 +5,16 @@ const fs = require('fs')
 var adminJWT, userJWT
 var host
 
+const userCreateData = {
+  "login": "test",
+  "firstname": "test",
+  "lastname": "test",
+  "authmethod": "local",
+  "locale": "en_US",
+  "email": "me",
+  "secret": "123"
+}
+
 before((done)=>{
   console.log("Passweaver API test before hook")
   // Read listen port from config
@@ -35,7 +45,6 @@ before((done)=>{
 
 describe("PassWeaver API tests", function() {
 
-// Successful login
 describe("Login endpoint", function() {
   it("Bad data", function(done) {
     agent
@@ -70,7 +79,7 @@ describe("Login endpoint", function() {
   })
 })
 
-describe("Users endpoint", function() {
+describe("Users endpoints", function() {
 
   describe("Users get", function() {
     it("Unauthorized", function(done) {
@@ -102,7 +111,51 @@ describe("Users endpoint", function() {
           done()
         })
     })
+  })
 
+  describe("User create and remove", function() {
+    it("Create and remove", function(done) {
+      agent
+      .post(`${host}/api/v1/users`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .send(userCreateData)
+      .end(function(err, res){
+        assert.equal( res.status, "201")
+        var userId = res.body.data.id
+
+        agent
+        .delete(`${host}/api/v1/users/${userId}`)
+        .set("Authorization",`Bearer ${adminJWT}`)
+        .end(function(err, res){
+          assert.equal( res.status, "200")
+
+          done()
+        })
+      })
+    })
+  })
+
+  describe("User update", function() {
+    it("Update", function(done) {
+      agent
+      .post(`${host}/api/v1/users`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .send(userCreateData)
+      .end(function(err, res){
+        assert.equal( res.status, "201")
+        var userId = res.body.data.id
+
+        agent
+        .patch(`${host}/api/v1/users/${userId}`)
+        .set("Authorization",`Bearer ${adminJWT}`)
+        .send({"firstname": "test2"})
+        .end(function(err, res){
+          assert.equal( res.status, "200")
+
+          done()
+        })
+      })
+    })
   })
 })
 
