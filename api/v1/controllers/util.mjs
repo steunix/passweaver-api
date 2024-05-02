@@ -41,7 +41,7 @@ export async function generatePassword(req, res, next) {
  * @param {Object} res Express response
  * @param {Function} next Next
  */
-export async function stats(req, res, next) {
+export async function info(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {

@@ -16,6 +16,6 @@ router.use(auth.validateJWT)
 
 router.get("/generatepassword", utilController.generatePassword)
 
-router.get("/stats", utilController.stats)
+router.get("/info", utilController.info)
 
 export default router

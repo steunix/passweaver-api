@@ -1,7 +1,7 @@
 get:
   tags:
     - Utilities
-  operationId: stats
+  operationId: info
   summary: Get statistics about PassWeaver
   description: Get statistics about PassWeaver
   security:
@@ -9,8 +9,8 @@ get:
 
   responses:
     "200":
-      $ref: '..\responsebodies\util.yaml#/statssuccess'
-      description: Stats successfully returned
+      $ref: '..\responsebodies\util.yaml#/infosuccess'
+      description: Info successfully returned
     "400":
       $ref: '..\responsebodies\default.yaml#/badrequest'
       description: Request body is not correct or unreadable

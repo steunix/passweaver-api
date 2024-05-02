@@ -3,8 +3,8 @@ status:
   type: string
   enum: [ "success", "failed" ]
 
-statssuccess:
-  description: Stats are returned
+infosuccess:
+  description: Info are returned
   content:
     application/json:
       schema:
@@ -41,7 +41,7 @@ statssuccess:
                 description: PassWeaver API startup
 
 generatepasswordsuccess:
-  description: Stats are returned
+  description: New password generated
   content:
     application/json:
       schema:

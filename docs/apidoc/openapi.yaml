@@ -75,8 +75,8 @@ paths:
     $ref: '.\paths\itemsid.yaml'
   /items:
     $ref: '.\paths\items.yaml'
-  /util/stats:
-    $ref: '.\paths\utilstats.yaml'
+  /util/info:
+    $ref: '.\paths\utilinfo.yaml'
   /util/generatepassword:
     $ref: '.\paths\utilgeneratepassword.yaml'
   /events:
