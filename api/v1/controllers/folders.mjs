@@ -169,8 +169,8 @@ export async function update (req, res, next) {
       return
     }
 
-    // Personal folders cannot be altered
-    if ( folder.personal ) {
+    // Personal folders roots cannot be altered, subfolders can
+    if ( folder.personal && folder.parent==Const.PW_FOLDER_PERSONALROOTID ) {
       res.status(422).send(R.ko("Personal folders cannot be updated"))
       return
     }
@@ -265,7 +265,8 @@ export async function remove(req, res, next) {
       return
     }
 
-    if ( folder.personal ) {
+    // Personal folders roots cannot be removed, subfolders can
+    if ( folder.personal && folder.parent==Const.PW_FOLDER_PERSONALROOTID) {
       res.status(422).send(R.ko("Personal folders cannot be deleted"))
       return
     }
