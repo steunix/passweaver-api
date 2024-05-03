@@ -6,11 +6,13 @@ It's **collaborative**, meaning that users are organized in groups and protected
 
 ## What is it?
 
-PassWeaver API is "only" a full API, there is no GUI or CLI: you can easily integrate it with your systems and let it act as a Password Centralized Vault. For a ready to use, simple yet complete Web GUI, have a look at https://github.com/steunix/passweaver-gui
+PassWeaver API is a full API server, is no GUI or CLI: you can easily integrate it with your systems and let it act as a password centralized vault. Instead, for a ready to use, simple yet complete Web GUI to run against the API, have a look at https://github.com/steunix/passweaver-gui
 
 PassWeaver API is a NodeJS application, released under MIT license, and it uses these (great) opensource libraries, among several others:
 - Express, to manage HTTPS connections
 - Prisma, for ORM and DB access
+
+See below for a full API documentation.
 
 ## How it works
 
@@ -148,13 +150,14 @@ Along with HTTP response code, you'll always get this minimum payload:
 ```
 {
   status: success/failed,
-  message: text
+  message: text,
+  data: {}
 }
 ```
 
-In case of errors (success=false), you can find the explanation in the "message" field.
+In case of errors (status="failed"), you can find the explanation in the "message" field.
 
-If any data is returned by the endpoint, it will be always encapsulated in a "data" field:
+If any data is returned by the endpoint, it will be always encapsulated in the "data" field:
 ```
 {
   status: success/failed,
@@ -169,13 +172,20 @@ If any data is returned by the endpoint, it will be always encapsulated in a "da
 
 Download the source, and install all dependencies with npm:
 
-```
-npm install
-```
+`npm install`
 
 ## Configure
 
-Edit `config-skel.json` and save it as `config.json`.
+Edit `config-skel.json` and save it as `config.json`. These are the options:
+- `master_key_env`: The environment variable containing the master key
+- `jwt_duration`: JWT (session) duration. For example, "2h" or "1d"
+- `listen_port`: IP port to bind
+- `log_dir`: Logs directory. It will be created if necessary.
+- `ldap`: LDAP configuration
+  - `url`: LDAP server host.
+  - `port`: LDAP server port
+  - `baseDn`: baseDn for searches
+  - `userDn`: userDn for searches
 
 ### Environment
 
@@ -188,21 +198,22 @@ Your environment must expose these 2 variables:
 
 PassWeaver API uses PostgreSQL as RDBMS and Prisma to access it.
 
-LIMITATION: ATM Prisma does not allow to specify a column length for text columns, so they are all created with the maximum width allowed by the single backend; this is of course sub-optimal and will be addressed in a later version.
+Create an empty database on your existent PostgreSQL istance, and set the environment variable `PASSWEAVERAPI_PRISMA_URL` accordingly.
 
-To initialize the db:
+Then, inside PassWeaver-API directory, run the following commands:
 
-- ensure `PASSWEAVERAPI_PRISMA_URL` variable is set and that it points to a valid PostgreSQL database
-- run `npx prisma db push`
+- `npx prisma db push`
+- `npx prisma db feed`
+- `npx prisma generate`
 
-To feed initial built-in data:
-
-- run `npx prisma db feed`
+The default user `admin` will be created with password `0`: change it as soon as you login.
 
 ## Run
 
-run `npm passweaver-api.mjs`
+run `npm passweaver-api.mjs`.
 
-# API documentation
+You may want to create a Linux service via `systemd` or a Windows service via `nssm`.
+
+# Full API documentation
 
 For a full API documentation you can refer to [this page](apidoc/index.html)
