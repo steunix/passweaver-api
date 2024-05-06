@@ -16,7 +16,7 @@ import DB from '../../../lib/db.mjs'
  * Generate a password
  * @param {object} req Express request
  * @param {object} res Express response
- * @param {function} next Next
+ * @param {Function} next Express next callback
  */
 export async function generatePassword(req, res, next) {
   try {
@@ -39,7 +39,7 @@ export async function generatePassword(req, res, next) {
  * Returns statistics about PassWeaver-API
  * @param {Object} req Express request
  * @param {Object} res Express response
- * @param {Function} next Next
+ * @param {Function} next Express next callback
  */
 export async function info(req, res, next) {
   try {

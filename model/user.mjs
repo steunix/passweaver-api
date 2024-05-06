@@ -9,8 +9,8 @@ import DB from '../lib/db.mjs'
 
 /**
  * Returns true if the user exists
- * @param {string} id
- * @returns
+ * @param {string} id User
+ * @returns {boolean} True if the user exists
  */
 export async function exists(id) {
   try {
@@ -23,7 +23,11 @@ export async function exists(id) {
   }
 }
 
-// Returns the groups of a user
+/**
+ * Returns groups for a user
+ * @param {string} user User
+ * @returns {Array} Array of groups
+ */
 export async function groups(user) {
   const groups = await DB.groupsmembers.findMany({
     where: { userid: user },

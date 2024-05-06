@@ -207,7 +207,7 @@ export async function permissions(id,user,foldersRecordset) {
 /**
  * Return the tree structure of folders visible to the user.
  *
- * @param {string} user
+ * @param {string} user User
  */
 export async function tree(user) {
   const c = Cache.get(user, Cache.foldersTreeKey)
