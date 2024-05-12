@@ -15,6 +15,8 @@ post:
     "201":
       $ref: '..\responsebodies\default.yaml#/created'
       description: User created, the new id is returned
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":

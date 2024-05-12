@@ -46,7 +46,7 @@ before((done)=>{
 describe("PassWeaver API tests", function() {
 
 describe("Login endpoint", function() {
-  it("Bad data", function(done) {
+  it("Login bad data", function(done) {
     agent
       .post(`${host}/api/v1/login`)
       .end(function(err, res){
@@ -81,86 +81,80 @@ describe("Login endpoint", function() {
 
 describe("Users endpoints", function() {
 
-  describe("Users get", function() {
-    it("Unauthorized", function(done) {
-      agent
-        .get(`${host}/api/v1/users`)
-        .set("Authorization",`Bearer ${userJWT}`)
-        .end(function(err, res){
-          assert.equal( res.status, "403")
-          done()
-        })
-    })
-
-    it("Get user list", function(done) {
-      agent
-        .get(`${host}/api/v1/users`)
-        .set("Authorization",`Bearer ${adminJWT}`)
-        .end(function(err, res){
-          assert.equal( res.status, "200")
-          done()
-        })
-    })
-
-    it("Get user", function(done) {
-      agent
-        .get(`${host}/api/v1/users/0`)
-        .set("Authorization",`Bearer ${adminJWT}`)
-        .end(function(err, res){
-          assert.equal( res.status, "200")
-          done()
-        })
-    })
+  it("Get user unauthorized", function(done) {
+    agent
+      .get(`${host}/api/v1/users`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "403")
+        done()
+      })
   })
 
-  describe("User create and remove", function() {
-    it("Create and remove", function(done) {
-      agent
-      .post(`${host}/api/v1/users`)
+  it("Get user list", function(done) {
+    agent
+      .get(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${adminJWT}`)
-      .send(userCreateData)
       .end(function(err, res){
-        assert.equal( res.status, "201")
-        var userId = res.body.data.id
+        assert.equal( res.status, "200")
+        done()
+      })
+  })
 
-        agent
-        .delete(`${host}/api/v1/users/${userId}`)
-        .set("Authorization",`Bearer ${adminJWT}`)
-        .end(function(err, res){
-          assert.equal( res.status, "200")
+  it("Get user", function(done) {
+    agent
+      .get(`${host}/api/v1/users/0`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "200")
+        done()
+      })
+  })
 
-          done()
-        })
+  it("Create and remove user", function(done) {
+    agent
+    .post(`${host}/api/v1/users`)
+    .set("Authorization",`Bearer ${adminJWT}`)
+    .send(userCreateData)
+    .end(function(err, res){
+      assert.equal( res.status, "201")
+      var userId = res.body.data.id
+
+      agent
+      .delete(`${host}/api/v1/users/${userId}`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "200")
+
+        done()
       })
     })
   })
 
-  describe("User update", function() {
-    it("Update", function(done) {
+  it("Update user", function(done) {
+    agent
+    .post(`${host}/api/v1/users`)
+    .set("Authorization",`Bearer ${adminJWT}`)
+    .send(userCreateData)
+    .end(function(err, res){
+      assert.equal( res.status, "201")
+      var userId = res.body.data.id
+
       agent
-      .post(`${host}/api/v1/users`)
+      .patch(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${adminJWT}`)
-      .send(userCreateData)
+      .send({"firstname": "test2"})
       .end(function(err, res){
-        assert.equal( res.status, "201")
-        var userId = res.body.data.id
+        assert.equal( res.status, "200")
 
-        agent
-        .patch(`${host}/api/v1/users/${userId}`)
-        .set("Authorization",`Bearer ${adminJWT}`)
-        .send({"firstname": "test2"})
-        .end(function(err, res){
-          assert.equal( res.status, "200")
-
-          done()
-        })
+        done()
       })
     })
   })
 })
 
 describe ("Items endpoints", ()=> {
-  it("List items", function(done) {
+  it("List item", function(done) {
     agent
     .get(`${host}/api/v1/items?search`)
     .set("Authorization",`Bearer ${userJWT}`)
@@ -169,6 +163,146 @@ describe ("Items endpoints", ()=> {
       done()
     })
   })
+
+  it("Update item", function(done) {
+    agent
+    .patch(`${host}/api/v1/items/test`)
+    .set("Authorization",`Bearer ${userJWT}`)
+    .send({metadata: "test"})
+    .end(function(err, res){
+      assert.equal( res.status, "200")
+      done()
+    })
+  })
+
+  it("Update item bad type", function(done) {
+    agent
+    .patch(`${host}/api/v1/items/test`)
+    .set("Authorization",`Bearer ${userJWT}`)
+    .send({type: "test"})
+    .end(function(err, res){
+      assert.equal( res.status, "422")
+      done()
+    })
+  })
+
 })
 
+describe("Item types", ()=>{
+  it("Get item type", (done)=>{
+    agent
+      .get(`${host}/api/v1/itemtypes/0`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "200")
+        done()
+      })
+  })
+
+  it("Get unauthorized", (done)=>{
+    agent
+      .get(`${host}/api/v1/itemtypes/0`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "403")
+        done()
+      })
+  })
+
+  it("Create and remove", (done)=>{
+    agent
+      .post(`${host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .send({description:"test", icon:"fa-icon"})
+      .end(function(err, res){
+        assert.equal( res.status, "201")
+        var itemtypeId = res.body.data.id
+
+        agent
+        .delete(`${host}/api/v1/itemtypes/${itemtypeId}`)
+        .set("Authorization",`Bearer ${adminJWT}`)
+        .end(function(err, res){
+          assert.equal( res.status, "200")
+
+          done()
+        })
+    })
+  })
+
+  it("Create itemtype unauthorized", (done)=>{
+    agent
+      .post(`${host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .send({description:"test", icon:"fa-icon"})
+      .end(function(err, res){
+        assert.equal( res.status, "403")
+        done()
+      })
+  })
+
+  it("Update itemtype", (done)=>{
+    agent
+      .patch(`${host}/api/v1/itemtypes/0`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .send({description:"test", icon:"fa-icon"})
+      .end(function(err, res){
+        assert.equal( res.status, "200")
+        done()
+      })
+  })
+
+  it("Update itemtype unauthorized", (done)=>{
+    agent
+      .patch(`${host}/api/v1/itemtypes/0`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .send({description:"test", icon:"fa-icon"})
+      .end(function(err, res){
+        assert.equal( res.status, "403")
+        done()
+      })
+  })
+
+  it("Update itemtype bad data", (done)=>{
+    agent
+      .patch(`${host}/api/v1/itemtypes/0`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .send({icon:"fa-icon"})
+      .end(function(err, res){
+        assert.equal( res.status, "400")
+        done()
+      })
+  })
+
+  it("Create itemtype bad data", (done)=>{
+    agent
+      .post(`${host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .send({icon:"fa-icon"})
+      .end(function(err, res){
+        assert.equal( res.status, "400")
+        done()
+      })
+  })
+
+  it("List itemtype", (done)=>{
+    agent
+      .get(`${host}/api/v1/itemtypes/?search=e`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "200")
+        done()
+      })
+  })
+
+  it("List itemtype unauthorized", (done)=>{
+    agent
+      .get(`${host}/api/v1/itemtypes/?search=e`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.equal( res.status, "403")
+        done()
+      })
+  })
+
+})
 })

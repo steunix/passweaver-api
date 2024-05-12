@@ -174,6 +174,18 @@ async function main() {
       write: true
     }
   })
+
+  /** ITEMS TYPE */
+  id = "0"
+  const it0 = await prisma.itemtypes.upsert({
+    where: { id: id },
+    update: {},
+    create: {
+      id: id,
+      description: "default",
+      icon: "fa-key"
+    }
+  })
 }
 
 main()

@@ -39,6 +39,8 @@ patch:
     "200":
       description: User deleted
       $ref: '..\responsebodies\default.yaml#/success'
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":

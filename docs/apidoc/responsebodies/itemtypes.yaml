@@ -1,0 +1,52 @@
+# Success response
+status:
+  type: string
+  enum: [ "success" ]
+
+getsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Item type ID
+                example: db
+              description:
+                type: string
+                description: Item type description
+              icon:
+                type: string
+                description: Font Awesome icon name
+
+listsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Item type ID
+                  example: db
+                description:
+                  type: string
+                  description: Item type description
+                icon:
+                  type: string
+                  description: Font Awesome icon name

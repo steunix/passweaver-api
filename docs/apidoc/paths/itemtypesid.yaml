@@ -1,44 +1,44 @@
 get:
   tags:
-    -  Groups
-  operationId: "getGroup"
-  summary: Get a group details
-  description: Returns a group
+    - Item types
+  operationId: "getItemType"
+  summary: Get item type
+  description: Get item type
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\groups.yaml#/groupid'
+    - $ref: '..\parameters\itemtypes.yaml#/itemtypeid'
   responses:
     "200":
-      $ref: '..\responsebodies\groups.yaml#/getsuccess'
-      description: Group found
+      $ref: '..\responsebodies\itemtypes.yaml#/getsuccess'
+      description: Item type found
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
-      description: Group not found
+      description: Item type not found
 
 patch:
   tags:
-    -  Groups
-  operationId: "updateGroup"
-  summary: Updates a group
-  description: Updates a group
+    - Item types
+  operationId: "updateItemType"
+  summary: Updates an item type
+  description: Updates an item type
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\groups.yaml#/groupid'
+    - $ref: '..\parameters\itemtypes.yaml#/itemtypeid'
   requestBody:
     content:
       application/json:
         schema:
-          $ref: '..\requestbodies\groups.yaml#/groupUpdateBody'
+          $ref: '..\requestbodies\itemtypes.yaml#/itemTypeUpdateBody'
   responses:
     "200":
       $ref: '..\responsebodies\default.yaml#/success'
-      description: Group updated
+      description: Item type updated
     "400":
       $ref: '..\responsebodies\default.yaml#/badrequest'
     "401":
@@ -47,30 +47,29 @@ patch:
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
-      description: Group not found
+      description: Item type not found
 
 delete:
   tags:
-    -  Groups
-  operationId: "deleteGroup"
-  summary: Delete a group
-  description: The group must be empty and must not have children groups
+    - Item types
+  operationId: "deleteItemType"
+  summary: Delete an item type
+  description: Delete an item type. All item with matching type will be reset.
   security:
     - bearerAuth: []
   parameters:
-    - $ref: '..\parameters\groups.yaml#/groupid'
+    - $ref: '..\parameters\itemtypes.yaml#/itemtypeid'
   responses:
     "200":
       $ref: '..\responsebodies\default.yaml#/success'
-      description: Group deleted
+      description: Item type deleted
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
-      description: Group not found
-    "422":
-      $ref: '..\responsebodies\default.yaml#/unprocessable'
-      description: Group is not empty
+      description: Item type not found
 

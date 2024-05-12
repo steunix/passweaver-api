@@ -31,6 +31,8 @@ tags:
     description: Folder permissions
   - name: "Items"
     description: Items
+  - name: "Item types"
+    description: Item types
   - name: "Events"
     description: Events
   - name: "Utilities"
@@ -75,6 +77,10 @@ paths:
     $ref: '.\paths\itemsid.yaml'
   /items:
     $ref: '.\paths\items.yaml'
+  /itemtypes:
+    $ref: '.\paths\itemtypes.yaml'
+  /itemtypes/{itemtypeid}:
+    $ref: '.\paths\itemtypesid.yaml'
   /util/info:
     $ref: '.\paths\utilinfo.yaml'
   /util/generatepassword:

@@ -25,6 +25,7 @@ import login from "./api/v1/routes/login.mjs"
 import util from "./api/v1/routes/util.mjs"
 import events from "./api/v1/routes/events.mjs"
 import personal from "./api/v1/routes/personal.mjs"
+import itemtypes from "./api/v1/routes/itemtypes.mjs"
 
 import * as R from './lib/response.mjs'
 
@@ -72,6 +73,7 @@ app.use("/api/v1/login", login)
 app.use("/api/v1/util", util)
 app.use("/api/v1/events", events)
 app.use("/api/v1/personal", personal)
+app.use("/api/v1/itemtypes", itemtypes)
 
 // Error handler
 app.use((err, req, res, next)=> {

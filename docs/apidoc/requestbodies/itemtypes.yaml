@@ -1,0 +1,25 @@
+# Request bodies for item types
+
+itemTypeCreateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Item type description
+    icon:
+      type: string
+      description: Font Awesome icon
+  required:
+    - description
+
+itemTypeUpdateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Item type description
+    icon:
+      type: string
+      description: Font Awesome icon
+  required:
+    - description

@@ -1,6 +1,6 @@
 get:
   tags:
-    -  Items
+    - Items
   operationId: "getItem"
   summary: Get item
   description: Get item
@@ -26,7 +26,7 @@ get:
 
 patch:
   tags:
-    -  Items
+    - Items
   operationId: "updateItem"
   summary: Updates an item
   description: Updates an item
@@ -43,6 +43,8 @@ patch:
     "200":
       $ref: '..\responsebodies\default.yaml#/success'
       description: Item updated
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
     "401":
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
@@ -50,6 +52,9 @@ patch:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Item not found
+    "422":
+      $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: Item type not found
     "412":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":
@@ -57,7 +62,7 @@ patch:
 
 delete:
   tags:
-    -  Items
+    - Items
   operationId: "deleteItem"
   summary: Delete an item
   description: Delete an item

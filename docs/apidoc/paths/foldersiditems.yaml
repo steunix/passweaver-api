@@ -24,6 +24,9 @@ post:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Folder not found
+    "422":
+      $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: Item type not found
 
 get:
   tags:

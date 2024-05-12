@@ -1,0 +1,17 @@
+# Items parameters
+
+itemtypeid:
+  name: itemtypeid
+  in: path
+  description: Item type ID
+  required: true
+  schema:
+    type: string
+
+search:
+  name: search
+  in: query
+  description: Search string
+  required: false
+  schema:
+    type: string

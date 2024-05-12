@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["relationJoins"]
 }
 
@@ -13,11 +13,11 @@ datasource db {
 
 // Folders
 model folders {
-  id          String @db.VarChar(30) @id
-  parent      String? @db.VarChar(30)
-  description String @db.VarChar(100)
-  personal    Boolean @default(false)
-  userid      String? @db.VarChar(30)
+  id          String   @id @db.VarChar(30)
+  parent      String?  @db.VarChar(30)
+  description String   @db.VarChar(100)
+  personal    Boolean  @default(false)
+  userid      String?  @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -30,96 +30,106 @@ model folders {
 }
 
 model groups {
-  id          String @db.VarChar(30) @id
-  description String @db.VarChar(100)
-  parent      String? @db.VarChar(30)
+  id          String   @id @db.VarChar(30)
+  description String   @db.VarChar(100)
+  parent      String?  @db.VarChar(30)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
-  users       groupsmembers[]
-  folders     folderspermissions[]
+  users   groupsmembers[]
+  folders folderspermissions[]
 
   @@index([parent])
 }
 
 model users {
-  id          String @db.VarChar(30) @id
-  login       String @db.VarChar(50)
-  lastname    String @db.VarChar(100)
-  firstname   String? @db.VarChar(100)
-  authmethod  String @db.VarChar(10)
-  locale      String @db.VarChar(10)
-  email       String @db.VarChar(50)
-  secret      String @db.VarChar(100)
+  id              String   @id @db.VarChar(30)
+  login           String   @db.VarChar(50)
+  lastname        String   @db.VarChar(100)
+  firstname       String?  @db.VarChar(100)
+  authmethod      String   @db.VarChar(10)
+  locale          String   @db.VarChar(10)
+  email           String   @db.VarChar(50)
+  secret          String   @db.VarChar(100)
   secretexpiresat DateTime
-  personalsecret String? @db.VarChar(100)
-  active      Boolean @default(true)
-  createdat   DateTime @default(now())
-  updatedat   DateTime @updatedAt
+  personalsecret  String?  @db.VarChar(100)
+  active          Boolean  @default(true)
+  createdat       DateTime @default(now())
+  updatedat       DateTime @updatedAt
 
-  groups      groupsmembers[]
-  folders     folders[]
+  groups  groupsmembers[]
+  folders folders[]
 
   @@index([login])
 }
 
 model groupsmembers {
-  id          String @db.VarChar(30) @id
-  userid      String @db.VarChar(30)
-  groupid     String @db.VarChar(30)
-  createdat   DateTime @default(now())
-  updatedat   DateTime @updatedAt
+  id        String   @id @db.VarChar(30)
+  userid    String   @db.VarChar(30)
+  groupid   String   @db.VarChar(30)
+  createdat DateTime @default(now())
+  updatedat DateTime @updatedAt
 
-  users       users @relation(fields:[userid], references:[id])
-  groups      groups @relation(fields:[groupid], references:[id])
+  users  users  @relation(fields: [userid], references: [id])
+  groups groups @relation(fields: [groupid], references: [id])
 
   @@index([userid])
   @@index([groupid])
 }
 
 model folderspermissions {
-  id          String @db.VarChar(30) @id
-  folderid    String @db.VarChar(30)
-  groupid     String @db.VarChar(30)
-  read        Boolean
-  write       Boolean
-  createdat   DateTime @default(now())
-  updatedat   DateTime @updatedAt
+  id        String   @id @db.VarChar(30)
+  folderid  String   @db.VarChar(30)
+  groupid   String   @db.VarChar(30)
+  read      Boolean
+  write     Boolean
+  createdat DateTime @default(now())
+  updatedat DateTime @updatedAt
 
-  folders     folders @relation(fields:[folderid], references:[id])
-  groups      groups @relation(fields:[groupid], references:[id])
+  folders folders @relation(fields: [folderid], references: [id])
+  groups  groups  @relation(fields: [groupid], references: [id])
 
   @@index([folderid])
   @@index([groupid])
 }
 
 model items {
-  id          String @db.VarChar(30) @id
-  folderid    String @db.VarChar(30)
-  personal    Boolean @default(false)
-  type        String? @db.VarChar(10)
-  title       String @db.VarChar(200)
+  id          String    @id @db.VarChar(30)
+  folderid    String    @db.VarChar(30)
+  personal    Boolean   @default(false)
+  type        String?   @db.VarChar(30)
+  title       String    @db.VarChar(200)
   data        String
   dataiv      String
   dataauthtag String
   algo        String?
   metadata    String?
-  createdat   DateTime @default(now())
-  updatedat   DateTime @updatedAt
+  createdat   DateTime  @default(now())
+  updatedat   DateTime  @updatedAt
   accessedat  DateTime?
 
-  folder      folders @relation(fields: [folderid], references: [id])
+  folder   folders    @relation(fields: [folderid], references: [id])
+  itemtype itemtypes? @relation(fields: [type], references: [id])
 
   @@index([folderid])
 }
 
+model itemtypes {
+  id          String   @id @db.VarChar(30)
+  description String   @db.VarChar(20)
+  icon        String?  @db.VarChar(50)
+  createdat   DateTime @default(now())
+  updatedat   DateTime @updatedAt
+  items       items[]
+}
+
 model events {
-  id          String @db.VarChar(30) @id
-  timestamp   DateTime @default(now())
-  action      String @db.VarChar(50)
-  itemtype    String @db.VarChar(20)
-  itemid      String @db.VarChar(100)
-  user        String? @db.VarChar(30)
+  id        String   @id @db.VarChar(30)
+  timestamp DateTime @default(now())
+  action    String   @db.VarChar(50)
+  itemtype  String   @db.VarChar(20)
+  itemid    String   @db.VarChar(100)
+  user      String?  @db.VarChar(30)
 
   @@index([timestamp])
   @@index([itemid])

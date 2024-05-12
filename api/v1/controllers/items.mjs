@@ -300,6 +300,17 @@ export async function create(req, res, next) {
       personal = true
     }
 
+    // If type is specified, check that it exists
+    if ( req?.body?.type ) {
+      const itemtype = await DB.itemtypes.findUnique({
+        where: { id: req.body.type }
+      })
+      if ( itemtype===null ) {
+        res.status(422).send(R.ko("Specified type does not exist"))
+        return
+      }
+    }
+
     // Encrypt data
     const encData = Crypt.encrypt(req.body.data)
 
@@ -388,6 +399,17 @@ export async function update(req, res, next) {
       const check = await checkPersonalAccess(req)
       if ( check!=0 ) {
         res.status(check).send(R.ko("Personal folder not accessible"))
+        return
+      }
+    }
+
+    // If type is specified, check that it exists
+    if ( req?.body?.type ) {
+      const itemtype = await DB.itemtypes.findUnique({
+        where: { id: req.body.type }
+      })
+      if ( itemtype===null ) {
+        res.status(422).send(R.ko("Specified type does not exist"))
         return
       }
     }

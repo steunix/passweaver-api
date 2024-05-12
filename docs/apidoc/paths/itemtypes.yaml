@@ -1,0 +1,44 @@
+get:
+  tags:
+    - Item types
+  operationId: "searchItemType"
+  summary: Search item types
+  description: Search item types
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\itemtypes.yaml#/search'
+  responses:
+    "200":
+      description: Item type found
+      $ref: '..\responsebodies\itemtypes.yaml#/listsuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Item not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+
+post:
+  tags:
+    - Item types
+  operationId: "createItemType"
+  summary: Create item type
+  description: Create item type
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\itemtypes.yaml#/itemTypeCreateBody'
+  security:
+    - bearerAuth: []
+  responses:
+    "201":
+      $ref: '..\responsebodies\default.yaml#/created'
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
