@@ -17,7 +17,7 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Const from '../../../lib/const.mjs'
 import DB from '../../../lib/db.mjs'
 
-// Payload schema
+// Payload schemas
 const createSchema = {
   "id": "create",
   "type": "object",
@@ -48,6 +48,7 @@ const groupSchema = {
  * Gets a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function get (req, res, next) {
@@ -83,6 +84,7 @@ export async function get (req, res, next) {
  * Creates a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function create(req, res, next) {
@@ -134,6 +136,7 @@ export async function create(req, res, next) {
  * Updates a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function update (req, res, next) {
@@ -238,6 +241,7 @@ export async function update (req, res, next) {
  * Deletes a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function remove(req, res, next) {
@@ -318,6 +322,7 @@ export async function remove(req, res, next) {
  * Add a group to a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function addGroup(req, res, next) {
@@ -389,6 +394,7 @@ export async function addGroup(req, res, next) {
  * Set group permissions
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function setGroup(req, res, next) {
@@ -457,6 +463,7 @@ export async function setGroup(req, res, next) {
  * Deletes a group from a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function removeGroup(req, res, next) {
@@ -587,6 +594,7 @@ export async function groups(req,res,next) {
  * Gets the tree of visible folders for current user
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function tree(req,res,next) {

@@ -16,7 +16,7 @@ import * as Const from '../../../lib/const.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
 
-// Payload schema
+// Payload schemas
 const createSchema = {
   "id": "create",
   "properties": {
@@ -70,7 +70,7 @@ async function checkPersonalAccess(req) {
  *
  * @param {Object} req Express request
  * @param {Object} res Express response
- * @param {Function} next Error callback
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function get(req, res, next) {
@@ -137,6 +137,7 @@ export async function get(req, res, next) {
  * Get folder items
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function list(req, res, next) {
@@ -250,6 +251,7 @@ export async function list(req, res, next) {
  * Create an item
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function create(req, res, next) {
@@ -342,6 +344,7 @@ export async function create(req, res, next) {
  * Updates an item
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function update(req, res, next) {
@@ -453,6 +456,7 @@ export async function update(req, res, next) {
  * Deletes an item
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function remove(req, res, next) {
@@ -519,6 +523,7 @@ export async function remove(req, res, next) {
  * Clone an item
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function clone(req, res, next) {

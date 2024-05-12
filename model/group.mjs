@@ -24,7 +24,12 @@ export async function exists(id) {
   }
 }
 
-// Gets group parents, ordered by closest first
+/**
+ *
+ * @param {string} id Folder
+ * @param {boolean} includeSelf If true, passed folder is returned in the array
+ * @returns
+ */
 export async function parents(id, includeSelf) {
   let array = [];
 
@@ -81,7 +86,7 @@ export async function parents(id, includeSelf) {
 /**
  * Gets all children for a given group
  *
- * @param {string} id group id
+ * @param {string} id Group id
  * @returns
  */
 export async function children(id) {
@@ -109,7 +114,11 @@ export async function children(id) {
   return ret
 }
 
-// Returns the parent of a group
+/**
+ * Returns an array containing the parents of a folder
+ * @param {id} id Folder ID
+ * @returns {Array} Folders array
+ */
 export async function parent(id) {
   const res = await this.parents(id,false)
 
@@ -122,7 +131,8 @@ export async function parent(id) {
 
 /**
  * Return the tree structure of groups visible to the user
- * @param {string} user
+ * @param {string} user User
+ * @returns {Object} Folders tree
  */
 export async function tree(user) {
   const c = Cache.get(user, Cache.groupsTreeKey)

@@ -38,6 +38,7 @@ const updateSchema = {
  * Gets a group
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function get(req, res, next) {
@@ -64,6 +65,7 @@ export async function get(req, res, next) {
  * Get groups list
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function list(req, res, next) {
   try {
@@ -104,6 +106,7 @@ export async function list(req, res, next) {
  * Gets a group members
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function getUsers(req, res, next) {
   try {
@@ -149,6 +152,7 @@ export async function getUsers(req, res, next) {
  * Create a group
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function create(req, res, next) {
@@ -201,6 +205,7 @@ export async function create(req, res, next) {
  * Update a group
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 
@@ -295,6 +300,7 @@ export async function update(req, res, next) {
  * Delete a group
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 
@@ -369,6 +375,7 @@ export async function remove(req, res, next) {
  * Adds a user to a group
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function addUser(req, res, next) {
@@ -434,6 +441,7 @@ export async function addUser(req, res, next) {
  * Remove a user from a group
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function removeUser(req, res, next) {
@@ -502,6 +510,7 @@ export async function removeUser(req, res, next) {
  * Get the structure of groups
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function tree(req, res, next) {

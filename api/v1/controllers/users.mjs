@@ -15,7 +15,7 @@ import * as Cache from '../../../lib/cache.mjs'
 import * as Const from '../../../lib/const.mjs'
 import DB from '../../../lib/db.mjs'
 
-// Payload schema
+// Payload schemas
 const createSchema = {
   "id": "create",
   "type": "object",
@@ -49,6 +49,7 @@ const updateSchema = {
  * Gets a user
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function get(req, res, next) {
   try {
@@ -91,6 +92,7 @@ export async function get(req, res, next) {
  * Get users list
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function list(req, res, next) {
   try {
@@ -135,6 +137,7 @@ export async function list(req, res, next) {
  * Gets a user groups
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function getGroups(req, res, next) {
   try {
@@ -166,6 +169,7 @@ export async function getGroups(req, res, next) {
  * Create a user
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function create(req, res, next) {
   try {
@@ -236,6 +240,7 @@ export async function create(req, res, next) {
  * Update a user
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function update(req, res, next) {
   try {
@@ -310,6 +315,7 @@ export async function update(req, res, next) {
  * Delete a user
  * @param {object} req Express request
  * @param {object} res Express response
+ * @param {Function} next Express next callback
  */
 export async function remove(req, res, next) {
   try {

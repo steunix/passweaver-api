@@ -28,6 +28,7 @@ const schemaLogin = {
  * Login
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function login(req, res, next) {

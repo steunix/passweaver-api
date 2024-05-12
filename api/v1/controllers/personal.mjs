@@ -25,6 +25,7 @@ const personalSchema = {
  * Personal folder unlock
  * @param {Object} req Express request
  * @param {Object} res Express response
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function unlock(req, res, next) {
@@ -67,7 +68,7 @@ export async function unlock(req, res, next) {
  * Set user personal password
  * @param {*} req Express request
  * @param {*} res Express response
- * @param {*} next Next
+ * @param {Function} next Express next callback
  * @returns
  */
 export async function setPassword(req, res, next) {
