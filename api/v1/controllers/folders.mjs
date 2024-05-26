@@ -112,6 +112,12 @@ export async function create(req, res, next) {
     // If leaf of a personal folder, it must be personal too
     const personal = await Folder.isPersonal(req.params.parent)
 
+    // Admin cannot create personal folders
+    if ( await Auth.isAdmin(req) && personal ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
+
     // Creates the folder
     const newid = newId()
     await DB.folders.create({
@@ -169,6 +175,12 @@ export async function update (req, res, next) {
 
     if ( !folder ) {
       res.status(404).send(R.ko("Folder not found"))
+      return
+    }
+
+    // Admin cannot update personal folders
+    if ( await Auth.isAdmin(req) && folder.personal ) {
+      res.status(403).send(R.ko("Unauthorized"))
       return
     }
 
@@ -274,6 +286,12 @@ export async function remove(req, res, next) {
       res.status(422).send(R.ko("Personal folders cannot be deleted"))
       return
     }
+
+      // Admin cannot remove personal folders
+      if ( await Auth.isAdmin(req) && folder.personal ) {
+        res.status(403).send(R.ko("Unauthorized"))
+        return
+      }
 
     // Check write permissions on folder
     const perm = await Folder.permissions(id, req.user);
