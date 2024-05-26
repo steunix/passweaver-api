@@ -481,7 +481,7 @@ export async function remove(req, res, next) {
 
     // Search folder
     const folder = await DB.folders.findUnique({
-      where: { id: item.folder }
+      where: { id: item.folderid }
     })
 
     if ( folder===null ) {
@@ -490,7 +490,7 @@ export async function remove(req, res, next) {
     }
 
     // Check write permissions on folder
-    const perm = await Folder.permissions(item.folder, req.user)
+    const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.write ) {
       res.status(401).send(R.ko("Unauthorized"))
       return
