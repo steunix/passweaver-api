@@ -7,7 +7,7 @@
 import { Router } from 'express'
 
 import * as auth from '../../../lib/auth.mjs'
-import * as itemTypesController from '../controllers/itemstype.mjs'
+import * as itemTypesController from '../controllers/itemtypes.mjs'
 
 const router = Router({mergeParams:true})
 
