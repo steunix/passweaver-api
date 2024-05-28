@@ -326,6 +326,12 @@ export async function remove(req, res, next) {
       return
     }
 
+    // Everyone group cannot be deleted
+    if ( id==Const.PW_GROUP_ADMINSID ) {
+      res.status(422).send(R.ko("Admins group cannot be deleted"))
+      return
+    }
+
     // Gets the group
     if ( !await Group.exists(id) ) {
       res.status(404).send(R.ko("Group not found"))
