@@ -85,6 +85,15 @@ itemslistsuccess:
                     description:
                       type: string
                       description: Folder description
+                itemtype:
+                  type: object
+                  properties:
+                    description:
+                      type: string
+                      description: Item type description
+                    icon:
+                      type: string
+                      description: Item type icon
 
 groupslistsuccess:
   description: Success

@@ -229,7 +229,8 @@ export async function list(req, res, next) {
           select: {
             description: true
           }
-        }
+        },
+        itemtype: true,
       },
       orderBy: {
         title: "asc"
