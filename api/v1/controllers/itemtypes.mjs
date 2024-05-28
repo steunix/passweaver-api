@@ -65,19 +65,13 @@ export async function get(req, res, next) {
 }
 
 /**
- * Get items type
+ * Get items types list
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @returns
  */
 export async function list(req, res, next) {
   try {
-    // Must be admin
-    if ( !await isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
-      return
-    }
-
     const search = req.query?.search ?? ''
 
     const itemtypes = await DB.itemtypes.findMany({
