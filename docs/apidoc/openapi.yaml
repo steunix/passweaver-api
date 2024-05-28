@@ -19,6 +19,8 @@ tags:
     description: Login
   - name: "Users"
     description: Operations on users
+  - name: "User settings"
+    description: User settings
   - name: "Groups"
     description: Operations on user groups
   - name: "Groups members"
@@ -45,6 +47,8 @@ paths:
     $ref: '.\paths\users.yaml'
   /users/{userid}:
     $ref: '.\paths\usersid.yaml'
+  /users/{userid}/settings:
+    $ref: '.\paths\usersidsettings.yaml'
   /personal/unlock:
     $ref: '.\paths\personalunlock.yaml'
   /personal/password:

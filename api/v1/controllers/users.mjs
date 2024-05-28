@@ -344,26 +344,29 @@ export async function remove(req, res, next) {
     }
 
     // Search user personal folders
-    const personal = await DB.folders.findMany({
-      where: { personal: true, userid: id }
-    })
-    const personalId = personal.length ? personal[0].id : ""
-
     await DB.$transaction(async(tx)=> {
       // Deletes user groups
       await DB.groupsmembers.deleteMany({
         where: { userid: id }
       })
 
-      if ( personalId ) {
-        // Deletes items in personal folder
+      await DB.usersettings.deleteMany({
+        where: { userid: id }
+      })
+
+      // Personal folders
+      const personal = await DB.folders.findMany({
+        where: { personal: true, userid: id }
+      })
+      for ( const pers of personal ) {
+        // Delete items in personal folder
         await DB.items.deleteMany({
-          where: { folderid: personalId }
+          where: { folderid: pers.id }
         })
 
-        // Deletes personal folder
+        // Delete personal folder
         await DB.folders.delete({
-          where: { id: personalId }
+          where: { id: pers.id }
         })
       }
 

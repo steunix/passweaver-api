@@ -59,8 +59,18 @@ model users {
 
   groups  groupsmembers[]
   folders folders[]
+  settings usersettings[]
 
   @@index([login])
+}
+
+model usersettings {
+  id              String   @id @db.VarChar(30)
+  userid          String   @db.VarChar(30)
+  setting         String   @db.VarChar(30)
+  value           String   @db.VarChar(100)
+
+  user  users     @relation(fields: [userid], references: [id])
 }
 
 model groupsmembers {

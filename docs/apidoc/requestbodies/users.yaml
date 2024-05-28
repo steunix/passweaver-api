@@ -72,3 +72,17 @@ userUpdateBody:
       type: boolean
       description: User is active
       example: true
+
+settingsUpdateBody:
+  type: array
+  items:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Setting name
+        example: user.param
+      secret:
+        type: string
+        description: Setting value
+        example: "123456789"

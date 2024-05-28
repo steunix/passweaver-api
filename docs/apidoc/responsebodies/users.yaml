@@ -49,3 +49,27 @@ getsuccess:
               updatedat:
                 type: string
                 description: Update date/time
+
+getsettingssuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            description: Preferences
+            items:
+              type: object
+              properties:
+                setting:
+                  type: string
+                  description: Setting name
+                  example: "user.param"
+                value:
+                  type: string
+                  description: Setting value
+                  example: "123456"

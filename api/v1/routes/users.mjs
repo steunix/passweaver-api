@@ -8,6 +8,7 @@ import { Router } from 'express'
 
 import * as auth from '../../../lib/auth.mjs'
 import * as usersController from '../controllers/users.mjs'
+import * as userSettingsController from '../controllers/usersettings.mjs'
 
 const router = Router()
 
@@ -25,5 +26,9 @@ router.patch("/:id", usersController.update)
 router.delete("/:id", usersController.remove)
 
 router.get('/:id/groups', usersController.getGroups)
+
+router.get("/:id/settings", userSettingsController.get)
+
+router.post("/:id/settings", userSettingsController.set)
 
 export default router

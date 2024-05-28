@@ -1,0 +1,50 @@
+get:
+  tags:
+    - User settings
+  operationId: "getSettings"
+  summary: Get user settings
+  description: Get user settings
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\users.yaml#/userid'
+  responses:
+    "200":
+      description: User found
+      $ref: '..\responsebodies\users.yaml#/getsettingssuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: User not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+
+post:
+  tags:
+    - User settings
+  operationId: "setSettings"
+  summary: Set user settings
+  description: Set user settings
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\users.yaml#/userid'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\users.yaml#/settingsUpdateBody'
+  responses:
+    "201":
+      description: Settings updated
+      $ref: '..\responsebodies\default.yaml#/created'
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: User not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
