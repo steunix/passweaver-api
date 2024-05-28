@@ -70,8 +70,8 @@ export async function set(req, res, next) {
   try {
     const userid = req.params.id
 
-    // Settings can be changed by admin or user itself
-    if ( !await isAdmin(req) || req.user!==userid) {
+    // Check user
+    if ( req.user!==userid) {
       res.status(403).send(R.ko("Unauthorized"))
       return
     }
