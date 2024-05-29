@@ -1,0 +1,42 @@
+get:
+  tags:
+    - One time tokens
+  operationId: "getOneTimeToken"
+  summary: Get and burn one time token content
+  description: Get one time token content. The token is then deleted and will not be accessible anymore.
+  security:
+    - bearerAuth: []
+  responses:
+    "200":
+      description: Item type found
+      $ref: '..\responsebodies\onetimetokens.yaml#/oneTimeSecretGetResult'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Item not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+
+post:
+  tags:
+    - One time tokens
+  operationId: "createOneTimeToken"
+  summary: Create a one time token
+  description: Create a one time token
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\onetimetokens.yaml#/oneTimeSecretCreateBody'
+  security:
+    - bearerAuth: []
+  responses:
+    "201":
+      $ref: '..\responsebodies\default.yaml#/created'
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'

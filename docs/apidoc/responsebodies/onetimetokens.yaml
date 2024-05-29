@@ -1,0 +1,21 @@
+# Success response
+status:
+  type: string
+  enum: [ "success" ]
+
+oneTimeSecretGetResult:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              data:
+                type: string
+                description: Token to link to
+                example: adf09709ds7f8s6d9f76

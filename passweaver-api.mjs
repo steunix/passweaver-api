@@ -26,6 +26,7 @@ import util from "./api/v1/routes/util.mjs"
 import events from "./api/v1/routes/events.mjs"
 import personal from "./api/v1/routes/personal.mjs"
 import itemtypes from "./api/v1/routes/itemtypes.mjs"
+import onetimetokens from "./api/v1/routes/onetimetokens.mjs"
 
 import * as R from './lib/response.mjs'
 
@@ -74,6 +75,7 @@ app.use("/api/v1/util", util)
 app.use("/api/v1/events", events)
 app.use("/api/v1/personal", personal)
 app.use("/api/v1/itemtypes", itemtypes)
+app.use("/api/v1/onetimetokens", onetimetokens)
 
 // Error handler
 app.use((err, req, res, next)=> {

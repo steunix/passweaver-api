@@ -1,0 +1,13 @@
+# Request bodies for item types
+oneTimeSecretCreateBody:
+  type: object
+  properties:
+    data:
+      type: string
+      description: Secret
+    hours:
+      type: integer
+      description: Number of hours after which the token will expire
+  required:
+    - data
+    - hours

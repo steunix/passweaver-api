@@ -60,6 +60,7 @@ model users {
   groups  groupsmembers[]
   folders folders[]
   settings usersettings[]
+  tokens onetimetokens[]
 
   @@index([login])
 }
@@ -131,6 +132,22 @@ model itemtypes {
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
   items       items[]
+}
+
+model onetimetokens {
+  id          String   @id @db.VarChar(30)
+  userid      String   @db.VarChar(30)
+  token       String   @db.VarChar(100)
+  expiresat   DateTime
+  data        String
+  dataiv      String
+  dataauthtag String
+  createdat   DateTime  @default(now())
+  updatedat   DateTime  @updatedAt
+
+  @@index([token])
+
+  user    users[]
 }
 
 model events {

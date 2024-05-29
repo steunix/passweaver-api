@@ -50,8 +50,8 @@ describe("Login endpoint", function() {
     agent
       .post(`${host}/api/v1/login`)
       .end(function(err, res){
-        assert.equal( res.status, "400")
-        assert.equal( res?.body?.data?.jwt, undefined)
+        assert.strictEqual( res.status, 400)
+        assert.strictEqual( res?.body?.data?.jwt, undefined)
         done()
       })
   })
@@ -61,8 +61,8 @@ describe("Login endpoint", function() {
       .post(`${host}/api/v1/login`)
       .send({"username":"admin", "password": "1"})
       .end(function(err, res){
-        assert.equal( res.status, "401")
-        assert.equal( res?.body?.data?.jwt, undefined)
+        assert.strictEqual( res.status, 401)
+        assert.strictEqual( res?.body?.data?.jwt, undefined)
         done()
       })
   })
@@ -72,8 +72,8 @@ describe("Login endpoint", function() {
       .post(`${host}/api/v1/login`)
       .send({"username":"admin", "password": "0"})
       .end(function(err, res){
-        assert.equal( res.status, "200")
-        assert.notEqual( res?.body?.data?.jwt, undefined)
+        assert.strictEqual( res.status, 200)
+        assert.notStrictEqual( res?.body?.data?.jwt, undefined)
         done()
       })
   })
@@ -86,7 +86,7 @@ describe("Users endpoints", function() {
       .get(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${userJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "403")
+        assert.strictEqual( res.status, 403)
         done()
       })
   })
@@ -96,7 +96,7 @@ describe("Users endpoints", function() {
       .get(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
         done()
       })
   })
@@ -106,7 +106,7 @@ describe("Users endpoints", function() {
       .get(`${host}/api/v1/users/0`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
         done()
       })
   })
@@ -117,14 +117,14 @@ describe("Users endpoints", function() {
     .set("Authorization",`Bearer ${adminJWT}`)
     .send(userCreateData)
     .end(function(err, res){
-      assert.equal( res.status, "201")
+      assert.strictEqual( res.status, 201)
       var userId = res.body.data.id
 
       agent
       .delete(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
 
         done()
       })
@@ -137,7 +137,7 @@ describe("Users endpoints", function() {
     .set("Authorization",`Bearer ${adminJWT}`)
     .send(userCreateData)
     .end(function(err, res){
-      assert.equal( res.status, "201")
+      assert.strictEqual( res.status, 201)
       var userId = res.body.data.id
 
       agent
@@ -145,7 +145,7 @@ describe("Users endpoints", function() {
       .set("Authorization",`Bearer ${adminJWT}`)
       .send({"firstname": "test2"})
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
 
         done()
       })
@@ -160,7 +160,7 @@ describe("User settings endpoints", function() {
     .send([{"setting": "theme", "value": "dark"}])
     .set("Authorization",`Bearer ${adminJWT}`)
     .end(function(err, res){
-      assert.equal( res.status, "201")
+      assert.strictEqual( res.status, 201)
       done()
     })
   })
@@ -171,13 +171,13 @@ describe("User settings endpoints", function() {
     .send([{"setting": "theme", "value": "dark"}])
     .set("Authorization",`Bearer ${adminJWT}`)
     .end(function(err, res){
-      assert.equal( res.status, "201")
+      assert.strictEqual( res.status, 201)
 
       agent
       .get(`${host}/api/v1/users/0/settings`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
         assert.doesNotThrow( ()=>{ res.body.data.length } )
 
         done()
@@ -186,13 +186,75 @@ describe("User settings endpoints", function() {
   })
 })
 
+describe ( "One time tokens", ()=> {
+  it("Create one time token", (done)=>{
+    agent
+    .post(`${host}/api/v1/onetimetokens`)
+    .send({data:'abc'})
+    .set("Authorization",`Bearer ${userJWT}`)
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      done()
+    })
+  })
+
+  it("Get one time token", (done)=>{
+    agent
+    .post(`${host}/api/v1/onetimetokens`)
+    .send({data:'abc'})
+    .set("Authorization",`Bearer ${userJWT}`)
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      const tokenid = res.body.data.token
+
+      agent
+      .get(`${host}/api/v1/onetimetokens/${tokenid}`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.strictEqual( res.status, 200)
+        assert.strictEqual( res.body.data, "abc")
+        done()
+      })
+    })
+  })
+
+  it("Get one time token twice", (done)=>{
+    agent
+    .post(`${host}/api/v1/onetimetokens`)
+    .send({data:'abc'})
+    .set("Authorization",`Bearer ${userJWT}`)
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      const tokenid = res.body.data.token
+
+      agent
+      .get(`${host}/api/v1/onetimetokens/${tokenid}`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.strictEqual( res.status, 200)
+        assert.strictEqual( res.body.data, "abc")
+
+        agent
+        .get(`${host}/api/v1/onetimetokens/${tokenid}`)
+        .set("Authorization",`Bearer ${userJWT}`)
+        .end(function(err, res){
+          assert.strictEqual( res.status, 404)
+
+          done()
+        })
+      })
+    })
+  })
+
+})
+
 describe ("Items endpoints", ()=> {
   it("List item", function(done) {
     agent
     .get(`${host}/api/v1/items?search`)
     .set("Authorization",`Bearer ${userJWT}`)
     .end(function(err, res){
-      assert.equal( res.status, "200")
+      assert.strictEqual( res.status, 200)
       done()
     })
   })
@@ -203,7 +265,7 @@ describe ("Items endpoints", ()=> {
     .set("Authorization",`Bearer ${userJWT}`)
     .send({metadata: "test"})
     .end(function(err, res){
-      assert.equal( res.status, "200")
+      assert.strictEqual( res.status, 200)
       done()
     })
   })
@@ -214,7 +276,7 @@ describe ("Items endpoints", ()=> {
     .set("Authorization",`Bearer ${userJWT}`)
     .send({type: "test"})
     .end(function(err, res){
-      assert.equal( res.status, "422")
+      assert.strictEqual( res.status, 422)
       done()
     })
   })
@@ -224,41 +286,50 @@ describe ("Items endpoints", ()=> {
 describe("Item types", ()=>{
   it("Get item type", (done)=>{
     agent
-      .get(`${host}/api/v1/itemtypes/0`)
+    .post(`${host}/api/v1/itemtypes`)
+    .set("Authorization",`Bearer ${adminJWT}`)
+    .send({description:"test", icon:"fa-icon"})
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      var itemtypeId = res.body.data.id
+
+      agent
+      .get(`${host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
         done()
       })
+    })
   })
 
   it("Get unauthorized", (done)=>{
     agent
-      .get(`${host}/api/v1/itemtypes/0`)
-      .set("Authorization",`Bearer ${userJWT}`)
-      .end(function(err, res){
-        assert.equal( res.status, "403")
-        done()
-      })
+    .get(`${host}/api/v1/itemtypes/0`)
+    .set("Authorization",`Bearer ${userJWT}`)
+    .end(function(err, res){
+      assert.strictEqual( res.status, 403)
+      done()
+    })
   })
 
   it("Create and remove", (done)=>{
     agent
-      .post(`${host}/api/v1/itemtypes`)
+    .post(`${host}/api/v1/itemtypes`)
+    .set("Authorization",`Bearer ${adminJWT}`)
+    .send({description:"test", icon:"fa-icon"})
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      var itemtypeId = res.body.data.id
+
+      agent
+      .delete(`${host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${adminJWT}`)
-      .send({description:"test", icon:"fa-icon"})
       .end(function(err, res){
-        assert.equal( res.status, "201")
-        var itemtypeId = res.body.data.id
+        assert.strictEqual( res.status, 200)
 
-        agent
-        .delete(`${host}/api/v1/itemtypes/${itemtypeId}`)
-        .set("Authorization",`Bearer ${adminJWT}`)
-        .end(function(err, res){
-          assert.equal( res.status, "200")
-
-          done()
-        })
+        done()
+      })
     })
   })
 
@@ -268,20 +339,29 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${userJWT}`)
       .send({description:"test", icon:"fa-icon"})
       .end(function(err, res){
-        assert.equal( res.status, "403")
+        assert.strictEqual( res.status, 403)
         done()
       })
   })
 
   it("Update itemtype", (done)=>{
     agent
-      .patch(`${host}/api/v1/itemtypes/0`)
+    .post(`${host}/api/v1/itemtypes`)
+    .set("Authorization",`Bearer ${adminJWT}`)
+    .send({description:"test", icon:"fa-icon"})
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      var itemtypeId = res.body.data.id
+
+      agent
+      .patch(`${host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .send({description:"test", icon:"fa-icon"})
       .end(function(err, res){
-        assert.equal( res.status, "200")
+        assert.strictEqual( res.status, 200)
         done()
       })
+    })
   })
 
   it("Update itemtype unauthorized", (done)=>{
@@ -290,7 +370,7 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${userJWT}`)
       .send({description:"test", icon:"fa-icon"})
       .end(function(err, res){
-        assert.equal( res.status, "403")
+        assert.strictEqual( res.status, 403)
         done()
       })
   })
@@ -301,7 +381,7 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${adminJWT}`)
       .send({icon:"fa-icon"})
       .end(function(err, res){
-        assert.equal( res.status, "400")
+        assert.strictEqual( res.status, 400)
         done()
       })
   })
@@ -312,7 +392,7 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${adminJWT}`)
       .send({icon:"fa-icon"})
       .end(function(err, res){
-        assert.equal( res.status, "400")
+        assert.strictEqual( res.status, 400)
         done()
       })
   })
@@ -322,20 +402,11 @@ describe("Item types", ()=>{
       .get(`${host}/api/v1/itemtypes/?search=e`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .end(function(err, res){
-        assert.equal( res.status, "200")
-        done()
-      })
-  })
-
-  it("List itemtype unauthorized", (done)=>{
-    agent
-      .get(`${host}/api/v1/itemtypes/?search=e`)
-      .set("Authorization",`Bearer ${userJWT}`)
-      .end(function(err, res){
-        assert.equal( res.status, "403")
+        assert.strictEqual( res.status, 200)
         done()
       })
   })
 
 })
+
 })

@@ -39,6 +39,7 @@ tags:
     description: Events
   - name: "Utilities"
     description: Utilities
+  - name: "One time tokens"
 
 paths:
   /login:
@@ -91,6 +92,8 @@ paths:
     $ref: '.\paths\utilgeneratepassword.yaml'
   /events:
     $ref: '.\paths\events.yaml'
+  /onetimetokens:
+    $ref: '.\paths\onetimetokens.yaml'
 
 components:
   securitySchemes:
