@@ -433,11 +433,11 @@ export async function update(req, res, next) {
     if ( req.body.title ) {
       updateStruct.title = req.body.title
     }
-    if ( req.body.metadata ) {
-      updateStruct.metadata = req.body.metadata
+    if ( req.body.hasOwnProperty("metadata") ) {
+      updateStruct.metadata = req.body.metadata || null
     }
-    if ( req.body.type ) {
-      updateStruct.type = req.body.type
+    if ( req.body.hasOwnProperty("type") ) {
+      updateStruct.type = req.body.type || null
     }
     await DB.items.update({
       data: updateStruct,
