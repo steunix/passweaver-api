@@ -88,7 +88,6 @@ export async function create(req, res, next) {
     await DB.onetimetokens.create({
       data: {
         id: newid,
-        userid: req.user,
         token: newToken,
         expiresat: exp,
         data: encData.encrypted,
