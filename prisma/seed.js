@@ -147,7 +147,7 @@ async function main() {
     create: {
       id: id,
       description: "default",
-      icon: "fa-key"
+      icon: "key"
     }
   })
 }
