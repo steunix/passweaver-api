@@ -199,22 +199,36 @@ export async function update (req, res, next) {
 
     // If parent is given, check for correctenns
     if ( req.body.parent ) {
+      if ( folder.personal ) {
+        res.status(422).send(R.ko("Personal folders cannot be moved"))
+        return
+      }
+
       // Parent cannot be itself
       if ( req.body.parent == folder.id ) {
-        res.status(422).send(R.ko("Parent folder is invalid"))
+        res.status(422).send(R.ko("Target folder is invalid"))
         return
       }
 
       // Search parent folder
-      if ( !await Folder.exists(req.body.parent) ) {
-        res.status(404).send(R.ko("Parent folder not found"))
+      const pfolder = await DB.folders.findUnique({
+        where: { id: req.body.parent }
+      });
+      if ( !pfolder ) {
+        res.status(404).send(R.ko("Target folder not found"))
+        return
+      }
+
+      // Parent cannot be a personal folder
+      if ( pfolder.personal ) {
+        res.status(422).send(R.ko("Target folder cannot be personal"))
         return
       }
 
       // Parent cannot be one of its current children, otherwise it would break the tree
       const children = await Folder.children(folder.id)
       if ( children.find( (elem)=> { return elem.id == req.body.parent} ) ) {
-        res.status(422).send(R.ko("Parent folder is invalid"))
+        res.status(422).send(R.ko("Target folder is invalid"))
         return
       }
 
