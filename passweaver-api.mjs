@@ -9,7 +9,7 @@
 
 import Express from "express"
 import Morgan from "morgan"
-import RFS from "rotating-file-stream"
+import * as RFS from "rotating-file-stream"
 import FS from "fs"
 
 import * as Config from './lib/config.mjs'
