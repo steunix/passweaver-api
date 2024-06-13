@@ -393,7 +393,7 @@ export async function update(req, res, next) {
 
       const perm2 = await Folder.permissions(folderFromURL, req.user)
       if ( !perm2.write ) {
-        res.status(401).send(R.ko("Unauthorized"))
+        res.status(403).send(R.ko("Unauthorized"))
         return
       }
     }
