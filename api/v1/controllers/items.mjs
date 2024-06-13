@@ -325,7 +325,7 @@ export async function create(req, res, next) {
         folderid: folder,
         personal: personal,
         title: req.body.title,
-        type: req?.body?.type,
+        type: req?.body?.type || null,
         algo: encData.algo,
         data: encData.encrypted,
         dataiv: encData.iv,
