@@ -55,13 +55,21 @@ PassWeaver API has 2 predefined folders that cannot be modified:
 
 ### Personal folders
 
-Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Not even 'admin' user can read these items since items are encrypted using a different key: each user will have to set a personal password that will be used for encrypting/decrypting personal items.
+Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Not even 'admin' user can read these items since items are encrypted using a different key: each user will have to set a personal password that will be used for unlocking personal folder. The key for encryption is (at the moment) the same of non-personal items.
 
 ### Users and groups
 
 Users are assigned to groups, and groups have read/write permissions for a given folder.
 
 Users can join any number of groups.
+
+While groups can be nested to form a tree, there is no inheritance: if a user is part of a group G, it will not automatically join the "children" of G.
+
+#### Authentication
+
+PassWeaver supports two authentication methods:
+ - Local: the user password is stored locally
+ - LDAP: a self authentication to an LDAP server: no LDAP admin credential are needed, a direct login is tried
 
 #### Admins
 
