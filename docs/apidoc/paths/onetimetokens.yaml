@@ -10,10 +10,6 @@ get:
     "200":
       description: Item type found
       $ref: '..\responsebodies\onetimetokens.yaml#/oneTimeSecretGetResult'
-    "401":
-      $ref: '..\responsebodies\default.yaml#/unauthorized'
-    "403":
-      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
       description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'

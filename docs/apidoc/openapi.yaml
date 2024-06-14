@@ -35,11 +35,12 @@ tags:
     description: Items
   - name: "Item types"
     description: Item types
+  - name: "One time tokens"
+    description: "One time tokens"
   - name: "Events"
     description: Events
   - name: "Utilities"
     description: Utilities
-  - name: "One time tokens"
 
 paths:
   /login:
