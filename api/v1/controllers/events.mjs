@@ -22,7 +22,7 @@ const createSchema = {
 }
 
 /**
- * Generate a password
+ * Store an event
  * @param {object} req Express request
  * @param {object} res Express response
  * @param {function} next Next

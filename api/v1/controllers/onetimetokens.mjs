@@ -22,7 +22,7 @@ const createSchema = {
 }
 
 /**
- *
+ * Decrypt and return a one time secret
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Error callback

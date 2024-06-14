@@ -513,7 +513,7 @@ export async function removeUser(req, res, next) {
 }
 
 /**
- * Get the structure of groups
+ * Get the tree structure of groups
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback

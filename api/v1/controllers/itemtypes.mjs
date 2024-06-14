@@ -130,7 +130,7 @@ export async function create(req, res, next) {
 }
 
 /**
- * Updates an item type
+ * Update an item type
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @returns
@@ -185,7 +185,7 @@ export async function update(req, res, next) {
 }
 
 /**
- * Deletes an item type
+ * Delete an item type
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @returns
@@ -206,7 +206,7 @@ export async function remove(req, res, next) {
     })
 
     if ( itemtypes===null ) {
-      res.status(404).send(R.ko("Item not found"))
+      res.status(404).send(R.ko("Item type not found"))
       return
     }
 
