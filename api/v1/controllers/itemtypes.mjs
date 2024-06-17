@@ -77,6 +77,9 @@ export async function list(req, res, next) {
     const itemtypes = await DB.itemtypes.findMany({
       where: {
         description: { contains: search, mode: 'insensitive' }
+      },
+      orderBy: {
+        description: "asc"
       }
     })
 
