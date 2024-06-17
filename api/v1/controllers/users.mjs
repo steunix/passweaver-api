@@ -187,7 +187,7 @@ export async function create(req, res, next) {
     }
 
     // Check for login uniqueness
-    const login = DB.users.findMany({
+    const login = await DB.users.findMany({
       where: { login: req.body.login}
     })
     if ( login ) {
