@@ -190,7 +190,7 @@ export async function create(req, res, next) {
     const login = await DB.users.findMany({
       where: { login: req.body.login}
     })
-    if ( login ) {
+    if ( login.length>0 ) {
       res.status(400).send(R.ko("Login already exist"))
       return
     }
@@ -278,13 +278,15 @@ export async function update(req, res, next) {
       return
     }
 
-    // Check for login uniqueness
-    const login = DB.users.findMany({
-      where: { login: req.body.login}
-    })
-    if ( login ) {
-      res.status(400).send(R.ko("Login already exist"))
-      return
+    // Check for login uniqueness, if changed
+    if ( req.body.login && req.body.login != user.login ) {
+      const login = DB.users.findMany({
+        where: { login: req.body.login}
+      })
+      if ( login.length ) {
+        res.status(400).send(R.ko("Login already exist"))
+        return
+      }
     }
 
     let updateStruct = {}
