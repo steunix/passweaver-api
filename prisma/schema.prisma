@@ -44,7 +44,7 @@ model groups {
 
 model users {
   id              String   @id @db.VarChar(30)
-  login           String   @db.VarChar(50)
+  login           String   @unique @db.VarChar(50)
   lastname        String   @db.VarChar(100)
   firstname       String?  @db.VarChar(100)
   authmethod      String   @db.VarChar(10)

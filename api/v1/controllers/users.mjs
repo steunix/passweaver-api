@@ -186,6 +186,15 @@ export async function create(req, res, next) {
       return
     }
 
+    // Check for login uniqueness
+    const login = DB.users.findMany({
+      where: { login: req.body.login}
+    })
+    if ( login ) {
+      res.status(400).send(R.ko("Login already exist"))
+      return
+    }
+
     // Creates user
     const newUserId = newId()
     await DB.$transaction(async(tx)=> {
@@ -266,6 +275,15 @@ export async function update(req, res, next) {
 
     if ( user===null ) {
       res.status(404).send(R.ko("User not found"))
+      return
+    }
+
+    // Check for login uniqueness
+    const login = DB.users.findMany({
+      where: { login: req.body.login}
+    })
+    if ( login ) {
+      res.status(400).send(R.ko("Login already exist"))
       return
     }
 
