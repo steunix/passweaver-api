@@ -300,11 +300,11 @@ export async function remove(req, res, next) {
       return
     }
 
-      // Admin cannot remove personal folders
-      if ( await Auth.isAdmin(req) && folder.personal ) {
-        res.status(403).send(R.ko("Unauthorized"))
-        return
-      }
+    // Admin cannot remove personal folders
+    if ( await Auth.isAdmin(req) && folder.personal ) {
+      res.status(403).send(R.ko("Unauthorized"))
+      return
+    }
 
     // Check write permissions on folder
     const perm = await Folder.permissions(id, req.user);
