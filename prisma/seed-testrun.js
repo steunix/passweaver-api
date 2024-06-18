@@ -49,7 +49,7 @@ async function main() {
       create: {
           id: id,
           description: "Sample folder 1",
-          parent: 0
+          parent: "0"
       }
   })
 
@@ -61,7 +61,7 @@ async function main() {
       create: {
           id: id,
           description: "Sample folder 2",
-          parent: 0
+          parent: "0"
       }
   })
 
@@ -135,16 +135,39 @@ async function main() {
     }
   })
 
+  // Admin
+  id = "user1"
+  const user1 = await prisma.users.upsert({
+    where: { id: id },
+    update: {},
+    create: {
+        id: id,
+        login: "user1",
+        lastname: "user1",
+        firstname: "",
+        locale: "en_US",
+        authmethod: "local",
+        email: "user1",
+        secret: "$2a$12$YIWFVQ9cU6Xv9Jf4jOz9VeyS7APLpAqmXqKM7ap8CybvJSc7ldLba",
+        secretexpiresat: new Date(2050,1,1),
+        personalsecret: null,
+        active: true
+    }
+  })
+
   /** USERS GROUP ASSOCIATION */
   // Admin in Admins
   id = "gu0"
   const gu1 = await prisma.groupsmembers.upsert({
     where: { id: id },
-    update: {},
+    update: {
+      groupid: Const.PW_GROUP_ADMINSID,
+      userid: Const.PW_USER_ADMINID
+    },
     create: {
       id: id,
-      group: Const.PW_GROUP_ADMINSID,
-      user: Const.PW_USER_ADMINID
+      groupid: Const.PW_GROUP_ADMINSID,
+      userid: Const.PW_USER_ADMINID
     }
   })
 
@@ -152,11 +175,29 @@ async function main() {
   id = "gu1"
   const gu2 = await prisma.groupsmembers.upsert({
     where: { id: id },
-    update: {},
+    update: {
+      groupid: Const.PW_GROUP_EVERYONEID,
+      userid: Const.PW_USER_ADMINID
+    },
     create: {
       id: id,
-      group: Const.PW_GROUP_EVERYONEID,
-      user: Const.PW_USER_ADMINID
+      groupid: Const.PW_GROUP_EVERYONEID,
+      userid: Const.PW_USER_ADMINID
+    }
+  })
+
+  // user1 in Everyone
+  id = "gu2"
+  const gu3 = await prisma.groupsmembers.upsert({
+    where: { id: id },
+    update: {
+      groupid: Const.PW_GROUP_EVERYONEID,
+      userid: "user1"
+    },
+    create: {
+      id: id,
+      groupid: Const.PW_GROUP_EVERYONEID,
+      userid: "user1"
     }
   })
 
@@ -168,8 +209,22 @@ async function main() {
     update: {},
     create: {
       id: id,
-      folder: Const.PW_FOLDER_ROOTID,
-      group: Const.PW_GROUP_ADMINSID,
+      folderid: Const.PW_FOLDER_ROOTID,
+      groupid: Const.PW_GROUP_ADMINSID,
+      read: true,
+      write: true
+    }
+  })
+
+  // Everyone r+w on sample1
+  id = "fg1"
+  const fg1 = await prisma.folderspermissions.upsert({
+    where: { id: id},
+    update: {},
+    create: {
+      id: id,
+      folderid: "sample1",
+      groupid: "E",
       read: true,
       write: true
     }

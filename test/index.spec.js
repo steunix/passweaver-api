@@ -6,13 +6,20 @@ var adminJWT, userJWT
 var host
 
 const userCreateData = {
-  "login": "14",
+  "login": "test",
   "firstname": "test",
   "lastname": "test",
   "authmethod": "local",
   "locale": "en_US",
   "email": "me",
   "secret": "123"
+}
+
+const itemCreateData = {
+  "title": "title",
+  "description": "description",
+  "data": "",
+  "metadata": ""
 }
 
 before((done)=>{
@@ -112,10 +119,13 @@ describe("Users endpoints", function() {
   })
 
   it("Create and remove user", function(done) {
+    var data = userCreateData
+    data.login = `${data.login}_t1`
+
     agent
     .post(`${host}/api/v1/users`)
     .set("Authorization",`Bearer ${adminJWT}`)
-    .send(userCreateData)
+    .send(data)
     .end(function(err, res){
       assert.strictEqual( res.status, 201)
       var userId = res.body.data.id
@@ -132,13 +142,16 @@ describe("Users endpoints", function() {
   })
 
   it("Update user", function(done) {
+    var data = userCreateData
+    data.login = `${data.login}_t2`
+
     agent
     .post(`${host}/api/v1/users`)
     .set("Authorization",`Bearer ${adminJWT}`)
-    .send(userCreateData)
+    .send(data)
     .end(function(err, res){
       assert.strictEqual( res.status, 201)
-      var userId = res.body.data.id
+      const userId = res.body.data.id
 
       agent
       .patch(`${host}/api/v1/users/${userId}`)
@@ -272,33 +285,76 @@ describe ( "One time tokens", ()=> {
 describe ("Items endpoints", ()=> {
   it("List item", function(done) {
     agent
-    .get(`${host}/api/v1/items?search`)
+    .post(`${host}/api/v1/folders/sample1/items`)
     .set("Authorization",`Bearer ${userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 200)
-      done()
+    .send(itemCreateData)
+    .end(function(err,res) {
+      assert.strictEqual(res.status, 201)
+      const itemid = res.body.data.id
+
+      agent
+      .get(`${host}/api/v1/items?search`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .end(function(err, res){
+        assert.strictEqual( res.status, 200)
+        done()
+      })
     })
   })
 
-  it("Update item", function(done) {
+  it("Create, update and remove item", function(done) {
     agent
-    .patch(`${host}/api/v1/items/test`)
+    .post(`${host}/api/v1/folders/sample1/items`)
     .set("Authorization",`Bearer ${userJWT}`)
-    .send({metadata: "test"})
-    .end(function(err, res){
-      assert.strictEqual( res.status, 200)
-      done()
+    .send(itemCreateData)
+    .end(function(err,res) {
+      assert.strictEqual(res.status, 201)
+      const itemid = res.body.data.id
+
+      agent
+      .patch(`${host}/api/v1/items/${itemid}`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .send({metadata: "test"})
+      .end(function(err, res){
+        assert.strictEqual( res.status, 200)
+
+        agent
+        .delete(`${host}/api/v1/items/${itemid}`)
+        .set("Authorization",`Bearer ${userJWT}`)
+        .end(function(err, res){
+          assert.strictEqual( res.status, 200)
+
+          done()
+        })
+      })
     })
   })
 
-  it("Update item bad type", function(done) {
+  it("Update item, bad type", function(done) {
     agent
-    .patch(`${host}/api/v1/items/test`)
+    .post(`${host}/api/v1/folders/sample1/items`)
     .set("Authorization",`Bearer ${userJWT}`)
-    .send({type: "test"})
-    .end(function(err, res){
-      assert.strictEqual( res.status, 422)
-      done()
+    .send(itemCreateData)
+    .end(function(err,res) {
+      assert.strictEqual(res.status, 201)
+      const itemid = res.body.data.id
+
+      agent
+      .patch(`${host}/api/v1/items/${itemid}`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .send({type: "test"})
+      .end(function(err, res){
+        assert.strictEqual( res.status, 422)
+
+        agent
+        .delete(`${host}/api/v1/items/${itemid}`)
+        .set("Authorization",`Bearer ${userJWT}`)
+        .end(function(err, res){
+          assert.strictEqual( res.status, 200)
+
+          done()
+        })
+      })
     })
   })
 

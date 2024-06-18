@@ -188,7 +188,7 @@ export async function create(req, res, next) {
 
     // Check for login uniqueness
     const login = await DB.users.findMany({
-      where: { login: req.body.login}
+      where: { login: req.body.login }
     })
     if ( login.length>0 ) {
       res.status(400).send(R.ko("Login already exist"))
