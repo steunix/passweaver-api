@@ -55,7 +55,7 @@ PassWeaver API has 2 predefined folders that cannot be modified:
 
 ### Personal folders
 
-Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Not even 'admin' user can read these items since items are encrypted using a different key: each user will have to set a personal password that will be used for unlocking personal folder. The key for encryption is (at the moment) the same of non-personal items.
+Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Each user will have to set a personal password that will be used for unlocking personal folders. The key for encryption is (at the moment) the same of non-personal items.
 
 ### Users and groups
 
@@ -63,7 +63,7 @@ Users are assigned to groups, and groups have read/write permissions for a given
 
 Users can join any number of groups.
 
-While groups can be nested to form a tree, there is no inheritance: if a user is part of a group G, it will not automatically join the "children" of G.
+While groups can be nested to form a tree, there is no membership inheritance: if a user is member of a group G, it will not automatically join the "children" of G.
 
 #### Authentication
 
@@ -73,13 +73,13 @@ PassWeaver supports two authentication methods:
 
 #### Admins
 
-The **Admins** built-in group, which built-in user **admin** is part of, is targeted at creating users and groups, and assigning permissions to folders. Both Admins group and admin user cannot be updated or removed.
+The **Admins** built-in group and it's built-in member user **admin** are targeted at creating users and groups, and assigning permissions to folders. Both Admins group and admin user cannot be updated or deleted.
 
-> A limitation of **Admins** group is that its members have **NO** access to any items in any folder: this is intentional... no implicit permissions on secreted data.
+Since **Admins** group members and **admin** user are meant for administration tasks, they have **NO** access to any items in any folder, and they do not have personal folders either.
 
 #### Everyone
 
-Another built-in group is 'Everyone', quite self-explanatory: all created users will be automatically added to this group, and they can't be removed from it.
+Another built-in group is **Everyone**, quite self-explanatory: all created users will be automatically added to this group, and they can't be removed from it.
 
 ### Permissions
 
@@ -108,21 +108,17 @@ But, remember, **permissions are always inherited**. What does this mean?
 
 If an "AdminGCP" user creates a new folder in "GCP", let's suppose "VPNs", what happens? This folder would inherit the "GCP" permissions, thus, in our example, read+write for "GCPAdmins". Even if this new "VPNs" folder is given read+write permissions on a completely different group, and not "AdminGCP" explicitly, "AdminGCP" will always have read+write permissions.
 
-In other words, a permission on a folder is granted **for itself and all its children folders**, with no exception.
+In other words, a permission on a folder is granted **for itself and all its children folders**.
 
-Think of it as a regular hard disk folder: 'root' user has access to all directories, and while user 'dummy' may create subdirectory, root will always be able to access them even if they have '700' permissions.
+While this may sound as a limitation, in the long run it allows to avoid wild permissions forests, such as "hidden" folders available only to a restricted number of people, in a point of the folder 'tree' where you would not expect it.
 
-While this may sound as a limitation, in the long run it allows to avoid wild permissions forests, such as "hidden" folders available only to a restricted number of people, in a point of the 'tree' where you would not expect. "Folder" admins are "responsible" for everything is happening in "their" tree, down to the last leaf.
-
-That is indeed **exactly** how user 'Admin' in PassWeaver API works: it's part of the builtin "Admins" group and "Admins" have read+write access to 'Root' folder, thus to every folder - due to this inheritance.
+That is indeed **exactly** how user **Admin** in PassWeaver API works: it's part of the builtin **Admins**, which has read+write access to 'Root' folder, thus to every folder - due to this kind of inheritance.
 
 ## Encryption
 
 User passwords are hashed using bcrypt algorythm.
 
-Items are encrypted and stored in the database using a master key that is read **from the environment variable `PASSWEAVERAPI_MASTER_KEY`**: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
-
-Items are encrypted using AES-GCM algorithm with the master key, and are stored along with IV and auth tag.
+Items are encrypted at rest in the database using AES-GCM, using a master key that is read **from the environment variable `PASSWEAVERAPI_MASTER_KEY`**: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
 
 **WARNING**: as with any other software using asymmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure you keep your master key safe and *properly backed up*.
 
@@ -132,7 +128,7 @@ Every operation is logged into the database, from logins to CRUD operations, to 
 
 ## Application logs
 
-PassWeaver API logs every call in a 'combined', Apache-like format. Errors are tracked in a separate log.
+PassWeaver API logs every call in a 'combined', Apache-like format. Errors are tracked in a separate log instead.
 
 ## The API
 
