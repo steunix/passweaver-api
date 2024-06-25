@@ -8,6 +8,7 @@
  */
 
 import Express from "express"
+import compression from "compression"
 import Morgan from "morgan"
 import * as RFS from "rotating-file-stream"
 import FS from "fs"
@@ -49,6 +50,9 @@ app.use(rateLimitMiddleware)
 
 // Use json middleware
 app.use(Express.json())
+
+// Compression
+app.use(compression())
 
 // HSTS
 if ( cfg?.https?.hsts ) {
