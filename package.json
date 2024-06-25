@@ -27,7 +27,8 @@
     "node-cache": "^5.1.2",
     "prisma": "^5.15.0",
     "rotating-file-stream": "^3.2.1",
-    "uuidv7": "^1.0.0"
+    "uuidv7": "^1.0.0",
+    "helmet": "^7.1.0"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

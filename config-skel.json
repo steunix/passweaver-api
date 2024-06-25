@@ -8,5 +8,11 @@
     "baseDn": "",
     "userDn": ""
   },
-  "log_dir": "./log"
+  "log_dir": "./log",
+  "https": {
+    "enabled": false,
+    "certificate": "/path/to/certificate",
+    "private_key": "/path/to/private_key",
+    "hsts": false
+  }
 }

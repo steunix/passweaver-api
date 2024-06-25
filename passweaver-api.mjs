@@ -11,6 +11,8 @@ import Express from "express"
 import Morgan from "morgan"
 import * as RFS from "rotating-file-stream"
 import FS from "fs"
+import helmet from 'helmet'
+import https from 'https'
 
 import * as Config from './lib/config.mjs'
 
@@ -47,6 +49,11 @@ app.use(rateLimitMiddleware)
 
 // Use json middleware
 app.use(Express.json())
+
+// HSTS
+if ( cfg?.https?.hsts ) {
+  app.use(helmet.hsts())
+}
 
 if ( !FS.existsSync(cfg.log_dir) ) {
   FS.mkdirSync(cfg.log_dir)
@@ -95,6 +102,15 @@ app.all("*", (_req, res, _next) => {
   })
 })
 
-console.log(`Listening on port ${cfg.listen_port}`)
 
-app.listen(cfg.listen_port)
+// HTTP(S) server startup
+if ( cfg.https.enabled ) {
+  https.createServer({
+    key: FS.readFileSync(cfg.https.private_key),
+    cert: FS.readFileSync(cfg.https.certificate)
+  },app).listen(cfg.listen_port)
+  console.log(`Listening on port ${cfg.listen_port} (https)`)
+} else {
+  console.log(`Listening on port ${cfg.listen_port} (http)`)
+  app.listen(cfg.listen_port)
+}
