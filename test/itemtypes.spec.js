@@ -1,7 +1,7 @@
 require("./common.js")
 
 describe("Item types", ()=>{
-  it("Get item type", (done)=>{
+  it("Create, get and delete item type", (done)=>{
     global.agent
     .post(`${global.host}/api/v1/itemtypes`)
     .set("Authorization",`Bearer ${global.adminJWT}`)
@@ -15,12 +15,19 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .end(function(err, res){
         assert.strictEqual( res.status, 200)
-        done()
+
+        agent
+        .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
+        .set("Authorization",`Bearer ${global.adminJWT}`)
+        .end(function(err, res){
+          assert.strictEqual( res.status, 200)
+          done()
+        })
       })
     })
   })
 
-  it("Get unauthorized", (done)=>{
+  it("Get item type unauthorized", (done)=>{
     agent
     .get(`${global.host}/api/v1/itemtypes/0`)
     .set("Authorization",`Bearer ${userJWT}`)
@@ -30,27 +37,7 @@ describe("Item types", ()=>{
     })
   })
 
-  it("Create and remove", (done)=>{
-    agent
-    .post(`${global.host}/api/v1/itemtypes`)
-    .set("Authorization",`Bearer ${global.adminJWT}`)
-    .send({description:"test", icon:"fa-icon"})
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
-      var itemtypeId = res.body.data.id
-
-      agent
-      .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
-      .set("Authorization",`Bearer ${global.adminJWT}`)
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
-
-        done()
-      })
-    })
-  })
-
-  it("Create itemtype unauthorized", (done)=>{
+  it("Create item type unauthorized", (done)=>{
     agent
       .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${userJWT}`)
@@ -61,7 +48,7 @@ describe("Item types", ()=>{
       })
   })
 
-  it("Update itemtype", (done)=>{
+  it("Update item type", (done)=>{
     agent
     .post(`${global.host}/api/v1/itemtypes`)
     .set("Authorization",`Bearer ${global.adminJWT}`)
@@ -76,12 +63,19 @@ describe("Item types", ()=>{
       .send({description:"test", icon:"fa-icon"})
       .end(function(err, res){
         assert.strictEqual( res.status, 200)
-        done()
+
+        agent
+        .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
+        .set("Authorization",`Bearer ${global.adminJWT}`)
+        .end(function(err, res){
+          assert.strictEqual( res.status, 200)
+          done()
+        })
       })
     })
   })
 
-  it("Update itemtype unauthorized", (done)=>{
+  it("Update item type unauthorized", (done)=>{
     agent
       .patch(`${global.host}/api/v1/itemtypes/0`)
       .set("Authorization",`Bearer ${userJWT}`)
@@ -92,7 +86,7 @@ describe("Item types", ()=>{
       })
   })
 
-  it("Update itemtype bad data", (done)=>{
+  it("Update item type bad data", (done)=>{
     agent
       .patch(`${global.host}/api/v1/itemtypes/0`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
@@ -103,7 +97,7 @@ describe("Item types", ()=>{
       })
   })
 
-  it("Create itemtype bad data", (done)=>{
+  it("Create item type bad data", (done)=>{
     agent
       .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
@@ -114,9 +108,9 @@ describe("Item types", ()=>{
       })
   })
 
-  it("List itemtype", (done)=>{
+  it("List item types", (done)=>{
     agent
-      .get(`${global.host}/api/v1/itemtypes/?search=e`)
+      .get(`${global.host}/api/v1/itemtypes/`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .end(function(err, res){
         assert.strictEqual( res.status, 200)

@@ -12,6 +12,17 @@ describe ( "One time tokens", ()=> {
     })
   })
 
+  it("Create one time token, empty data", (done)=>{
+    agent
+    .post(`${host}/api/v1/onetimetokens`)
+    .send({data:''})
+    .set("Authorization",`Bearer ${global.userJWT}`)
+    .end(function(err, res){
+      assert.strictEqual( res.status, 400)
+      done()
+    })
+  })
+
   it("Create one time token", (done)=>{
     agent
     .post(`${host}/api/v1/onetimetokens`)

@@ -70,6 +70,12 @@ export async function create(req, res, next) {
       return
     }
 
+    // Check data is not empty
+    if ( req.body.data=="" ) {
+      res.status(400).send(R.ko("Data cannot be empty"))
+      return
+    }
+
     // Delete expired items
     await DB.onetimetokens.deleteMany({
       where: {
