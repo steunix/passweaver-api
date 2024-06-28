@@ -436,7 +436,6 @@ export async function addUser(req, res, next) {
 
     actions.log(req.user, "add", "groupsmembers", `${group}/${user}`)
     Cache.resetFoldersTree()
-    Cache.resetGroupsTree()
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -505,7 +504,6 @@ export async function removeUser(req, res, next) {
 
     actions.log(req.user, "delete", "groupsmembers", `${group}/${user}`)
     Cache.resetFoldersTree()
-    Cache.resetGroupsTree()
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
