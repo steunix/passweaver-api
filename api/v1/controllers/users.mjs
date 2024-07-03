@@ -188,7 +188,7 @@ export async function create(req, res, next) {
 
     // Check for login uniqueness
     const login = await DB.users.findMany({
-      where: { login: req.body.login }
+      where: { login: req.body.login.toLowerCase() }
     })
     if ( login.length>0 ) {
       res.status(400).send(R.ko("Login already exist"))
@@ -202,12 +202,12 @@ export async function create(req, res, next) {
       await DB.users.create({
         data: {
           id: newUserId,
-          login: req.body.login,
+          login: req.body.login.toLowerCase(),
           firstname: req.body.firstname,
           lastname: req.body?.lastname,
           locale: req.body?.locale ?? "en_US",
           authmethod: req.body?.authmethod ?? "local",
-          email: req.body.email,
+          email: req.body.email.toLowerCase(),
           secret: hash,
           secretexpiresat: new Date(2050,12,31,23,59,59)
         }
@@ -291,7 +291,7 @@ export async function update(req, res, next) {
 
     let updateStruct = {}
     if ( req.body.login ) {
-      updateStruct.login = req.body.login
+      updateStruct.login = req.body.login.toLowerCase()
     }
     if ( req.body.firstname ) {
       updateStruct.firstname = req.body.firstname
@@ -306,7 +306,7 @@ export async function update(req, res, next) {
       updateStruct.locale = req.body.locale
     }
     if ( req.body.email ) {
-      updateStruct.email = req.body.email
+      updateStruct.email = req.body.email.toLowerCase()
     }
     if ( req.body.secret ) {
       updateStruct.secret = await Crypt.hashPassword(req.body.secret)

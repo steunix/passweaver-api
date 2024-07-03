@@ -42,7 +42,7 @@ export async function login(req, res, next) {
 
     // Check user
     const user = await DB.users.findFirst({
-      where: { login: req.body.username }
+      where: { login: req.body.username.toLowerCase() }
     })
     if ( user===null ) {
       actions.log(req.body.username, "loginnotfound", "user", req.body.username)

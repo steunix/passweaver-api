@@ -38,12 +38,12 @@ before((done)=>{
   // Get both admin jwt and user jwt
   agent
     .post(`${global.host}/api/v1/login`)
-    .send({"username":"admin", "password": "0"})
+    .send({"username":"ADMIN", "password": "0"})
     .then(res=>{
       global.adminJWT = res.body.data.jwt
       agent
         .post(`${global.host}/api/v1/login`)
-        .send({"username":"user1", "password": "0"})
+        .send({"username":"USER1", "password": "0"})
         .then(res=>{
           global.userJWT = res.body.data.jwt
           done()

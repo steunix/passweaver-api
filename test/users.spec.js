@@ -55,6 +55,30 @@ describe("Users endpoints", function() {
     })
   })
 
+  it("Create duplicate login", function(done) {
+    var data = userCreateData
+    data.login = `${data.login}_t1`
+
+    agent
+    .post(`${host}/api/v1/users`)
+    .set("Authorization",`Bearer ${global.adminJWT}`)
+    .send(data)
+    .end(function(err, res){
+      assert.strictEqual( res.status, 201)
+      data.login = data.login.toUpperCase()
+
+      agent
+      .post(`${host}/api/v1/users`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send(data)
+      .end(function(err, res){
+        assert.strictEqual( res.status, 400)
+
+        done()
+      })
+    })
+  })
+
   it("Update user", function(done) {
     var data = userCreateData
     data.login = `${data.login}_t2`
