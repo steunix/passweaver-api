@@ -33,7 +33,7 @@ describe("Users endpoints", function() {
   })
 
   it("Create and remove user", function(done) {
-    var data = userCreateData
+    var data = { ...userCreateData }
     data.login = `${data.login}_t1`
 
     agent
@@ -56,7 +56,7 @@ describe("Users endpoints", function() {
   })
 
   it("Create duplicate login", function(done) {
-    var data = userCreateData
+    var data = { ...userCreateData }
     data.login = `${data.login}_t1`
 
     agent
@@ -74,7 +74,13 @@ describe("Users endpoints", function() {
       .end(function(err, res){
         assert.strictEqual( res.status, 400)
 
-        done()
+        agent
+        .delete(`${host}/api/v1/users/${userId}`)
+        .set("Authorization",`Bearer ${global.adminJWT}`)
+        .end(function(err, res){
+          assert.strictEqual( res.status, 200)
+          done()
+        })
       })
     })
   })
