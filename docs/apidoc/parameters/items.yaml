@@ -19,7 +19,15 @@ folderid:
 search:
   name: search
   in: query
-  description: Search string
+  description: Filter items for title or metadata
+  required: false
+  schema:
+    type: string
+
+type:
+  name: type
+  in: query
+  description: Filter items by type
   required: false
   schema:
     type: string

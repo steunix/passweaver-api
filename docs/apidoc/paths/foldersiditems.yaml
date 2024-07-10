@@ -39,6 +39,7 @@ get:
   parameters:
     - $ref: '..\parameters\items.yaml#/folderid'
     - $ref: '..\parameters\items.yaml#/search'
+    - $ref: '..\parameters\items.yaml#/type'
   responses:
     "200":
       $ref: '..\responsebodies\folders.yaml#/itemslistsuccess'

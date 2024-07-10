@@ -150,6 +150,7 @@ export async function list(req, res, next) {
 
     const folder = req.params?.folder
     const search = req.query?.search ?? ''
+    const type = req.query?.type ?? ''
 
     var items, folders
 
@@ -210,12 +211,20 @@ export async function list(req, res, next) {
 
     // Search folder
     const folderList = folders.map(folders=>folders)
+
+    // Build search filter
+    let queryFilter = [
+      { folderid: { in: folderList } },
+      { AND: contains }
+    ]
+
+    if ( type!='' ) {
+      queryFilter.push({type: type})
+    }
+
     items = await DB.items.findMany({
       where: {
-        AND: [
-          { folderid: { in: folderList } },
-          { AND: contains }
-        ]
+        AND: queryFilter
       },
       select: {
         id: true,
