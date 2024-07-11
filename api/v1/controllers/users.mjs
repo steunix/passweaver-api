@@ -397,7 +397,7 @@ export async function remove(req, res, next) {
 
     })
 
-    actions.log(req.user, "delete", "folder", id)
+    actions.log(req.user, "delete", "user", id)
     Cache.resetFoldersTree()
     Cache.resetGroupsTree()
 
