@@ -124,6 +124,23 @@ model items {
   @@index([folderid])
 }
 
+model itemsdeleted {
+  id          String    @id @db.VarChar(30)
+  folderid    String    @db.VarChar(30)
+  personal    Boolean   @default(false)
+  type        String?   @db.VarChar(30)
+  title       String    @db.VarChar(200)
+  data        String
+  dataiv      String
+  dataauthtag String
+  algo        String?
+  metadata    String?
+  createdat   DateTime
+  updatedat   DateTime  @updatedAt
+  deletedat   DateTime  @default(now())
+  accessedat  DateTime?
+}
+
 model itemtypes {
   id          String   @id @db.VarChar(30)
   description String   @db.VarChar(20)

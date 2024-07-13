@@ -515,11 +515,17 @@ export async function remove(req, res, next) {
       }
     }
 
-    // Deletes item
-    await DB.items.delete({
-      where: {
-        id: id
-      }
+    // Delete item and move it to deleted items table
+    await DB.$transaction(async(tx)=> {
+      await DB.itemsdeleted.create({
+        data: item
+      })
+
+      await DB.items.delete({
+        where: {
+          id: id
+        }
+      })
     })
 
     actions.log(req.user, "delete", "item", id)
