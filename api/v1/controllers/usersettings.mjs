@@ -9,7 +9,6 @@ import jsonschema from 'jsonschema'
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as actions from '../../../lib/action.mjs'
-import { isAdmin } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
 
 // Payload schema
