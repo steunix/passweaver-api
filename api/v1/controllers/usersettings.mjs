@@ -11,7 +11,7 @@ import * as R from '../../../lib/response.mjs'
 import * as actions from '../../../lib/action.mjs'
 import DB from '../../../lib/db.mjs'
 
-// Payload schema
+// Payload schemas
 const setSchema = {
   "id": "create",
   "type": "array",
@@ -36,7 +36,7 @@ export async function get(req, res, next) {
   try {
     const userid = req.params.id
 
-    // Settings can be changed user only
+    // Settings can be read only by the owner
     if ( req.user!==userid) {
       res.status(403).send(R.ko("Unauthorized"))
       return
@@ -69,7 +69,7 @@ export async function set(req, res, next) {
   try {
     const userid = req.params.id
 
-    // Check user
+    // Settings can be written only by the owner
     if ( req.user!==userid) {
       res.status(403).send(R.ko("Unauthorized"))
       return
@@ -102,7 +102,7 @@ export async function set(req, res, next) {
       }
     })
 
-    actions.log(req.user, "create", "settings", userid)
+    actions.log(req.user, "update", "settings", userid)
     res.status(201).send(R.ok())
   } catch (err) {
     next(err)

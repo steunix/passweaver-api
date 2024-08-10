@@ -1,6 +1,6 @@
 /**
  * Personal folder controller module
- * @module controllers/login
+ * @module controllers/personal
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
@@ -12,6 +12,7 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import DB from '../../../lib/db.mjs'
 
+// Payload schemas
 const personalSchema = {
   "id": "unlock",
   "type": "object",

@@ -134,7 +134,7 @@ export async function get(req, res, next) {
 }
 
 /**
- * Get folder items
+ * Get folder items list
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback

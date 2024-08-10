@@ -50,12 +50,12 @@ const groupSchema = {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function get (req, res, next) {
+export async function get(req, res, next) {
   try {
     const id = req.params.id
 
     // Search folder
-    const folder = await DB.folders.findFirst({
+    const folder = await DB.folders.findUnique({
       where: { id: id }
     })
     if ( folder===null ) {
@@ -196,7 +196,7 @@ export async function update (req, res, next) {
       return
     }
 
-    // If parent is given, check for correctenns
+    // If parent is given, check for correctness
     if ( req.body.parent ) {
       if ( folder.personal ) {
         res.status(422).send(R.ko("Personal folders cannot be moved"))
@@ -246,6 +246,7 @@ export async function update (req, res, next) {
     if ( req.body.parent ) {
       updateStruct.parent = req.body.parent
     }
+
     // Update folder
     await DB.folders.update({
       data: updateStruct,
@@ -473,7 +474,7 @@ export async function setGroup(req, res, next) {
       return
     }
 
-    // Adds the permission
+    // Update permissions
     await DB.folderspermissions.update({
       where: { id: perm.id },
       data: {

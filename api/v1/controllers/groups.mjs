@@ -103,7 +103,7 @@ export async function list(req, res, next) {
 }
 
 /**
- * Gets a group members
+ * Get group members
  * @param {object} req Express request
  * @param {object} res Express response
  * @param {Function} next Express next callback
@@ -139,6 +139,7 @@ export async function getUsers(req, res, next) {
       }
     })
 
+    // FIXME: is this loop necessary? Why not sending users directly?
     for ( const user of users ) {
       data.push(user.users)
     }
@@ -347,6 +348,7 @@ export async function remove(req, res, next) {
       return
     }
 
+    // FIXME: use transaction
     // Delete user/groups
     await DB.groupsmembers.deleteMany({
       where: {
@@ -435,6 +437,8 @@ export async function addUser(req, res, next) {
     })
 
     actions.log(req.user, "add", "groupsmembers", `${group}/${user}`)
+
+    // FIXME: reset folder tree cache for the input user only
     Cache.resetFoldersTree()
     res.status(200).send(R.ok())
   } catch (err) {
@@ -503,6 +507,8 @@ export async function removeUser(req, res, next) {
     })
 
     actions.log(req.user, "delete", "groupsmembers", `${group}/${user}`)
+
+    // FIXME: reset folder tree cache for the input user only
     Cache.resetFoldersTree()
     res.status(200).send(R.ok())
   } catch (err) {

@@ -55,6 +55,8 @@ export async function get(req, res, next) {
   try {
     const id = req.params.id
 
+    // FIXME: admin can query any user, other only themselves; add check
+
     // Search user
     const user = await DB.users.findUnique({
       where: { id: id },
@@ -143,6 +145,8 @@ export async function getGroups(req, res, next) {
   try {
     const id = req.params.id
 
+    // FIXME: admin can query any user, other only themselves; add check
+
     var data = []
 
     // Search user's groups
@@ -226,10 +230,10 @@ export async function create(req, res, next) {
       })
 
       // Add user to 'Everyone' group
-      const newid2 = newId()
+      const newMemberId = newId()
       await DB.groupsmembers.create({
         data: {
-          id: newid2,
+          id: newMemberId,
           groupid: Const.PW_GROUP_EVERYONEID,
           userid: newUserId
         }
@@ -316,7 +320,7 @@ export async function update(req, res, next) {
       updateStruct.active = req.body.active
     }
 
-    // Updates
+    // Updates user
     await DB.users.update({
       data: updateStruct,
       where: {
@@ -365,11 +369,12 @@ export async function remove(req, res, next) {
 
     // Search user personal folders
     await DB.$transaction(async(tx)=> {
-      // Deletes user groups
+      // Delete user groups
       await DB.groupsmembers.deleteMany({
         where: { userid: id }
       })
 
+      // Delete settings
       await DB.usersettings.deleteMany({
         where: { userid: id }
       })
@@ -398,6 +403,8 @@ export async function remove(req, res, next) {
     })
 
     actions.log(req.user, "delete", "user", id)
+
+    // FIXME: reset folders tree only for the input user
     Cache.resetFoldersTree()
     Cache.resetGroupsTree()
 

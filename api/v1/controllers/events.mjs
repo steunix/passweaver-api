@@ -9,7 +9,7 @@ import jsonschema from 'jsonschema'
 import * as R from '../../../lib/response.mjs'
 import * as Action from '../../../lib/action.mjs'
 
-// Payload schema
+// Payload schemas
 const createSchema = {
   "id": "create",
   "type": "object",

@@ -14,6 +14,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import DB from '../../../lib/db.mjs'
 
+// Payload schemas
 const schemaLogin = {
   "id": "/login",
   "type": "object",
@@ -41,7 +42,7 @@ export async function login(req, res, next) {
     }
 
     // Check user
-    const user = await DB.users.findFirst({
+    const user = await DB.users.findUnique({
       where: { login: req.body.username.toLowerCase() }
     })
     if ( user===null ) {

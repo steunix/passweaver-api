@@ -1,6 +1,6 @@
 /**
  * One type tokens module
- * @module controllers/itemtypes
+ * @module controllers/onetimetokens
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
@@ -11,7 +11,7 @@ import * as R from '../../../lib/response.mjs'
 import DB from '../../../lib/db.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 
-// Payload schema
+// Payload schemas
 const createSchema = {
   "id": "create",
   "properties": {
@@ -33,7 +33,7 @@ export async function get(req, res, next) {
     const id = req.params.id
 
     // Search token
-    const ottoken = await DB.onetimetokens.findFirst({
+    const ottoken = await DB.onetimetokens.findUnique({
       where: { token: id }
     })
 

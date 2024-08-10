@@ -12,7 +12,7 @@ import * as actions from '../../../lib/action.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
 
-// Payload schema
+// Payload schemas
 const createSchema = {
   "id": "create",
   "properties": {
@@ -31,7 +31,7 @@ const updateSchema = {
 }
 
 /**
- *
+ * Get item type
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Error callback
@@ -216,7 +216,7 @@ export async function remove(req, res, next) {
     await DB.$transaction(async(tx)=>{
       // Clear fields for existing items
       await DB.items.updateMany({
-        data: { type: null},
+        data: { type: null },
         where: {
           type: id
         }
