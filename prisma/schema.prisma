@@ -44,7 +44,7 @@ model groups {
 
 model users {
   id              String   @id @db.VarChar(30)
-  login           String   @unique @db.VarChar(50)
+  login           String   @db.VarChar(50)
   lastname        String   @db.VarChar(100)
   firstname       String?  @db.VarChar(100)
   authmethod      String   @db.VarChar(10)
@@ -61,7 +61,7 @@ model users {
   folders folders[]
   settings usersettings[]
 
-  @@index([login])
+  @@unique([login])
 }
 
 model usersettings {
@@ -160,7 +160,7 @@ model onetimetokens {
   createdat   DateTime  @default(now())
   updatedat   DateTime  @updatedAt
 
-  @@index([token])
+  @@unique([token])
 }
 
 model events {
