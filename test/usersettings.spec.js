@@ -1,58 +1,46 @@
 require("./common.js")
 
 describe("User settings", function() {
-  it("Set settings", function(done) {
-    agent
-    .post(`${host}/api/v1/users/0/settings`)
-    .send([{"setting": "theme", "value": "dark"}])
-    .set("Authorization",`Bearer ${global.adminJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
-      done()
-    })
+  it("Set settings", async()=> {
+    const res1 = await agent
+      .post(`${host}/api/v1/users/0/settings`)
+      .send([{"setting": "theme", "value": "dark"}])
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+
+    assert.strictEqual( res1.status, 201 )
   })
 
-  it("Get settings", function(done) {
-    agent
-    .post(`${host}/api/v1/users/0/settings`)
-    .send([{"setting": "theme", "value": "dark"}])
-    .set("Authorization",`Bearer ${global.adminJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
+  it("Get settings", async()=> {
+    const res1 = await agent
+      .post(`${host}/api/v1/users/0/settings`)
+      .send([{"setting": "theme", "value": "dark"}])
+      .set("Authorization",`Bearer ${global.adminJWT}`)
 
-      agent
+    assert.strictEqual( res1.status, 201)
+
+    const res2 = await agent
       .get(`${host}/api/v1/users/0/settings`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
-        assert.doesNotThrow( ()=>{ res.body.data.length } )
 
-        done()
-      })
-    })
+    assert.strictEqual( res2.status, 200)
+    assert.doesNotThrow( ()=>{ res2.body.data.length })
   })
 
-  it("Set settings unauthorized", function(done) {
-    agent
-    .post(`${host}/api/v1/users/0/settings`)
-    .send([{"setting": "theme", "value": "dark"}])
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 403)
-
-      done()
-    })
+  it("Set settings unauthorized", async()=> {
+    const res1 = await agent
+      .post(`${host}/api/v1/users/0/settings`)
+      .send([{"setting": "theme", "value": "dark"}])
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+    assert.strictEqual( res1.status, 403)
   })
 
-  it("Get settings unauthorized", function(done) {
-    agent
-    .get(`${host}/api/v1/users/0/settings`)
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 403)
-
-      done()
-    })
+  it("Get settings unauthorized", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/0/settings`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+    assert.strictEqual( res1.status, 403)
   })
 })
 

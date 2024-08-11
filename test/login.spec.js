@@ -1,35 +1,31 @@
 require("./common.js")
 
 describe("Login", function() {
-  it("Login bad data", function(done) {
-    agent
+  it("Login bad data", async()=> {
+    const res1 = await agent
       .post(`${host}/api/v1/login`)
-      .end(function(err, res){
-        assert.strictEqual( res.status, 400)
-        assert.strictEqual( res?.body?.data?.jwt, undefined)
-        done()
-      })
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400)
+    assert.strictEqual( res1?.body?.data?.jwt, undefined)
   })
 
-  it("Invalid login", function(done) {
-    agent
+  it("Invalid login", async()=> {
+    const res1 = await agent
       .post(`${host}/api/v1/login`)
       .send({"username":"admin", "password": "1"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 401)
-        assert.strictEqual( res?.body?.data?.jwt, undefined)
-        done()
-      })
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 401)
+    assert.strictEqual( res1?.body?.data?.jwt, undefined)
   })
 
-  it("Valid login", function(done) {
-    agent
+  it("Valid login", async()=> {
+    const res1 = await agent
       .post(`${host}/api/v1/login`)
       .send({"username":"admin", "password": "0"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
-        assert.notStrictEqual( res?.body?.data?.jwt, undefined)
-        done()
-      })
+
+    assert.strictEqual(res1.status, 200)
+    assert.notStrictEqual(res1?.body?.data?.jwt, undefined)
   })
 })

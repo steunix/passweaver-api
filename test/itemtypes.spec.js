@@ -1,121 +1,100 @@
 require("./common.js")
 
 describe("Item types", ()=>{
-  it("Create, get and delete item type", (done)=>{
-    global.agent
-    .post(`${global.host}/api/v1/itemtypes`)
-    .set("Authorization",`Bearer ${global.adminJWT}`)
-    .send({description:"test", icon:"fa-icon"})
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
-      var itemtypeId = res.body.data.id
+  it("Create, get and delete item type", async()=>{
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({description:"test", icon:"fa-icon"})
 
-      agent
+    assert.strictEqual( res1.status, 201)
+    var itemtypeId = res1.body.data.id
+
+    const res2 = await agent
       .get(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
 
-        agent
-        .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
-        .set("Authorization",`Bearer ${global.adminJWT}`)
-        .end(function(err, res){
-          assert.strictEqual( res.status, 200)
-          done()
-        })
-      })
-    })
+    assert.strictEqual( res2.status, 200)
+
+    const res3 = await agent
+      .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+    assert.strictEqual( res3.status, 200)
   })
 
-  it("Get item type unauthorized", (done)=>{
-    agent
-    .get(`${global.host}/api/v1/itemtypes/0`)
-    .set("Authorization",`Bearer ${userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 403)
-      done()
-    })
+  it("Get item type unauthorized", async()=>{
+    const res1 = await agent
+      .get(`${global.host}/api/v1/itemtypes/0`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .catch(v=>v)
+    assert.strictEqual( res1.status, 403)
   })
 
-  it("Create item type unauthorized", (done)=>{
-    agent
+  it("Create item type unauthorized", async()=>{
+    const res1 = await agent
       .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${userJWT}`)
       .send({description:"test", icon:"fa-icon"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 403)
-        done()
-      })
+      .catch(v=>v)
+    assert.strictEqual( res1.status, 403)
   })
 
-  it("Update item type", (done)=>{
-    agent
-    .post(`${global.host}/api/v1/itemtypes`)
-    .set("Authorization",`Bearer ${global.adminJWT}`)
-    .send({description:"test", icon:"fa-icon"})
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
-      var itemtypeId = res.body.data.id
+  it("Update item type", async()=>{
+    const res1 = await agent
+      .post(`${global.host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({description:"test", icon:"fa-icon"})
 
-      agent
+    assert.strictEqual( res1.status, 201)
+    var itemtypeId = res1.body.data.id
+
+    const res2 = await agent
       .patch(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({description:"test", icon:"fa-icon"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
 
-        agent
-        .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
-        .set("Authorization",`Bearer ${global.adminJWT}`)
-        .end(function(err, res){
-          assert.strictEqual( res.status, 200)
-          done()
-        })
-      })
-    })
+    assert.strictEqual( res2.status, 200)
+
+    const res3 = await agent
+      .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+    assert.strictEqual( res3.status, 200)
   })
 
-  it("Update item type unauthorized", (done)=>{
-    agent
+  it("Update item type unauthorized", async()=>{
+    const res1 = await agent
       .patch(`${global.host}/api/v1/itemtypes/0`)
       .set("Authorization",`Bearer ${userJWT}`)
       .send({description:"test", icon:"fa-icon"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 403)
-        done()
-      })
+      .catch(v=>v)
+    assert.strictEqual( res1.status, 403)
   })
 
-  it("Update item type bad data", (done)=>{
-    agent
+  it("Update item type bad data", async()=>{
+    const res1 = await agent
       .patch(`${global.host}/api/v1/itemtypes/0`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({icon:"fa-icon"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 400)
-        done()
-      })
+      .catch(v=>v)
+    assert.strictEqual( res1.status, 400)
   })
 
-  it("Create item type bad data", (done)=>{
-    agent
+  it("Create item type bad data", async()=>{
+    const res1 = await agent
       .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({icon:"fa-icon"})
-      .end(function(err, res){
-        assert.strictEqual( res.status, 400)
-        done()
-      })
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400)
   })
 
-  it("List item types", (done)=>{
-    agent
+  it("List item types", async()=>{
+    const res1 = await agent
       .get(`${global.host}/api/v1/itemtypes/`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
-        done()
-      })
+
+    assert.strictEqual( res1.status, 200)
   })
 
 })

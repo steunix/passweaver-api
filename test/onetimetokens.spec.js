@@ -1,85 +1,74 @@
 require("./common.js")
 
 describe ( "One time tokens", ()=> {
-  it("Create one time token bad data", (done)=>{
-    agent
-    .post(`${host}/api/v1/onetimetokens`)
-    .send({data:'abc'})
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 400)
-      done()
-    })
+  it("Create one time token bad data", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/onetimetokens`)
+      .send({data:'abc'})
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 400)
   })
 
-  it("Create one time token, empty data", (done)=>{
-    agent
-    .post(`${host}/api/v1/onetimetokens`)
-    .send({data:''})
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 400)
-      done()
-    })
+  it("Create one time token, empty data", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/onetimetokens`)
+      .send({data:''})
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 400)
   })
 
-  it("Create one time token", (done)=>{
-    agent
-    .post(`${host}/api/v1/onetimetokens`)
-    .send({data:'abc', hours: 1})
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
-      done()
-    })
+  it("Create one time token", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/onetimetokens`)
+      .send({data:'abc', hours: 1})
+      .set("Authorization",`Bearer ${global.userJWT}`)
+
+    assert.strictEqual( res1.status, 201)
   })
 
-  it("Get one time token", (done)=>{
-    agent
-    .post(`${host}/api/v1/onetimetokens`)
-    .send({data:'abc', hours: 1})
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual(res.status, 201)
-      const tokenid = res.body.data.token
+  it("Get one time token", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/onetimetokens`)
+      .send({data:'abc', hours: 1})
+      .set("Authorization",`Bearer ${global.userJWT}`)
 
-      agent
+    assert.strictEqual(res1.status, 201)
+    const tokenid = res1.body.data.token
+
+    const res2 = await agent
       .get(`${host}/api/v1/onetimetokens/${tokenid}`)
       .set("Authorization",`Bearer ${global.userJWT}`)
-      .end(function(err, res){
-        assert.strictEqual(res.status, 200)
-        assert.strictEqual(res.body.data, "abc")
-        done()
-      })
-    })
+
+    assert.strictEqual(res2.status, 200)
+    assert.strictEqual(res2.body.data, "abc")
   })
 
-  it("Get one time token twice", (done)=>{
-    agent
-    .post(`${host}/api/v1/onetimetokens`)
-    .send({data:'abc', hours: 1})
-    .set("Authorization",`Bearer ${global.userJWT}`)
-    .end(function(err, res){
-      assert.strictEqual( res.status, 201)
-      const tokenid = res.body.data.token
+  it("Get one time token twice", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/onetimetokens`)
+      .send({data:'abc', hours: 1})
+      .set("Authorization",`Bearer ${global.userJWT}`)
 
-      agent
+    assert.strictEqual(res1.status, 201)
+    const tokenid = res1.body.data.token
+
+    const res2 = await agent
       .get(`${host}/api/v1/onetimetokens/${tokenid}`)
       .set("Authorization",`Bearer ${global.userJWT}`)
-      .end(function(err, res){
-        assert.strictEqual( res.status, 200)
-        assert.strictEqual( res.body.data, "abc")
 
-        agent
-        .get(`${host}/api/v1/onetimetokens/${tokenid}`)
-        .set("Authorization",`Bearer ${global.userJWT}`)
-        .end(function(err, res){
-          assert.strictEqual( res.status, 404)
+    assert.strictEqual( res2.status, 200)
+    assert.strictEqual( res2.body.data, "abc")
 
-          done()
-        })
-      })
-    })
+    const res3 = await agent
+      .get(`${host}/api/v1/onetimetokens/${tokenid}`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res3.status, 404)
   })
 
 })
