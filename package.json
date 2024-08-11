@@ -4,7 +4,7 @@
   "description": "Collaborative password manager API",
   "main": "passweaver-api.mjs",
   "scripts": {
-    "test": "mocha test/index.spec.js",
+    "test": "mocha --reporter spec",
     "start": "node passweaver-api.mjs"
   },
   "author": "Stefano Rivoir",
