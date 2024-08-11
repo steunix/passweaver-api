@@ -40,15 +40,15 @@ describe ( "One time tokens", ()=> {
     .send({data:'abc', hours: 1})
     .set("Authorization",`Bearer ${global.userJWT}`)
     .end(function(err, res){
-      assert.strictEqual( res.status, 201)
+      assert.strictEqual(res.status, 201)
       const tokenid = res.body.data.token
 
       agent
       .get(`${host}/api/v1/onetimetokens/${tokenid}`)
       .set("Authorization",`Bearer ${global.userJWT}`)
       .end(function(err, res){
-        assert.strictEqual( res.status, 200)
-        assert.strictEqual( res.body.data, "abc")
+        assert.strictEqual(res.status, 200)
+        assert.strictEqual(res.body.data, "abc")
         done()
       })
     })

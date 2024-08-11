@@ -34,7 +34,8 @@ describe("Users", function() {
 
   it("Create and remove user", function(done) {
     var data = { ...userCreateData }
-    data.login = `${data.login}_t1`
+    var rnd = (new Date%9e6).toString(36)
+    data.login = `${data.login}_${rnd}`
 
     agent
     .post(`${host}/api/v1/users`)
@@ -48,7 +49,7 @@ describe("Users", function() {
       .delete(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .end(function(err, res){
-        assert.strictEqual( res.status, 200)
+        assert.strictEqual(res.status, 200)
 
         done()
       })
@@ -57,7 +58,8 @@ describe("Users", function() {
 
   it("Create duplicate login", function(done) {
     var data = { ...userCreateData }
-    data.login = `${data.login}_t1`
+    var rnd = (new Date%9e6).toString(36)
+    data.login = `${data.login}_${rnd}`
 
     agent
     .post(`${host}/api/v1/users`)
@@ -66,6 +68,8 @@ describe("Users", function() {
     .end(function(err, res){
       assert.strictEqual( res.status, 201)
       data.login = data.login.toUpperCase()
+
+      var userId = res.body.data.id
 
       agent
       .post(`${host}/api/v1/users`)
