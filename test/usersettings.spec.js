@@ -1,6 +1,6 @@
 require("./common.js")
 
-describe("User settings endpoints", function() {
+describe("User settings", function() {
   it("Set settings", function(done) {
     agent
     .post(`${host}/api/v1/users/0/settings`)

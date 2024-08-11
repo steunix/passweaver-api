@@ -1,6 +1,6 @@
 require("./common.js")
 
-describe("Login endpoint", function() {
+describe("Login", function() {
   it("Login bad data", function(done) {
     agent
       .post(`${host}/api/v1/login`)

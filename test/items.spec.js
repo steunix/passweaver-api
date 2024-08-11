@@ -1,6 +1,6 @@
 require("./common.js")
 
-describe ("Items endpoints", ()=> {
+describe ("Items", ()=> {
   it("List item", function(done) {
     agent
     .post(`${host}/api/v1/folders/sample1/items`)

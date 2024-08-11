@@ -1,6 +1,6 @@
 require("./common.js")
 
-describe("Users endpoints", function() {
+describe("Users", function() {
 
   it("Get user unauthorized", function(done) {
     agent
