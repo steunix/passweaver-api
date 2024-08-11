@@ -1,7 +1,7 @@
 require("./common.js")
 
 describe ("Items", ()=> {
-  it("List item", function(done) {
+  it("List items", function(done) {
     agent
     .post(`${host}/api/v1/folders/sample1/items`)
     .set("Authorization",`Bearer ${global.userJWT}`)
