@@ -118,7 +118,7 @@ That is indeed **exactly** how user **Admin** in PassWeaver API works: it's part
 
 User passwords are hashed using bcrypt algorythm.
 
-Items are encrypted at rest in the database using AES-GCM, using a master key that is read **from the environment variable `PASSWEAVERAPI_MASTER_KEY`**: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
+Items are encrypted at rest in the database using AES-GCM, using a master key that is read from the file defined in `master_key_file` config entry: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
 
 **WARNING**: as with any other software using asymmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure you keep your master key safe and *properly backed up*.
 
@@ -181,7 +181,7 @@ Download the source, and install all dependencies with npm:
 ## Configure
 
 Edit `config-skel.json` and save it as `config.json`. These are the options:
-- `master_key_env`: The environment variable containing the master key
+- `master_key_file`: The file (with path) containing the master key
 - `jwt_duration`: JWT (session) duration. For example, "2h" or "1d"
 - `listen_port`: IP port to bind
 - `log_dir`: Logs directory. It will be created if necessary.
@@ -190,12 +190,16 @@ Edit `config-skel.json` and save it as `config.json`. These are the options:
   - `port`: LDAP server port
   - `baseDn`: baseDn for searches
   - `userDn`: userDn for searches
+- `https`
+  - `enabled`: HTTPS enabled (true/false)
+  - `certificate`: certificate file path
+  - `private_key`: certificate private key
+  - `hsts`: enable HSTS (true/false)
 
 ### Environment
 
-Your environment must expose these 2 variables:
+Your environment must expose this variable:
 
-- `PASSWEAVERAPI_MASTER_KEY`: the AES-256-GCM key used for encryption
 - `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
 
 ### Database
