@@ -118,9 +118,9 @@ That is indeed **exactly** how user **Admin** in PassWeaver API works: it's part
 
 User passwords are hashed using bcrypt algorythm.
 
-Items are encrypted at rest in the database using AES-GCM, using a master key that is read from the file defined in `master_key_file` config entry: there is no other way to get the master key and this is fully intentional, in order to leave the responsability of safely keeping your master key secret completely **up to you**.
+Items are encrypted in the database using AES-GCM, using a master key that is read from the file defined in `master_key_file` config entry.
 
-**WARNING**: as with any other software using asymmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure you keep your master key safe and *properly backed up*.
+**WARNING**: as with any other software using symmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure to keep your master key safe and *properly backed up*.
 
 ## Operations log
 
@@ -181,7 +181,7 @@ Download the source, and install all dependencies with npm:
 ## Configure
 
 Edit `config-skel.json` and save it as `config.json`. These are the options:
-- `master_key_file`: The file (with path) containing the master key
+- `master_key_file`: The file (with path) containing the (base64 encoded) master key
 - `jwt_duration`: JWT (session) duration. For example, "2h" or "1d"
 - `listen_port`: IP port to bind
 - `log_dir`: Logs directory. It will be created if necessary.
