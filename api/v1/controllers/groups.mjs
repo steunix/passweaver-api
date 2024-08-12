@@ -438,8 +438,7 @@ export async function addUser(req, res, next) {
 
     actions.log(req.user, "add", "groupsmembers", `${group}/${user}`)
 
-    // FIXME: reset folder tree cache for the input user only
-    Cache.resetFoldersTree()
+    Cache.resetFoldersTree(user)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -508,8 +507,7 @@ export async function removeUser(req, res, next) {
 
     actions.log(req.user, "delete", "groupsmembers", `${group}/${user}`)
 
-    // FIXME: reset folder tree cache for the input user only
-    Cache.resetFoldersTree()
+    Cache.resetFoldersTree(user)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)

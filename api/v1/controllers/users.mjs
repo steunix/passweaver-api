@@ -404,8 +404,7 @@ export async function remove(req, res, next) {
 
     actions.log(req.user, "delete", "user", id)
 
-    // FIXME: reset folders tree only for the input user
-    Cache.resetFoldersTree()
+    Cache.resetFoldersTree(user)
     Cache.resetGroupsTree()
 
     res.status(200).send(R.ok('Done'))
