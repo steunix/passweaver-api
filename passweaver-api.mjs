@@ -40,11 +40,6 @@ console.log(`PassWeaver API ${Config.packageJson().version} starting...`)
 // Checks for config
 const cfg = Config.get()
 
-if ( !cfg.master_key ) {
-  console.error("Master key cannot be found: verify environment variable name and value")
-  process.exit(1)
-}
-
 // Rate limiter
 app.use(rateLimitMiddleware)
 
