@@ -54,13 +54,14 @@ export async function info(req, res, next) {
     const folders = await DB.folders.count()
 
     const version = Config.packageJson().version
-    const cache = Cache.size()
+    const cache = await Cache.size()
 
     const data = {
       users: users,
       items: items,
       folders: folders,
       version: version,
+      cacheProvider: Config.get().redis.enabled ? "redis" : "node-cache",
       cacheSize: cache,
       startup: Config.get().startuptime
     }

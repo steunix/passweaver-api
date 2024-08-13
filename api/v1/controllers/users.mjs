@@ -241,7 +241,7 @@ export async function create(req, res, next) {
     })
 
     actions.log(req.user, "create", "user", newUserId)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
 
     res.status(201).send(R.ok({id: newUserId}))
   } catch (err) {
@@ -404,8 +404,8 @@ export async function remove(req, res, next) {
 
     actions.log(req.user, "delete", "user", id)
 
-    Cache.resetFoldersTree(user)
-    Cache.resetGroupsTree()
+    await Cache.resetFoldersTree(user)
+    await Cache.resetGroupsTree()
 
     res.status(200).send(R.ok('Done'))
   } catch (err) {

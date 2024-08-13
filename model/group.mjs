@@ -135,7 +135,7 @@ export async function parent(id) {
  * @returns {Object} Folders tree
  */
 export async function tree(user) {
-  const c = Cache.get(user, Cache.groupsTreeKey)
+  const c = await Cache.get(user, Cache.groupsTreeKey)
   if ( c ) {
     return c
   }
@@ -159,6 +159,6 @@ export async function tree(user) {
     }
   })
 
-  Cache.set(user, Cache.groupsTreeKey, tree)
+  await Cache.set(user, Cache.groupsTreeKey, tree)
   return tree
 }

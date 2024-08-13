@@ -130,7 +130,7 @@ export async function create(req, res, next) {
     })
 
     actions.log(req.user, "create", "folder", newid)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
     res.status(201).send(R.ok({id: newid}))
   } catch ( err ) {
     next(err)
@@ -256,7 +256,7 @@ export async function update (req, res, next) {
     })
 
     actions.log(req.user, "update", "folder", id)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -343,7 +343,7 @@ export async function remove(req, res, next) {
     })
 
     actions.log(req.user, "delete", "folder", id)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)
@@ -415,7 +415,7 @@ export async function addGroup(req, res, next) {
     })
 
     actions.log(req.user, "add", "foldergroup", req.params.folder)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)
@@ -484,7 +484,7 @@ export async function setGroup(req, res, next) {
     })
 
     actions.log(req.user, "set", "foldergroup", req.params.folder)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)
@@ -544,7 +544,7 @@ export async function removeGroup(req, res, next) {
     })
 
     actions.log(req.user, "delete", "foldergroup", req.params.folder)
-    Cache.resetFoldersTree()
+    await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)

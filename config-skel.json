@@ -14,5 +14,9 @@
     "certificate": "/path/to/certificate",
     "private_key": "/path/to/private_key",
     "hsts": false
+  },
+  "redis": {
+    "enabled": true,
+    "url": "localhost:6379"
   }
 }

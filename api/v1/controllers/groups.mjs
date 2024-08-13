@@ -195,7 +195,7 @@ export async function create(req, res, next) {
     // Tree cache doesn't need to be reset, because the group is empty
     actions.log(req.user, "create", "group", newid)
 
-    Cache.resetGroupsTree()
+    await Cache.resetGroupsTree()
     res.status(201).send(R.ok({id:newid}))
   } catch (err) {
     next(err)
@@ -289,8 +289,8 @@ export async function update(req, res, next) {
     })
 
     actions.log(req.user, "update", "group", id)
-    Cache.resetFoldersTree()
-    Cache.resetGroupsTree()
+    await Cache.resetFoldersTree()
+    await Cache.resetGroupsTree()
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -371,8 +371,8 @@ export async function remove(req, res, next) {
     })
 
     actions.log(req.user, "delete", "group", id)
-    Cache.resetFoldersTree()
-    Cache.resetGroupsTree()
+    await Cache.resetFoldersTree()
+    await Cache.resetGroupsTree()
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -438,7 +438,7 @@ export async function addUser(req, res, next) {
 
     actions.log(req.user, "add", "groupsmembers", `${group}/${user}`)
 
-    Cache.resetFoldersTree(user)
+    await Cache.resetFoldersTree(user)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -507,7 +507,7 @@ export async function removeUser(req, res, next) {
 
     actions.log(req.user, "delete", "groupsmembers", `${group}/${user}`)
 
-    Cache.resetFoldersTree(user)
+    await Cache.resetFoldersTree(user)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)

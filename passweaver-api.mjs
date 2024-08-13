@@ -16,6 +16,7 @@ import helmet from 'helmet'
 import https from 'https'
 
 import * as Config from './lib/config.mjs'
+import * as Cache from './lib/cache.mjs'
 
 export const app = Express()
 
@@ -37,8 +38,11 @@ import rateLimitMiddleware from "./lib/ratelimiter.mjs"
 
 console.log(`PassWeaver API ${Config.packageJson().version} starting...`)
 
-// Checks for config
+// Read config
 const cfg = Config.get()
+
+// Init cache
+await Cache.init()
 
 // Rate limiter
 app.use(rateLimitMiddleware)
