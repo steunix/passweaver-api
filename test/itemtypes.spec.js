@@ -30,6 +30,15 @@ describe("Item types", ()=>{
     assert.strictEqual( res1.status, 403)
   })
 
+  it("Get item type unexistent", async()=>{
+    const res1 = await agent
+      .get(`${global.host}/api/v1/itemtypes/000`)
+      .set("Authorization",`Bearer ${adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 404)
+  })
+
   it("Create item type unauthorized", async()=>{
     const res1 = await agent
       .post(`${global.host}/api/v1/itemtypes`)

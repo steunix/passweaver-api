@@ -10,6 +10,15 @@ describe("Users", function() {
     assert.strictEqual( res1.status, 403)
   })
 
+  it("Get user unexistent", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/000`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 404 )
+  })
+
   it("Get user list", async()=> {
     const res1 = await agent
       .get(`${host}/api/v1/users`)
@@ -101,4 +110,15 @@ describe("Users", function() {
 
     assert.strictEqual( res3.status, 200)
   })
+
+  it("Update user, unexistent", async()=> {
+    const res1 = await agent
+      .patch(`${host}/api/v1/users/000`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"firstname": "test2"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 404)
+  })
+
 })

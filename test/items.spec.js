@@ -1,7 +1,7 @@
 require("./common.js")
 
 describe ("Items", ()=> {
-  it("List items", async()=> {
+  it("List items in folder", async()=> {
     const res1 = await agent
       .post(`${host}/api/v1/folders/sample1/items`)
       .set("Authorization",`Bearer ${global.userJWT}`)
@@ -64,4 +64,23 @@ describe ("Items", ()=> {
     assert.strictEqual( res3.status, 200)
   })
 
+  it("Create item, unexistent folder", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/folders/000/items`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 404)
+  })
+
+  it("Get item, unexistent", async()=>{
+    const res1 = await agent
+      .patch(`${host}/api/v1/items/000`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send({type: "test"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 404)
+  })
 })
