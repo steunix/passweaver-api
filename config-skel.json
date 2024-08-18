@@ -8,7 +8,11 @@
     "baseDn": "",
     "userDn": ""
   },
-  "log_dir": "./log",
+  "log": {
+    "dir": "./log",
+    "rotation": "1d",
+    "retention": 14
+  },
   "https": {
     "enabled": false,
     "certificate": "/path/to/certificate",

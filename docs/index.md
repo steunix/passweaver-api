@@ -184,7 +184,10 @@ Edit `config-skel.json` and save it as `config.json`. These are the options:
 - `master_key_file`: The file (with path) containing the (base64 encoded) master key
 - `jwt_duration`: JWT (session) duration. For example, "2h" or "1d"
 - `listen_port`: IP port to bind
-- `log_dir`: Logs directory. It will be created if necessary.
+- `log`:
+  - `dir`: Logs directory. It will be created if necessary.
+  - `rotation`: Rotation interval. For example, "12h" or "1d"
+  - `retention`: Log files retention (number of rotated log files kept)
 - `ldap`: LDAP configuration
   - `url`: LDAP server host.
   - `port`: LDAP server port
