@@ -3,7 +3,7 @@ status:
   type: string
   enum: [ "success" ]
 
-oneTimeSecretGetResult:
+oneTimeTokenGetResult:
   description: Success
   content:
     application/json:

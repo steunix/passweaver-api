@@ -1,5 +1,5 @@
 # Request bodies for item types
-oneTimeSecretCreateBody:
+oneTimeTokenCreateBody:
   type: object
   properties:
     data:
@@ -7,7 +7,7 @@ oneTimeSecretCreateBody:
       description: Secret
     hours:
       type: integer
-      description: Number of hours after which the token will expire
+      description: Number of hours after which the token will expire. Must not exceed configured limit.
   required:
     - data
     - hours

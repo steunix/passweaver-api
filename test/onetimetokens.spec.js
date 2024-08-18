@@ -30,6 +30,16 @@ describe ( "One time tokens", ()=> {
     assert.strictEqual( res1.status, 201)
   })
 
+  it("Create one time token, over hours limit", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/onetimetokens`)
+      .send({data:'abc', hours: 1000})
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400)
+  })
+
   it("Get one time token", async()=>{
     const res1 = await agent
       .post(`${host}/api/v1/onetimetokens`)

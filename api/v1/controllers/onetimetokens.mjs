@@ -10,6 +10,7 @@ import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import DB from '../../../lib/db.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
+import * as Config from '../../../lib/config.mjs'
 
 // Payload schemas
 const createSchema = {
@@ -73,6 +74,12 @@ export async function create(req, res, next) {
     // Check data is not empty
     if ( req.body.data=="" ) {
       res.status(400).send(R.ko("Data cannot be empty"))
+      return
+    }
+
+    // Check if expiration is within limits
+    if ( parseInt(req.body.hours) > parseInt(Config.get().onetimetokens.max_hours) ) {
+      res.status(400).send(R.ko("Hours exceed server limit"))
       return
     }
 

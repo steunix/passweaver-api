@@ -9,7 +9,7 @@ get:
   responses:
     "200":
       description: Item type found
-      $ref: '..\responsebodies\onetimetokens.yaml#/oneTimeSecretGetResult'
+      $ref: '..\responsebodies\onetimetokens.yaml#/oneTimeTokenGetResult'
     "404":
       description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
@@ -24,7 +24,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '..\requestbodies\onetimetokens.yaml#/oneTimeSecretCreateBody'
+          $ref: '..\requestbodies\onetimetokens.yaml#/oneTimeTokenCreateBody'
   security:
     - bearerAuth: []
   responses:
