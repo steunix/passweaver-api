@@ -38,7 +38,7 @@ export async function get(req, res, next) {
 
     // Settings can be read only by the owner
     if ( req.user!==userid) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
@@ -71,14 +71,14 @@ export async function set(req, res, next) {
 
     // Settings can be written only by the owner
     if ( req.user!==userid) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
     // Validate payload
     const validate = jsonschema.validate(req.body, setSchema)
     if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
+      res.status(400).send(R.badRequest())
       return
     }
 

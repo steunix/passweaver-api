@@ -34,7 +34,7 @@ export async function unlock(req, res, next) {
     // Validate payload
     const validate = jsonschema.validate(req.body, personalSchema)
     if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
+      res.status(400).send(R.badRequest())
       return
     }
 
@@ -76,7 +76,7 @@ export async function setPassword(req, res, next) {
   try {
     const validate = jsonschema.validate(req.body, personalSchema)
     if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
+      res.status(400).send(R.badRequest())
       return
     }
 

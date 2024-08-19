@@ -71,7 +71,7 @@ export async function list(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
@@ -160,14 +160,14 @@ export async function create(req, res, next) {
     try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
     // Validate payload
     const validate = jsonschema.validate(req.body, createSchema)
     if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
+      res.status(400).send(R.badRequest())
       return
     }
 
@@ -214,14 +214,14 @@ export async function update(req, res, next) {
     try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
     // Validate payload
     const validate = jsonschema.validate(req.body, updateSchema)
     if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
+      res.status(400).send(R.badRequest())
       return
     }
 
@@ -309,7 +309,7 @@ export async function remove(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
@@ -399,7 +399,7 @@ export async function addUser(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 
@@ -465,7 +465,7 @@ export async function removeUser(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Forbidden"))
+      res.status(403).send(R.forbidden())
       return
     }
 

@@ -33,7 +33,7 @@ export async function create(req, res, next) {
     // Validate payload
     const validate = jsonschema.validate(req.body, createSchema)
     if ( !validate.valid ) {
-      res.status(400).send(R.ko("Bad request"))
+      res.status(400).send(R.badRequest())
       return
     }
 
