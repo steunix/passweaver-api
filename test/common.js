@@ -23,6 +23,10 @@ global.itemCreateData = {
   "metadata": ""
 }
 
+global.folderCreateData = {
+  "description": "fodler description"
+}
+
 before((done)=>{
   console.log("Passweaver API test before hook")
   // Read listen port from config
