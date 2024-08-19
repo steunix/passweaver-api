@@ -100,7 +100,7 @@ export async function list(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -179,7 +179,7 @@ export async function create(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -259,7 +259,7 @@ export async function update(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -345,7 +345,7 @@ export async function remove(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 

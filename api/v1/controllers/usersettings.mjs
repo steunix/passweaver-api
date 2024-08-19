@@ -38,7 +38,7 @@ export async function get(req, res, next) {
 
     // Settings can be read only by the owner
     if ( req.user!==userid) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -71,7 +71,7 @@ export async function set(req, res, next) {
 
     // Settings can be written only by the owner
     if ( req.user!==userid) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 

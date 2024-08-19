@@ -45,7 +45,7 @@ export async function info(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 

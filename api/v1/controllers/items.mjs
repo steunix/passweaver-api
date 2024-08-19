@@ -79,7 +79,7 @@ export async function get(req, res, next) {
 
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -105,7 +105,7 @@ export async function get(req, res, next) {
     // Check read permissions on folder
     const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.read ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -144,7 +144,7 @@ export async function list(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -164,7 +164,7 @@ export async function list(req, res, next) {
       // Check read permissions on folder
       const perm = await Folder.permissions(folder, req.user)
       if ( !perm.read ) {
-        res.status(403).send(R.ko("Unauthorized"))
+        res.status(403).send(R.ko("Forbidden"))
         return
       }
 
@@ -174,7 +174,7 @@ export async function list(req, res, next) {
 
       // Admin can see all folders, but cannot access any personal folder
       if ( fld.personal && req.user===Const.PW_USER_ADMINID ) {
-        res.status(403).send(R.ko("Unauthorized"))
+        res.status(403).send(R.ko("Forbidden"))
         return
       }
 
@@ -268,7 +268,7 @@ export async function create(req, res, next) {
   try {
       // Admins have no access to items
       if ( await isAdmin(req) ) {
-        res.status(403).send(R.ko("Unauthorized"))
+        res.status(403).send(R.ko("Forbidden"))
         return
       }
 
@@ -361,7 +361,7 @@ export async function update(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -389,7 +389,7 @@ export async function update(req, res, next) {
     // Check write permissions on current folder
     const perm1 = await Folder.permissions(item.folderid, req.user)
     if ( !perm1.write ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -402,7 +402,7 @@ export async function update(req, res, next) {
 
       const perm2 = await Folder.permissions(folderFromURL, req.user)
       if ( !perm2.write ) {
-        res.status(403).send(R.ko("Unauthorized"))
+        res.status(403).send(R.ko("Forbidden"))
         return
       }
     }
@@ -473,7 +473,7 @@ export async function remove(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
@@ -546,7 +546,7 @@ export async function clone(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.ko("Unauthorized"))
+      res.status(403).send(R.ko("Forbidden"))
       return
     }
 
