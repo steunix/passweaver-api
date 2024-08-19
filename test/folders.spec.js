@@ -1,24 +1,6 @@
 require("./common.js")
 
 describe("Folders", function() {
-  it("Get folder", async()=>{
-    const res1 = await agent
-      .get(`${host}/api/v1/folders/sample1`)
-      .set("Authorization",`Bearer ${global.userJWT}`)
-      .catch(v=>v)
-
-    assert.strictEqual(res1.status, 200)
-  })
-
-  it("Get folder, unexistent", async()=>{
-    const res1 = await agent
-      .get(`${host}/api/v1/folders/000`)
-      .set("Authorization",`Bearer ${global.userJWT}`)
-      .catch(v=>v)
-
-    assert.strictEqual(res1.status, 404)
-  })
-
   it("Create, update and delete folder", async()=>{
     const res1 = await agent
       .post(`${host}/api/v1/folders/sample1/folders`)
@@ -55,6 +37,34 @@ describe("Folders", function() {
     assert.strictEqual(res1.status, 403)
   })
 
+  it("Create, bad data", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/folders/0/folders`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({})
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 400)
+  })
+
+  it("Get folder", async()=>{
+    const res1 = await agent
+      .get(`${host}/api/v1/folders/sample1`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 200)
+  })
+
+  it("Get folder, unexistent", async()=>{
+    const res1 = await agent
+      .get(`${host}/api/v1/folders/000`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 404)
+  })
+
   it("Delete non empty folder", async()=>{
     const res1 = await agent
       .post(`${host}/api/v1/folders/sample1/folders`)
@@ -72,4 +82,12 @@ describe("Folders", function() {
     assert.strictEqual(res2.status, 422)
   })
 
+  it("Delete folder, unauthorized", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/folders/sample2`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 403)
+  })
 })

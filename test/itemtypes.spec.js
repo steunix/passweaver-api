@@ -26,7 +26,27 @@ describe("Item types", ()=>{
     assert.strictEqual( res3.status, 200)
   })
 
-  it("Get item type unauthorized", async()=>{
+  it("Create item type bad data", async()=>{
+    const res1 = await agent
+      .post(`${global.host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({icon:"fa-icon"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400)
+  })
+
+  it("Create item type unauthorized", async()=>{
+    const res1 = await agent
+      .post(`${global.host}/api/v1/itemtypes`)
+      .set("Authorization",`Bearer ${userJWT}`)
+      .send({description:"test", icon:"fa-icon"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 403)
+  })
+
+  it("Get item type, unauthorized", async()=>{
     const res1 = await agent
       .get(`${global.host}/api/v1/itemtypes/0`)
       .set("Authorization",`Bearer ${userJWT}`)
@@ -42,16 +62,6 @@ describe("Item types", ()=>{
       .catch(v=>v)
 
     assert.strictEqual( res1.status, 404)
-  })
-
-  it("Create item type unauthorized", async()=>{
-    const res1 = await agent
-      .post(`${global.host}/api/v1/itemtypes`)
-      .set("Authorization",`Bearer ${userJWT}`)
-      .send({description:"test", icon:"fa-icon"})
-      .catch(v=>v)
-
-    assert.strictEqual( res1.status, 403)
   })
 
   it("Update item type", async()=>{
@@ -93,16 +103,6 @@ describe("Item types", ()=>{
   it("Update item type bad data", async()=>{
     const res1 = await agent
       .patch(`${global.host}/api/v1/itemtypes/0`)
-      .set("Authorization",`Bearer ${global.adminJWT}`)
-      .send({icon:"fa-icon"})
-      .catch(v=>v)
-
-    assert.strictEqual( res1.status, 400)
-  })
-
-  it("Create item type bad data", async()=>{
-    const res1 = await agent
-      .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({icon:"fa-icon"})
       .catch(v=>v)
