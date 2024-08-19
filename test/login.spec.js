@@ -24,6 +24,7 @@ describe("Login", function() {
     const res1 = await agent
       .post(`${host}/api/v1/login`)
       .send({"username":"admin", "password": "0"})
+      .catch(v=>v)
 
     assert.strictEqual(res1.status, 200)
     assert.notStrictEqual(res1?.body?.data?.jwt, undefined)

@@ -6,6 +6,7 @@ describe("Item types", ()=>{
       .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({description:"test", icon:"fa-icon"})
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
     var itemtypeId = res1.body.data.id
@@ -13,12 +14,15 @@ describe("Item types", ()=>{
     const res2 = await agent
       .get(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res2.status, 200)
 
     const res3 = await agent
       .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
     assert.strictEqual( res3.status, 200)
   })
 
@@ -27,6 +31,7 @@ describe("Item types", ()=>{
       .get(`${global.host}/api/v1/itemtypes/0`)
       .set("Authorization",`Bearer ${userJWT}`)
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 403)
   })
 
@@ -45,6 +50,7 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${userJWT}`)
       .send({description:"test", icon:"fa-icon"})
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 403)
   })
 
@@ -53,6 +59,7 @@ describe("Item types", ()=>{
       .post(`${global.host}/api/v1/itemtypes`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({description:"test", icon:"fa-icon"})
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
     var itemtypeId = res1.body.data.id
@@ -61,12 +68,15 @@ describe("Item types", ()=>{
       .patch(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({description:"test", icon:"fa-icon"})
+      .catch(v=>v)
 
     assert.strictEqual( res2.status, 200)
 
     const res3 = await agent
       .delete(`${global.host}/api/v1/itemtypes/${itemtypeId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
     assert.strictEqual( res3.status, 200)
   })
 
@@ -76,6 +86,7 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${userJWT}`)
       .send({description:"test", icon:"fa-icon"})
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 403)
   })
 
@@ -85,6 +96,7 @@ describe("Item types", ()=>{
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({icon:"fa-icon"})
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 400)
   })
 
@@ -102,6 +114,7 @@ describe("Item types", ()=>{
     const res1 = await agent
       .get(`${global.host}/api/v1/itemtypes/`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 200)
   })

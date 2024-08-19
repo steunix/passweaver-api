@@ -6,6 +6,7 @@ describe("User settings", function() {
       .post(`${host}/api/v1/users/0/settings`)
       .send([{"setting": "theme", "value": "dark"}])
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201 )
   })
@@ -15,12 +16,14 @@ describe("User settings", function() {
       .post(`${host}/api/v1/users/0/settings`)
       .send([{"setting": "theme", "value": "dark"}])
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
 
     const res2 = await agent
       .get(`${host}/api/v1/users/0/settings`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res2.status, 200)
     assert.doesNotThrow( ()=>{ res2.body.data.length })
@@ -32,6 +35,7 @@ describe("User settings", function() {
       .send([{"setting": "theme", "value": "dark"}])
       .set("Authorization",`Bearer ${global.userJWT}`)
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 403)
   })
 
@@ -40,6 +44,7 @@ describe("User settings", function() {
       .get(`${host}/api/v1/users/0/settings`)
       .set("Authorization",`Bearer ${global.userJWT}`)
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 403)
   })
 })

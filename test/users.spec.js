@@ -7,6 +7,7 @@ describe("Users", function() {
       .get(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${global.userJWT}`)
       .catch(v=>v)
+
     assert.strictEqual( res1.status, 403)
   })
 
@@ -23,6 +24,7 @@ describe("Users", function() {
     const res1 = await agent
       .get(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 200)
   })
@@ -31,6 +33,7 @@ describe("Users", function() {
     const res1 = await agent
       .get(`${host}/api/v1/users/0`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 200)
   })
@@ -44,6 +47,7 @@ describe("Users", function() {
       .post(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send(data)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
     var userId = res1.body.data.id
@@ -51,6 +55,7 @@ describe("Users", function() {
     const res2 = await agent
       .delete(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual(res2.status, 200)
   })
@@ -64,6 +69,7 @@ describe("Users", function() {
       .post(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send(data)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
     data.login = data.login.toUpperCase()
@@ -74,12 +80,14 @@ describe("Users", function() {
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send(data)
       .catch(v=>v)
+      .catch(v=>v)
 
     assert.strictEqual( res2.status, 400)
 
     const res3 = await agent
       .delete(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res3.status, 200)
   })
@@ -93,6 +101,7 @@ describe("Users", function() {
       .post(`${host}/api/v1/users`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send(data)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
     const userId = res1.body.data.id
@@ -101,12 +110,14 @@ describe("Users", function() {
       .patch(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send({"firstname": "test2"})
+      .catch(v=>v)
 
     assert.strictEqual( res2.status, 200)
 
     const res3 = await agent
       .delete(`${host}/api/v1/users/${userId}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res3.status, 200)
   })

@@ -24,7 +24,11 @@ global.itemCreateData = {
 }
 
 global.folderCreateData = {
-  "description": "fodler description"
+  "description": "folder description"
+}
+
+global.groupCreateData = {
+  "description": "group description"
 }
 
 before((done)=>{
@@ -55,3 +59,7 @@ before((done)=>{
     })
 })
 
+function rnd(prefix) {
+  var rnd = (new Date%9e6).toString(36)
+  return `${prefix}_${rnd}`
+}

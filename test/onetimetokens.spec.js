@@ -26,6 +26,7 @@ describe ( "One time tokens", ()=> {
       .post(`${host}/api/v1/onetimetokens`)
       .send({data:'abc', hours: 1})
       .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res1.status, 201)
   })
@@ -45,6 +46,7 @@ describe ( "One time tokens", ()=> {
       .post(`${host}/api/v1/onetimetokens`)
       .send({data:'abc', hours: 1})
       .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
     const tokenid = res1.body.data.token
@@ -52,6 +54,7 @@ describe ( "One time tokens", ()=> {
     const res2 = await agent
       .get(`${host}/api/v1/onetimetokens/${tokenid}`)
       .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual(res2.status, 200)
     assert.strictEqual(res2.body.data, "abc")
@@ -62,6 +65,7 @@ describe ( "One time tokens", ()=> {
       .post(`${host}/api/v1/onetimetokens`)
       .send({data:'abc', hours: 1})
       .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
     const tokenid = res1.body.data.token
@@ -69,6 +73,7 @@ describe ( "One time tokens", ()=> {
     const res2 = await agent
       .get(`${host}/api/v1/onetimetokens/${tokenid}`)
       .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
 
     assert.strictEqual( res2.status, 200)
     assert.strictEqual( res2.body.data, "abc")
