@@ -348,6 +348,15 @@ export async function remove(req, res, next) {
       return
     }
 
+    // Looks for members
+    const members = await DB.groupsmembers.findFirst({
+      where: { groupid: id }
+    })
+    if ( members!==null ) {
+      res.status(422).send(R.ko("Group has members"))
+      return
+    }
+
     // FIXME: use transaction
     // Delete user/groups
     await DB.groupsmembers.deleteMany({
