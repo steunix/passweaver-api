@@ -456,13 +456,13 @@ export async function setGroup(req, res, next) {
       return
     }
 
-    // Checks the folder
+    // Check the folder
     if ( !await Folder.exists(req.params.folder) ) {
       res.status(404).send(R.ko("Folder not found"))
       return
     }
 
-    // Checks is group is alread assigned
+    // Check if group is already assigned
     const perm = await DB.folderspermissions.findFirst({
       where: {
         folderid: req.params.folder,
@@ -470,7 +470,7 @@ export async function setGroup(req, res, next) {
       }
     })
     if ( perm.length==0 ) {
-      res.status(422).send(R.ko("Group is not associated to folder"))
+      res.status(422).send(R.ko("Group is not associated to this folder"))
       return
     }
 

@@ -47,6 +47,24 @@ describe ("Items", ()=> {
     assert.strictEqual(res1.status, 403)
   })
 
+  it("Create item, system folders", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/folders/0/items`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+
+    const res2 = await agent
+      .post(`${host}/api/v1/folders/P/items`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 422)
+  })
+
   it("List items in folder", async()=> {
     const res1 = await agent
       .post(`${host}/api/v1/folders/sample1/items`)

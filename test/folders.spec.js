@@ -90,4 +90,36 @@ describe("Folders", function() {
 
     assert.strictEqual(res1.status, 403)
   })
+
+  it("Delete system folders, unprocessable", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/folders/0`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+
+    const res2 = await agent
+      .delete(`${host}/api/v1/folders/P`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 422)
+  })
+
+  it("Update system folders, unprocessable", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/folders/0`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+
+    const res2 = await agent
+      .delete(`${host}/api/v1/folders/P`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 422)
+  })
 })

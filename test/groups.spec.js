@@ -132,6 +132,34 @@ describe("Groups", function() {
     assert.strictEqual(res5.status, 200)
   })
 
+  it("Add and remove member", async()=>{
+    // Create group
+    const res1 = await agent
+      .post(`${host}/api/v1/groups/0/groups`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send(global.folderCreateData)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 201)
+    const group = res1.body.data.id
+
+    // Add user
+    const res2 = await agent
+      .post(`${host}/api/v1/groups/${group}/users/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 200)
+
+    // Remove user
+    const res3 = await agent
+      .delete(`${host}/api/v1/groups/${group}/users/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res3.status, 200)
+  })
+
   it("Add member, unauthorized", async()=>{
     // Create group
     const res1 = await agent
@@ -148,6 +176,7 @@ describe("Groups", function() {
       .post(`${host}/api/v1/groups/${group}/users/0`)
       .set("Authorization",`Bearer ${global.userJWT}`)
       .catch(v=>v)
+
     assert.strictEqual(res2.status, 403)
 
     // Cleanup
@@ -157,5 +186,50 @@ describe("Groups", function() {
       .catch(v=>v)
 
     assert.strictEqual(res5.status, 200)
+  })
+
+  it("Remove admin from Admins, unprocessable", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/groups/A/users/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+  })
+
+  it("Remove admin from Everyone, unprocessable", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/groups/E/users/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+  })
+
+  it("Update system groups, unprocessable", async()=>{
+    const res1 = await agent
+      .patch(`${host}/api/v1/groups/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"description":"description"})
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+
+    const res2 = await agent
+      .patch(`${host}/api/v1/groups/A`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"description":"description"})
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 422)
+
+    const res3 = await agent
+      .patch(`${host}/api/v1/groups/E`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"description":"description"})
+      .catch(v=>v)
+
+    assert.strictEqual(res3.status, 422)
+
   })
 })
