@@ -24,7 +24,7 @@ success:
             type: object
 
 unprocessable:
-  description: Object cannot be processed
+  description: Operation cannot be peformed, see error message
   content:
     application/json:
       schema:

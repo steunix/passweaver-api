@@ -44,7 +44,7 @@ describe ("Items", ()=> {
       .send(global.itemCreateData)
       .catch(v=>v)
 
-    assert.strictEqual(res1.status, 401)
+    assert.strictEqual(res1.status, 403)
   })
 
   it("List items in folder", async()=> {

@@ -374,7 +374,7 @@ export async function addGroup(req, res, next) {
 
     // Check for permissions
     if ( req.body.write && !req.body.read) {
-      res.status(400).send(R.ko("If write is true, also read must be true"))
+      res.status(422).send(R.ko("If write is true, also read must be true"))
       return
     }
 
@@ -446,7 +446,7 @@ export async function setGroup(req, res, next) {
 
     // Check for permissions
     if ( req.body.write && !req.body.read) {
-      res.status(400).send(R.ko("If write is true, also read must be true"))
+      res.status(422).send(R.ko("If write is true, also read must be true"))
       return
     }
 
@@ -532,7 +532,7 @@ export async function removeGroup(req, res, next) {
 
     // Admins group cannot be removed from Root group
     if ( req.params.group==Const.PW_GROUP_ADMINSID && req.params.folder==Const.PW_FOLDER_ROOTID ) {
-      res.status(422).send(R.ko("Admins cannot be removed from root folder"))
+      res.status(422).send(R.ko("Admin cannot be removed from root folder"))
       return
     }
 

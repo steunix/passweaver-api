@@ -73,13 +73,13 @@ export async function create(req, res, next) {
 
     // Check data is not empty
     if ( req.body.data=="" ) {
-      res.status(400).send(R.ko("Data cannot be empty"))
+      res.status(422).send(R.ko("Data cannot be empty"))
       return
     }
 
     // Check if expiration is within limits
     if ( parseInt(req.body.hours) > parseInt(Config.get().onetimetokens.max_hours) ) {
-      res.status(400).send(R.ko("Hours exceed server limit"))
+      res.status(422).send(R.ko("Hours exceed server limit"))
       return
     }
 

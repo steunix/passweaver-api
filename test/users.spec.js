@@ -46,7 +46,7 @@ describe("Users", function() {
       .catch(v=>v)
       .catch(v=>v)
 
-    assert.strictEqual( res2.status, 400)
+    assert.strictEqual( res2.status, 422)
 
     const res3 = await agent
       .delete(`${host}/api/v1/users/${userId}`)

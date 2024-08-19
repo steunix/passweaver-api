@@ -195,7 +195,7 @@ export async function create(req, res, next) {
       where: { login: req.body.login.toLowerCase() }
     })
     if ( login.length>0 ) {
-      res.status(400).send(R.ko("Login already exist"))
+      res.status(422).send(R.ko("Login already exist"))
       return
     }
 

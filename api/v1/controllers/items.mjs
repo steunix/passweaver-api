@@ -289,14 +289,14 @@ export async function create(req, res, next) {
 
     // No items on root or personal folders root
     if ( folder==Const.PW_FOLDER_PERSONALROOTID || folder==Const.PW_FOLDER_ROOTID ) {
-      res.status(401).send(R.ko("You cannot create items in this folder"))
+      res.status(422).send(R.ko("You cannot create items in this folder"))
       return
     }
 
     // Check write permissions on folder
     const perm = await Folder.permissions(folder, req.user)
     if ( !perm.write ) {
-      res.status(401).send(R.ko("Unauthorized"))
+      res.status(403).send(R.forbidden())
       return
     }
 
@@ -502,7 +502,7 @@ export async function remove(req, res, next) {
     // Check write permissions on folder
     const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.write ) {
-      res.status(401).send(R.ko("Unauthorized"))
+      res.status(403).send(R.forbidden())
       return
     }
 
@@ -565,7 +565,7 @@ export async function clone(req, res, next) {
     // Check write permissions on folder
     const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.write ) {
-      res.status(401).send(R.ko("Unauthorized"))
+      res.status(403).send(R.forbidden())
       return
     }
 

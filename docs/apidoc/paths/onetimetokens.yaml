@@ -13,7 +13,9 @@ get:
     "404":
       description: Item not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-
+    "422":
+      $ref: '..\responsebodies\default.yaml#/unprocessable'
+      description: Folder not found
 post:
   tags:
     - One time tokens
