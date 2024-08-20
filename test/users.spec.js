@@ -44,7 +44,6 @@ describe("Users", function() {
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .send(data)
       .catch(v=>v)
-      .catch(v=>v)
 
     assert.strictEqual( res2.status, 422)
 
