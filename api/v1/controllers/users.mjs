@@ -257,10 +257,14 @@ export async function create(req, res, next) {
  */
 export async function update(req, res, next) {
   try {
-    // Must be admin
-    if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
-      return
+    const id = req.params.id
+
+    // Must be admin if updating another user
+    if ( req.user != id ) {
+      if ( !await Auth.isAdmin(req) ) {
+        res.status(403).send(R.forbidden())
+        return
+      }
     }
 
     // Validate payload
@@ -270,7 +274,14 @@ export async function update(req, res, next) {
       return
     }
 
-    const id = req.params.id
+    // If not admin, the only change possible is the password
+    if ( !await Auth.isAdmin(req) ) {
+      if ( !req.body.secret ) {
+        res.status(400).send(R.badRequest())
+        return
+      }
+      req.body = { "secret": req.body.secret }
+    }
 
     // Search user
     const user = await DB.users.findUnique({

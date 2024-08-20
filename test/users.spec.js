@@ -92,7 +92,7 @@ describe("Users", function() {
     assert.strictEqual( res1.status, 200)
   })
 
-  it("Update user", async()=> {
+  it("Update user as admin", async()=> {
     var data = userCreateData
     var rnd = (new Date%9e6).toString(36)
     data.login = `${data.login}_${rnd}`
@@ -122,6 +122,26 @@ describe("Users", function() {
     assert.strictEqual( res3.status, 200)
   })
 
+  it("Update user as user, bad data", async()=> {
+    const res1 = await agent
+      .patch(`${host}/api/v1/users/user1`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send({"firstname": "test2"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400)
+  })
+
+  it("Update user as user (change password)", async()=> {
+    const res1 = await agent
+      .patch(`${host}/api/v1/users/user1`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send({"secret": "0"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 200)
+  })
+
   it("Update user, unexistent", async()=> {
     const res1 = await agent
       .patch(`${host}/api/v1/users/000`)
@@ -132,4 +152,13 @@ describe("Users", function() {
     assert.strictEqual( res1.status, 404)
   })
 
+  it("Update user, forbidden", async()=> {
+    const res1 = await agent
+      .patch(`${host}/api/v1/users/0`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send({"firstname": "test2"})
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 403)
+  })
 })
