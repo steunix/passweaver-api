@@ -71,11 +71,7 @@ export async function parents(id, foldersRecordset) {
     return pFolders
   }
 
-  const folders = await DB.folders.findMany({
-    orderBy: {
-      description: "asc"
-    }
-  })
+  const folders = foldersRecordset
 
   const item = folders.find(elem => elem.id == id)
 
@@ -133,11 +129,27 @@ export async function parents(id, foldersRecordset) {
 export async function children(id, foldersRecordset) {
   let ret = []
 
-  const folders = foldersRecordset ?? await DB.folders.findMany({
-    orderBy: {
-      description: "asc"
-    }
-  })
+  if ( !foldersRecordset ) {
+    const pFolders = await DB.$queryRaw`
+      with recursive folder_tree as
+      (
+        select 1 as level, *
+        from   folders froot
+        where  froot.id=${id}
+        union all
+        select fparent.level+1 as level, fchild.*
+        from   folders fchild
+        join   folder_tree fparent
+        on     fchild.parent = fparent.id
+      )
+      select * from folder_tree
+      where  id!=${id}
+      order  by level, parent, description
+    }`
+    return pFolders
+  }
+
+  const folders = foldersRecordset
 
   // Recursive to get all children
   function addChildren(id) {
