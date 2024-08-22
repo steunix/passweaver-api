@@ -573,7 +573,7 @@ export async function groups(req,res,next) {
     }
 
     // Get folders parents
-    const parents = await Folder.parents(req.params.id, true)
+    const parents = await Folder.parents(req.params.id)
     const perms = new Map()
     const canmodify = !parents[0].personal && parents[0].id!=Const.PW_FOLDER_PERSONALROOTID
 

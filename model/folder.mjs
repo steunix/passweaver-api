@@ -31,7 +31,7 @@ export async function exists(id) {
  * @param {string} id Folder ID
  */
 export async function isPersonal(id) {
-  const folders = await parents(id, true)
+  const folders = await parents(id)
 
   for ( const folder of folders ) {
     if ( folder.id==Const.PW_FOLDER_PERSONALROOTID ) {
@@ -45,14 +45,33 @@ export async function isPersonal(id) {
 /**
  * Returns the parents of a folder, ordered from last child to root
  * @param {*} id Folder id
- * @param {*} includeSelf Include itself in the array
  * @param {array} foldersRecordset If provided, it's used instead of doing a query
  * @returns Array
  */
-export async function parents(id, includeSelf, foldersRecordset) {
+export async function parents(id, foldersRecordset) {
   let array = [];
 
-  const folders = foldersRecordset ?? await DB.folders.findMany({
+  // If no recordset is provided, query the DB
+  if ( !foldersRecordset ) {
+    const pFolders = await DB.$queryRaw`
+      with recursive folder_parents as
+      (
+        select 1 as level, *
+        from   folders ffolder
+        where  ffolder.id=${id}
+        union all
+        select fchild.level+1 as level, fparent.*
+        from   folders fparent
+        join   folder_parents fchild
+        on     fparent.id = fchild.parent
+      )
+      select * from folder_parents
+      order by level, description
+    `
+    return pFolders
+  }
+
+  const folders = await DB.folders.findMany({
     orderBy: {
       description: "asc"
     }
@@ -60,11 +79,9 @@ export async function parents(id, includeSelf, foldersRecordset) {
 
   const item = folders.find(elem => elem.id == id)
 
-  // Adds itself if requested
-  if ( includeSelf ) {
-    item.tree_level = 0
-    array.push(item)
-  }
+  // Adds itself as root
+  item.tree_level = 0
+  array.push(item)
 
   // If root, don't look any further
   if ( id==Const.PW_FOLDER_ROOTID ) {
@@ -139,21 +156,6 @@ export async function children(id, foldersRecordset) {
 }
 
 /**
- * Returns the parent of a folder
- * @param {string} id Folder id
- * @returns
- */
-export async function parent(id) {
-  const res = await this.parents(id,false)
-
-  if ( res.length==0 ) {
-    return []
-  }
-
-  return res[0]
-}
-
-/**
  * Gets the permissions for a user on a folder
  *
  * Permissions are always inherited: the given folder's permission are OR'ed with parents,
@@ -168,7 +170,7 @@ export async function permissions(id,user,foldersRecordset) {
     write: false
   }
 
-  let folders = await parents(id,true,foldersRecordset)
+  let folders = await parents(id,foldersRecordset)
 
   // First folder is itself, so I can check if it's personal
   if ( folders[0].personal ) {
@@ -243,7 +245,7 @@ export async function tree(user) {
   for ( const folder of readFolders ) {
 
     const achildren = await children(folder.id, allFolders)
-    const aparents  = await parents(folder.id, true, allFolders)
+    const aparents  = await parents(folder.id, allFolders)
 
     readable.set(folder.id, folder.id)
 
