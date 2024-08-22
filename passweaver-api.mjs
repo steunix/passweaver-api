@@ -14,9 +14,11 @@ import * as RFS from "rotating-file-stream"
 import FS from "fs"
 import helmet from 'helmet'
 import https from 'https'
+import rateLimitMiddleware from "./lib/ratelimiter.mjs"
 
 import * as Config from './lib/config.mjs'
 import * as Cache from './lib/cache.mjs'
+import * as R from './lib/response.mjs'
 
 export const app = Express()
 
@@ -31,10 +33,6 @@ import events from "./api/v1/routes/events.mjs"
 import personal from "./api/v1/routes/personal.mjs"
 import itemtypes from "./api/v1/routes/itemtypes.mjs"
 import onetimetokens from "./api/v1/routes/onetimetokens.mjs"
-
-import * as R from './lib/response.mjs'
-
-import rateLimitMiddleware from "./lib/ratelimiter.mjs"
 
 console.log(`PassWeaver API ${Config.packageJson().version} starting...`)
 

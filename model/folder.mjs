@@ -174,48 +174,59 @@ export async function children(id, foldersRecordset) {
  * so that if a user has read or write on a folder it has it on all the children
  * @param {string} id Folder id
  * @param {string} user User id
- * @param {array} foldersRecordset If provided, it's used instead of doing a query
 */
-export async function permissions(id,user,foldersRecordset) {
-  let perm = {
+export async function permissions(id,user) {
+  let ret = {
     read: false,
     write: false
   }
 
-  let folders = await parents(id,foldersRecordset)
+  // Extracts the parents, and all the permissions for any group where user is a member
+  const pPerms = await DB.$queryRaw`
+    with recursive folder_parents as
+    (
+      select 1 as level, *
+      from   folders ffolder
+      where  ffolder.id=${id}
+      union all
+      select fchild.level+1 as level, fparent.*
+      from   folders fparent
+      join   folder_parents fchild
+      on     fparent.id = fchild.parent
+    )
+    select f.personal, f.userid, p.read, p.write
+    from   folder_parents f
+    join   folderspermissions p
+    on     p.folderid = f.id
+    join   groupsmembers m
+    on     p.groupid = m.groupid
+    where  m.userid = ${user}
+    order  by level`
 
-  // First folder is itself, so I can check if it's personal
-  if ( folders[0].personal ) {
-    const admin = await Auth.isAdmin(user)
-    if ( admin || folders[0].userid == user ) {
-      perm.read = true
-      perm.write = true
+  // No perms?
+  if ( pPerms.length==0 ) {
+    // The above query does not find personal folders, for which there is no explicit permission
+    const folder = await DB.folders.findUnique({
+      where: { id: id }
+    })
+    if ( folder.personal && folder.userid==user ) {
+      ret.read = true
+      ret.write = true
     }
-    return perm
+    return ret
   }
 
-  let groups = await User.groups(user)
+  for ( const perm of pPerms ) {
+    ret.read = ret.read || perm.read
+    ret.write = ret.write || perm.write
 
-  // Scans all parent folders and OR's all the found permissions
-  for ( const folder of folders ) {
-    for ( const group of groups ) {
-      const prm = await DB.folderspermissions.findMany({
-        where: { folderid: folder.id, groupid: group.id }
-      })
-
-      for ( const p of prm ) {
-        perm.read = perm.read || p.read
-        perm.write = perm.write || p.write
-
-        // If both perm are true, we can early exit
-        if ( perm.read && perm.write ) {
-          return perm
-        }
-      }
+    // If both perm are true, we can early exit
+    if ( ret.read && ret.write ) {
+      return ret
     }
   }
 
-  return perm
+  return ret
 }
 
 /**

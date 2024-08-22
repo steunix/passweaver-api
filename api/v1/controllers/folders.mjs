@@ -308,7 +308,7 @@ export async function remove(req, res, next) {
     }
 
     // Check write permissions on folder
-    const perm = await Folder.permissions(id, req.user);
+    const perm = await Folder.permissions(id, req.user)
     if ( !perm.write ) {
       res.status(403).send(R.forbidden())
       return
