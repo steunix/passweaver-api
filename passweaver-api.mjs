@@ -49,7 +49,7 @@ app.use(rateLimitMiddleware)
 app.use(Express.json())
 
 // Compression
-app.use(compression())
+app.use(compression( {threshold: 10240} ))
 
 // HSTS
 if ( cfg?.https?.hsts ) {
