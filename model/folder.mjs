@@ -224,9 +224,9 @@ export async function permissions(id,user,foldersRecordset) {
  * @param {string} user User
  */
 export async function tree(user) {
-  const c = await Cache.get(user, Cache.foldersTreeKey)
-  if ( c ) {
-    return c
+  const cache = await Cache.get(user, Cache.foldersTreeKey)
+  if ( cache ) {
+    return cache
   }
 
   // Get folders for cache
