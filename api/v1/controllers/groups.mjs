@@ -8,7 +8,7 @@ import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
 import * as Group from '../../../model/group.mjs'
 import * as User from '../../../model/user.mjs'
 import * as Cache from '../../../lib/cache.mjs'
@@ -193,7 +193,7 @@ export async function create(req, res, next) {
     })
 
     // Tree cache doesn't need to be reset, because the group is empty
-    actions.log(req.user, "create", "group", newid)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, newid)
 
     await Cache.resetGroupsTree()
     res.status(201).send(R.ok({id:newid}))
@@ -288,7 +288,7 @@ export async function update(req, res, next) {
       }
     })
 
-    actions.log(req.user, "update", "group", id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_GROUP, id)
     await Cache.resetFoldersTree()
     await Cache.resetGroupsTree()
     res.status(200).send(R.ok())
@@ -379,7 +379,7 @@ export async function remove(req, res, next) {
       }
     })
 
-    actions.log(req.user, "delete", "group", id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUP, id)
     await Cache.resetFoldersTree()
     await Cache.resetGroupsTree()
     res.status(200).send(R.ok())
@@ -445,7 +445,7 @@ export async function addUser(req, res, next) {
       }
     })
 
-    actions.log(req.user, "add", "groupsmembers", `${group}/${user}`)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, group, user)
 
     await Cache.resetFoldersTree(user)
     res.status(200).send(R.ok())
@@ -514,7 +514,7 @@ export async function removeUser(req, res, next) {
       }
     })
 
-    actions.log(req.user, "delete", "groupsmembers", `${group}/${user}`)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
 
     await Cache.resetFoldersTree(user)
     res.status(200).send(R.ok())

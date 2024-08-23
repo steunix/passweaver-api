@@ -8,7 +8,7 @@ import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
@@ -126,7 +126,7 @@ export async function get(req, res, next) {
       }
     })
 
-    actions.log(req.user, "read", "item", id)
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, id)
     res.status(200).send(R.ok(item))
   } catch (err) {
     next(err)
@@ -343,7 +343,7 @@ export async function create(req, res, next) {
       }
     })
 
-    actions.log(req.user, "create", "item", newid)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
     res.status(201).send(R.ok({id: newid}))
   } catch (err) {
     next(err)
@@ -455,7 +455,7 @@ export async function update(req, res, next) {
       }
     })
 
-    actions.log(req.user, "update", "item", id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, id)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -528,7 +528,7 @@ export async function remove(req, res, next) {
       })
     })
 
-    actions.log(req.user, "delete", "item", id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, id)
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)
@@ -600,8 +600,8 @@ export async function clone(req, res, next) {
       data: newItem
     })
 
-    actions.log(req.user, "clone", "item", id)
-    actions.log(req.user, "create", "item", newid)
+    Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, id)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
     res.status(201).send(R.ok({id: newid}))
   } catch (err) {
     next(err)

@@ -7,9 +7,10 @@
 import jsonschema from 'jsonschema'
 
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
+import * as Const from '../../../lib/const.mjs'
 import DB from '../../../lib/db.mjs'
 
 // Payload schemas
@@ -43,14 +44,14 @@ export async function unlock(req, res, next) {
       where: { id: req.user }
     })
     if ( user===null ) {
-      actions.log(req.user, "personalunlocknotfound", "user", req.user)
+      Events.add(req.user, Const.EV_ACTION_UNLOCKNF, Const.EV_ENTITY_USER, req.user)
       res.status(401).send(R.ko("Bad user or wrong password"))
       return
     }
 
     // Check password
     if ( !await( Crypt.checkPassword(req.body.password, user.personalsecret) ) ) {
-      actions.log(user.id, "personalunlockfail", "user", user.id)
+      Events.add(user.id, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, user.id)
       res.status(401).send(R.ko("Wrong password"))
       return
     }
@@ -58,7 +59,7 @@ export async function unlock(req, res, next) {
     // Creates JWT token
     const token = await Auth.createToken(user.id, true)
 
-    actions.log(user.id,"personalunlock", "user", user.id)
+    Events.add(user.id, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, user.id)
     res.status(200).send(R.ok({jwt:token}))
   } catch(err) {
     next(err)
@@ -88,7 +89,7 @@ export async function setPassword(req, res, next) {
       }
     })
 
-    actions.log(req.user, "personalpasswordcreate", "user", req.user)
+    Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)

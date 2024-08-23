@@ -8,7 +8,8 @@ import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
+import * as Const from '../../../lib/const.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
 
@@ -57,7 +58,7 @@ export async function get(req, res, next) {
       return
     }
 
-    actions.log(req.user, "read", "itemtype", id)
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEMTYPE, id)
     res.status(200).send(R.ok(itemtype))
   } catch (err) {
     next(err)
@@ -125,7 +126,7 @@ export async function create(req, res, next) {
       }
     })
 
-    actions.log(req.user, "create", "itemtype", newid)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, newid)
     res.status(201).send(R.ok({id: newid}))
   } catch (err) {
     next(err)
@@ -180,7 +181,7 @@ export async function update(req, res, next) {
       }
     })
 
-    actions.log(req.user, "update", "itemtype", id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEMTYPE, id)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -230,7 +231,7 @@ export async function remove(req, res, next) {
       })
     })
 
-    actions.log(req.user, "delete", "itemtype", id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, id)
     res.status(200).send(R.ok('Done'))
   } catch (err) {
     next(err)

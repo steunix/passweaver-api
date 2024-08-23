@@ -8,11 +8,11 @@ import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
+import * as Const from '../../../lib/const.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
-import * as Const from '../../../lib/const.mjs'
 import DB from '../../../lib/db.mjs'
 
 // Payload schemas
@@ -240,7 +240,7 @@ export async function create(req, res, next) {
       })
     })
 
-    actions.log(req.user, "create", "user", newUserId)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_USER, newUserId)
     await Cache.resetFoldersTree()
 
     res.status(201).send(R.ok({id: newUserId}))
@@ -339,7 +339,7 @@ export async function update(req, res, next) {
       }
     })
 
-    actions.log(req.user, "update", "user", id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_USER, id)
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
@@ -413,7 +413,7 @@ export async function remove(req, res, next) {
 
     })
 
-    actions.log(req.user, "delete", "user", id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_USER, id)
 
     await Cache.resetFoldersTree(user)
     await Cache.resetGroupsTree()

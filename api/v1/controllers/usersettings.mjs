@@ -8,7 +8,8 @@ import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
+import * as Const from '../../../lib/const.mjs'
 import DB from '../../../lib/db.mjs'
 
 // Payload schemas
@@ -51,7 +52,6 @@ export async function get(req, res, next) {
       }
     })
 
-    actions.log(req.user, "read", "usersettings", userid)
     res.status(200).send(R.ok(settings))
   } catch (err) {
     next(err)
@@ -102,7 +102,6 @@ export async function set(req, res, next) {
       }
     })
 
-    actions.log(req.user, "update", "settings", userid)
     res.status(201).send(R.ok())
   } catch (err) {
     next(err)

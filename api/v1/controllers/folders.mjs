@@ -8,7 +8,7 @@ import jsonschema from 'jsonschema'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Group from '../../../model/group.mjs'
 import * as Cache from '../../../lib/cache.mjs'
@@ -129,7 +129,7 @@ export async function create(req, res, next) {
       }
     })
 
-    actions.log(req.user, "create", "folder", newid)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, newid)
     await Cache.resetFoldersTree()
     res.status(201).send(R.ok({id: newid}))
   } catch ( err ) {
@@ -255,7 +255,7 @@ export async function update (req, res, next) {
       }
     })
 
-    actions.log(req.user, "update", "folder", id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, id)
     await Cache.resetFoldersTree()
     res.status(200).send(R.ok())
   } catch (err) {
@@ -342,7 +342,7 @@ export async function remove(req, res, next) {
       where: { id: id }
     })
 
-    actions.log(req.user, "delete", "folder", id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, id)
     await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
@@ -414,7 +414,7 @@ export async function addGroup(req, res, next) {
       }
     })
 
-    actions.log(req.user, "add", "foldergroup", req.params.folder)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder)
     await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
@@ -483,7 +483,7 @@ export async function setGroup(req, res, next) {
       }
     })
 
-    actions.log(req.user, "set", "foldergroup", req.params.folder)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, req.params.folder)
     await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {
@@ -543,7 +543,7 @@ export async function removeGroup(req, res, next) {
       }
     })
 
-    actions.log(req.user, "delete", "foldergroup", req.params.folder)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, req.params.folder)
     await Cache.resetFoldersTree()
     res.status(200).send(R.ok('Done'))
   } catch (err) {

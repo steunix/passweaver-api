@@ -8,10 +8,12 @@ import jsonschema from 'jsonschema'
 import * as LDAP from 'ldap-authentication'
 
 import * as R from '../../../lib/response.mjs'
-import * as actions from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
+import * as Const from '../../../lib/const.mjs'
+
 import DB from '../../../lib/db.mjs'
 
 // Payload schemas
@@ -46,14 +48,14 @@ export async function login(req, res, next) {
       where: { login: req.body.username.toLowerCase() }
     })
     if ( user===null ) {
-      actions.log(req.body.username, "loginnotfound", "user", req.body.username)
+      Events.add(req.body.username, Const.EV_ACTION_LOGINNF, Const.EV_ENTITY_USER, req.body.username)
       res.status(401).send(R.ko("Bad user or wrong password"))
       return
     }
 
     // Check if user is valid
     if ( !user.active ) {
-      actions.log(req.body.username, "loginnotvalid", "user", req.body.username)
+      Events.add(req.body.username, Const.EV_ACTION_LOGINNV, Const.EV_ENTITY_USER, req.body.username)
       res.status(401).send(R.ko("Bad user or wrong password"))
       return
     }
@@ -72,14 +74,14 @@ export async function login(req, res, next) {
           userPassword: req.body.password
         })
       } catch (err) {
-        actions.log(null, "loginfail", "user", req.body.username)
+        Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
         res.status(401).send(R.ko("Bad user or wrong password"))
         return
       }
     } else {
       // Local authentication
       if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
-        actions.log(null, "loginfail", "user", req.body.username)
+        Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
         res.status(401).send(R.ko("Bad user or wrong password"))
         return
       }
@@ -88,7 +90,7 @@ export async function login(req, res, next) {
     // Creates JWT token
     const token = await Auth.createToken(user.id, false)
 
-    actions.log(user.id,"login", "user", user.id)
+    Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
     res.status(200).send(R.ok({jwt:token}))
   } catch(err) {
     next(err)

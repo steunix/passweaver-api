@@ -7,18 +7,19 @@
 import jsonschema from 'jsonschema'
 
 import * as R from '../../../lib/response.mjs'
-import * as Action from '../../../lib/action.mjs'
+import * as Events from '../../../lib/event.mjs'
 
 // Payload schemas
 const createSchema = {
   "id": "create",
   "type": "object",
   "properties": {
-    "event" : { "type": "string", "maxLength": 50 },
-    "itemtype" : { "type": "string", "maxLength": 20 },
-    "itemid": { "type": "string", "maxLength": 100 }
+    "event" : { "type": "numeric" },
+    "entity" : { "type": "numeric" },
+    "entityid": { "type": "string", "maxLength": 100 },
+    "entityid2": { "type": "string", "maxLength": 100 }
   },
-  "required": ["event", "itemtype", "itemid"]
+  "required": ["event", "entity", "entityid"]
 }
 
 /**
@@ -37,11 +38,12 @@ export async function create(req, res, next) {
       return
     }
 
-    await Action.log(
+    await Events.add(
       req.user,
       req.body.event,
-      req.body.itemtype,
-      req.body.itemid
+      req.body.entity,
+      req.body.entityid,
+      req.body.entityid2
     )
 
     res.status(200).send(R.ok())

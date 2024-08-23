@@ -166,12 +166,13 @@ model onetimetokens {
 model events {
   id        String   @id @db.Uuid @default(uuid(7))
   timestamp DateTime @default(now())
-  action    String   @db.VarChar(50)
-  itemtype  String   @db.VarChar(20)
-  itemid    String   @db.VarChar(100)
+  action    Int
+  entity    Int
+  entityid1 String   @db.VarChar(100)
+  entityid2 String?  @db.VarChar(100)
   user      String?  @db.VarChar(30)
 
   @@index([timestamp])
-  @@index([itemid])
+  @@index([entityid1])
   @@index([user])
 }
