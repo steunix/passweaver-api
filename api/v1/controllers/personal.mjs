@@ -43,14 +43,14 @@ export async function unlock(req, res, next) {
       where: { id: req.user }
     })
     if ( user===null ) {
-      actions.log(req.body.username, "personalunlocknotfound", "user", req.user)
+      actions.log(req.user, "personalunlocknotfound", "user", req.user)
       res.status(401).send(R.ko("Bad user or wrong password"))
       return
     }
 
     // Check password
     if ( !await( Crypt.checkPassword(req.body.password, user.personalsecret) ) ) {
-      actions.log(null, "personalunlockfail", "user", req.user)
+      actions.log(user.id, "personalunlockfail", "user", user.id)
       res.status(401).send(R.ko("Wrong password"))
       return
     }
