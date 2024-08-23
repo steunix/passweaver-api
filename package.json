@@ -1,6 +1,6 @@
 {
   "name": "passweaver-api",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Collaborative password manager API",
   "main": "passweaver-api.mjs",
   "scripts": {
