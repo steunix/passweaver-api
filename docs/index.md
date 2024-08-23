@@ -1,23 +1,41 @@
 # PassWeaver API
 
-PassWeaver API is an enterprise-scale, collaborative secrets manager API. It allows to safely store and retreive sensitive data, such as sites passwords, API credentials, network passwords... in other words any information that needs to be encrypted, protected, monitored, shared.
+PassWeaver API is a stateless, enterprise-scale, collaborative secrets manager API. It allows to safely store and retreive sensitive data, such as sites passwords, API credentials, network passwords... in other words any information that needs to be encrypted, protected, monitored, shared.
 
 It's **collaborative**, meaning that users are organized in groups and protected items are organized in folders: different permissions can be defined for each folder for each user group.
 
 ## What is it?
 
-PassWeaver API is a full API server, is no GUI or CLI: you can easily integrate it with your systems and let it act as a password centralized vault. Instead, for a ready to use, simple yet complete Web GUI to run against the API, have a look at https://github.com/steunix/passweaver-gui
+PassWeaver API is a full API server, no GUI or CLI: you can easily integrate it with your systems and let it act as a centralized password vault. Instead, for a ready to use, simple yet complete Web GUI to run against the API, have a look at https://github.com/steunix/passweaver-gui
 
 PassWeaver API is a NodeJS application, released under MIT license, and it uses these (great) opensource libraries, among several others:
+
 - Express, to manage HTTPS connections
+- EJS, for HTML templating
 - Prisma, for ORM and DB access
 
 See below for a full API documentation.
 
+## Dependencies
+
+- PostgreSQL: PassWeaver API uses PostgreSQL for storing data
+- Redis: (optional) for caching
+
 ## How it works
 
+PassWeaver API gives you access to the following objects:
+
+  - Users: who can access the system
+  - Groups: groups of users
+  - Items: the entries you want to protect
+  - Items type: a way to categorize your items
+  - Folders: containers of items
+  - Personal folders: special folder accessible only to a single user
+  - Onetime secrets: an easy way to share a one-time only secrets
+
 ### Items
-An 'item' is an entity with a (unecrypted) title, a `type` field, `metadata` field, and some encrypted `data`. PassWeaver API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
+
+An 'item' is an entity with a (unecrypted) `title`, a `type` field, `metadata` field, and some encrypted `data`. PassWeaver API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
 
 For example, in one item you may store a JSON object that identifies a login:
 ```
@@ -39,17 +57,21 @@ and in another item you may have something that represents an API credentials se
 ```
 and in another item you may have just only a flat string.
 
-It's up to the consumer to decode and handle the data, based on the `type` field.
+It's up to the consumer to decode and handle the data, maybe based on the `type` field (see Item types below).
 
 An item has also a mandatory `title` field, that can be searched for and is NOT encrypted: do not use it for storing sensitive information.
 
 The `metadata` field is NOT encrypted as well but not mandatory, and it allows to store any additional uncrypted info for a given item.
 
+### Item types
+
+Item types are categorized, and they just consist of a code and a description.
+
 ### Folders
 
-Folders, just like in a file system, holds a collection of items and/or subfolders. Each folder may hold specific persmissions for a given group, and will inherit parent's credentials (see 'Permissions' below).
+Folders, just like in a file system, hold collections of items and/or subfolders. Each folder may hold specific persmissions for a given group, and will inherit parent's permissions (see 'Permissions' below).
 
-PassWeaver API has 2 predefined folders that cannot be modified:
+PassWeaver API has 2 predefined folders that cannot be modified or deleted:
 - Root folder
 - Personal folders root
 
@@ -75,7 +97,9 @@ PassWeaver supports two authentication methods:
 
 The **Admins** built-in group and it's built-in member user **admin** are targeted at creating users and groups, and assigning permissions to folders. Both Admins group and admin user cannot be updated or deleted.
 
-Since **Admins** group members and **admin** user are meant for administration tasks, they have **NO** access to any items in any folder, and they do not have personal folders either.
+Since **Admins** group members are meant for administration tasks, they have **NO** access to any items in any folder, and they do not have personal folders either. They can though add and (if empty) remove folders.
+
+If you need someone with full access to all folders, you may create a group with read/write permissions on Root folder and add the user.
 
 #### Everyone
 
@@ -83,11 +107,13 @@ Another built-in group is **Everyone**, quite self-explanatory: all created user
 
 ### Permissions
 
+Permissions are per folder, not per item: you cannot give different permissions to different items in the same folder.
+
 A folder has 2 permissions:
 - read: permission to list and read items
 - write: permission to create/modify items or subfolders. It implies read permission.
 
-Permissions are on **folders**, and not on single items, and are granted **to groups** of users, and not to single users: this is intentional, following the KISS philosophy; in complex environments, permissions for a single user or for a single item are difficult to maintain and very easy to mess with, while group permissions let you have a cleaner and more maintainable configuration.
+Permissions are granted **to groups** of users, and not to single users: this is intentional, following the KISS philosophy; in complex environments, permissions for a single user or for a single item are difficult to maintain and very easy to mess with, while group permissions let you have a cleaner and more maintainable configuration.
 
 Following same KISS paradigm, permissions are **always** inherited. For example, in a company setup you may have these folders:
 
@@ -110,9 +136,15 @@ If an "AdminGCP" user creates a new folder in "GCP", let's suppose "VPNs", what 
 
 In other words, a permission on a folder is granted **for itself and all its children folders**.
 
-While this may sound as a limitation, in the long run it allows to avoid wild permissions forests, such as "hidden" folders available only to a restricted number of people, in a point of the folder 'tree' where you would not expect it.
+While this may sound as a limitation, in the long run it allows to avoid wild permissions forests, such as "hidden" folders available only to a restricted number of people, in a point of the  'tree' where you would not expect it.
 
 That is indeed **exactly** how user **Admin** in PassWeaver API works: it's part of the builtin **Admins**, which has read+write access to 'Root' folder, thus to every folder - due to this kind of inheritance.
+
+### One time secrets
+
+OTS are an easy way to share a secret with someone: you provide the data to encrypt and you will receive back a token; accessing the token through the API, you will have access to the the decrypted data, **but only once**: once "consumed", the token will be deleted.
+
+This is similar to various public services you can find online.
 
 ## Encryption
 
@@ -128,13 +160,20 @@ Every operation is logged into the database, from logins to CRUD operations, to 
 
 ## Application logs
 
-PassWeaver API logs every call in a 'combined', Apache-like format. Errors are tracked in a separate log instead.
+PassWeaver API logs every call in a 'combined log format'. Errors are tracked in a separate log.
+
+## Cache
+
+PassWeaver API makes use of a cache in order to avoid too much pressure on the database, especially in relation to permissions and folders tree. You can choose between these cache providers:
+  - internal: when the "redis" configuration (see below) is false, `node-cache` npm module is used: be aware that this module is
+    **intentionally** non advisable for production environments
+  - Redis: you can use Redis by setting "redis" to true in the configuration and providing an URL to a running Redis instance
 
 ## The API
 
 ### Authorization
 
-PassWeaver API uses JWTs for authorization with a SHA-512 algorithm. No sensitive data is stored within the token, just the user id.
+PassWeaver API is **stateless* and uses JWTs for authorization with a SHA-512 algorithm.
 
 A JWT is returned on successful login, and it must be provided in all subsequent calls - until it expires - in requests header as an "Authorization bearer".
 
@@ -172,6 +211,14 @@ If any data is returned by the endpoint, it will be always encapsulated in the "
 
 # Install and run
 
+## Prerequisites
+
+In order to be able to install PassWeaver API, you need:
+  - NodeJS and npm
+  - A running PostgreSQL instance
+
+A running Redis instance is warmly advised.
+
 ## Install
 
 Download the source, and install all dependencies with npm:
@@ -180,16 +227,21 @@ Download the source, and install all dependencies with npm:
 
 ## Configure
 
-Edit `config-skel.json` and save it as `config.json`. These are the options:
-- `master_key_file`: The file (with path) containing the (base64 encoded) master key
-- `jwt_duration`: JWT (session) duration. For example, "2h" or "1d"
+Prepare a master key file and save it on your disk: this file will contain the base64 encoded AES-256 key
+for encrypting your data. Ensure it is **outside** the directory where PassWeaver sources are. Keep this
+file as secret and secure as possible: if you loose it you won't be able to decrypt your data anymore.
+
+Copy `config-skel.json` to `config.json` and adjust the options:
+
+- `master_key_file`: The file (with complete path) containing the (base64 encoded) master key
+- `jwt_duration`: JWT duration. For example, "2h" or "1d". When JWT expires, a new login is required.
 - `listen_port`: IP port to bind
 - `log`:
   - `dir`: Logs directory. It will be created if necessary.
   - `rotation`: Rotation interval. For example, "12h" or "1d"
   - `retention`: Log files retention (number of rotated log files kept)
 - `ldap`: LDAP configuration
-  - `url`: LDAP server host.
+  - `url`: LDAP server host
   - `port`: LDAP server port
   - `baseDn`: baseDn for searches
   - `userDn`: userDn for searches
@@ -205,16 +257,18 @@ Your environment must expose this variable:
 
 - `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
 
+See [Prisma Documentation](https://www.prisma.io/docs/orm/overview/databases/postgresql#connection-details) for further details.
+
 ### Database
 
-PassWeaver API uses PostgreSQL as RDBMS and Prisma to access it.
+PassWeaver API uses PostgreSQL as RDBMS and Prisma ORM to access it.
 
-Create an empty database on your existent PostgreSQL istance, and set the environment variable `PASSWEAVERAPI_PRISMA_URL` accordingly.
+Create an empty database on your existent PostgreSQL instance, and set the environment variable `PASSWEAVERAPI_PRISMA_URL` accordingly.
 
 Then, inside PassWeaver-API directory, run the following commands:
 
 - `npx prisma db push`
-- `npx prisma db feed`
+- `npx prisma db seed`
 - `npx prisma generate`
 
 The default user `admin` will be created with password `0`: change it as soon as you login.
