@@ -6,10 +6,7 @@
 
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
-import * as Events from '../../../lib/event.mjs'
-import * as Const from '../../../lib/const.mjs'
 import DB from '../../../lib/db.mjs'
 
 // Payload schemas
@@ -92,7 +89,6 @@ export async function set(req, res, next) {
           // Delete setting
           await DB.usersettings.create({
             data: {
-              id: newId(),
               userid: userid,
               setting: setting.setting,
               value: setting.value
