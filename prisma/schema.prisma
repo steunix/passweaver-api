@@ -70,7 +70,7 @@ model usersettings {
   setting         String   @db.VarChar(40)
   value           String   @db.VarChar(100)
 
-  user  users     @relation(fields: [userid], references: [id])
+  user  users     @relation(fields: [userid], references: [id], onUpdate: Cascade, onDelete: Restrict )
 }
 
 model groupsmembers {
@@ -80,8 +80,8 @@ model groupsmembers {
   createdat DateTime @default(now())
   updatedat DateTime @updatedAt
 
-  users  users  @relation(fields: [userid], references: [id])
-  groups groups @relation(fields: [groupid], references: [id])
+  users  users  @relation(fields: [userid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  groups groups @relation(fields: [groupid], references: [id], onUpdate: Cascade, onDelete: Restrict )
 
   @@index([userid])
   @@index([groupid])
@@ -96,8 +96,8 @@ model folderspermissions {
   createdat DateTime @default(now())
   updatedat DateTime @updatedAt
 
-  folders folders @relation(fields: [folderid], references: [id])
-  groups  groups  @relation(fields: [groupid], references: [id])
+  folders folders @relation(fields: [folderid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  groups  groups  @relation(fields: [groupid], references: [id], onUpdate: Cascade, onDelete: Restrict )
 
   @@index([folderid])
   @@index([groupid])
@@ -118,8 +118,8 @@ model items {
   updatedat   DateTime  @updatedAt
   accessedat  DateTime?
 
-  folder   folders    @relation(fields: [folderid], references: [id])
-  itemtype itemtypes? @relation(fields: [type], references: [id])
+  folder   folders    @relation(fields: [folderid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  itemtype itemtypes? @relation(fields: [type], references: [id], onUpdate: Cascade, onDelete: Restrict )
 
   @@index([folderid])
 }
