@@ -209,7 +209,6 @@ export async function create(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-
 export async function update(req, res, next) {
     try {
     // Must be admin

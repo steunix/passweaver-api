@@ -5,10 +5,12 @@
  */
 
 import jsonschema from 'jsonschema'
+import { Prisma } from '@prisma/client'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
+import * as Item from '../../../model/item.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
@@ -197,58 +199,47 @@ export async function list(req, res, next) {
       }
     }
 
-    // Split search string and create array for later AND
+    // Split search string and create array for ':*' addition in ts_query
     let contains = []
     if ( search!='' ) {
-      let searchTokens = search.split(' ')
+      let searchTokens = search.trim().split(' ')
       for ( const token of searchTokens ) {
-        contains.push( { OR: [
-          { title: { contains: token, mode: 'insensitive'} },
-          { metadata: { contains: token, mode: 'insensitive'} }
-        ]})
+        contains.push(token+':*')
       }
     }
+    const tsquery = contains.join(' & ')
 
     // Search folder
     const folderList = folders.map(folders=>folders)
 
-    // Build search filter
-    let queryFilter = [
-      { folderid: { in: folderList } },
-      { AND: contains }
-    ]
-
-    if ( type!='' ) {
-      queryFilter.push({type: type})
-    }
-
-    items = await DB.items.findMany({
-      where: {
-        AND: queryFilter
-      },
-      select: {
-        id: true,
-        folderid: true,
-        type: true,
-        title: true,
-        metadata: true,
-        createdat: true,
-        updatedat: true,
-        folder: {
-          select: {
-            description: true
-          }
-        },
-        itemtype: true,
-      },
-      orderBy: {
-        title: "asc"
-      }
-    })
+    items = await DB.$queryRaw`
+      select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, f.description folderdescription, t.description typedescription, t.icon, t.id typeid
+      from   items i
+      join   folders f
+      on     f.id = i.folderid
+      left   join itemtypes t
+      on     t.id = i.type
+      where  i.folderid in (${Prisma.join(folderList)})
+      ${ tsquery && folder ? Prisma.sql` and i.fts_vectoritem @@ ${tsquery}::tsquery` : Prisma.empty }
+      ${ tsquery && !folder ? Prisma.sql` and i.fts_vectorfull @@ ${tsquery}::tsquery` : Prisma.empty }
+      ${ type ? Prisma.sql` and i.type=${type}::uuid` : Prisma.empty}
+      order  by i.title
+      ${ folder ? Prisma.empty : Prisma.sql` limit 100` }
+      `
 
     if ( items.length==0 ) {
       res.status(404).send(R.ko("No item found"))
       return
+    }
+
+    for ( let i = 0; i< items.length; i++ ) {
+      items[i].folder = { description: items[i]['folderdescription'] }
+      items[i].itemtype = { id:items[i]['typeid'], description: items[i]['typedescription'], icon: items[i]['icon'] }
+
+      delete items[i].typeid
+      delete items[i].icon
+      delete items[i].typedescription
+      delete items[i].folderdescription
     }
 
     res.status(200).send(R.ok(items))
@@ -266,11 +257,11 @@ export async function list(req, res, next) {
  */
 export async function create(req, res, next) {
   try {
-      // Admins have no access to items
-      if ( await isAdmin(req) ) {
-        res.status(403).send(R.forbidden())
-        return
-      }
+    // Admins have no access to items
+    if ( await isAdmin(req) ) {
+      res.status(403).send(R.forbidden())
+      return
+    }
 
     // Validate payload
     const validate = jsonschema.validate(req.body, createSchema)
@@ -342,6 +333,9 @@ export async function create(req, res, next) {
         metadata: req.body.metadata
       }
     })
+
+    // Update tsvector
+    await Item.update_fts(newid)
 
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
     res.status(201).send(R.ok({id: newid}))
@@ -454,6 +448,9 @@ export async function update(req, res, next) {
         id: id
       }
     })
+
+    // Update tsvector
+    await Item.update_fts(id)
 
     Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, id)
     res.status(200).send(R.ok())
@@ -599,6 +596,9 @@ export async function clone(req, res, next) {
     await DB.items.create({
       data: newItem
     })
+
+    // Update tsvector
+    await Item.update_fts(newid)
 
     Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, id)
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)

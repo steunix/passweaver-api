@@ -255,6 +255,13 @@ export async function update (req, res, next) {
       }
     })
 
+    await Folder.update_fts(id)
+
+    // If reparenting, recalc old folder too
+    if ( req.body.parent ) {
+      await Folder.update_fts(folder.id)
+    }
+
     Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, id)
     await Cache.resetFoldersTree()
     res.status(200).send(R.ok())

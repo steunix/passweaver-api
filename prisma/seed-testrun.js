@@ -205,7 +205,7 @@ async function main() {
   const it0 = await prisma.itemtypes.create({
     data: {
       description: "default",
-      icon: "fa-key"
+      icon: "key"
     }
   })
 }

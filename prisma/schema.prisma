@@ -114,6 +114,8 @@ model items {
   dataauthtag String
   algo        String?
   metadata    String?
+  fts_vectorfull  Unsupported("tsvector")?
+  fts_vectoritem  Unsupported("tsvector")?
   createdat   DateTime  @default(now())
   updatedat   DateTime  @updatedAt
   accessedat  DateTime?

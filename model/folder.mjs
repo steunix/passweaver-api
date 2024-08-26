@@ -4,9 +4,8 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import * as User from './user.mjs'
 import * as Cache from '../lib/cache.mjs'
-import * as Auth from '../lib/auth.mjs'
+import * as Item from './item.mjs'
 import * as Const from '../lib/const.mjs'
 import DB from '../lib/db.mjs'
 
@@ -144,8 +143,7 @@ export async function children(id, foldersRecordset) {
       )
       select * from folder_tree
       where  id!=${id}
-      order  by level, parent, description
-    }`
+      order  by level, parent, description`
     return pFolders
   }
 
@@ -319,4 +317,23 @@ export async function tree(user) {
   await Cache.set(user, Cache.foldersTreeKey, tree)
   await Cache.set(user, Cache.foldersReadableKey, Array.from(readable.keys()))
   return tree
+}
+
+/**
+ * Updates ts_vector for folder and its children
+ * @param {} id
+ */
+export async function update_fts(id) {
+  const cfolders = await children(id)
+  cfolders.push(id)
+
+  for ( const f of cfolders ) {
+    const items = await DB.items.findMany({
+      where: { folderid: f }
+    })
+
+    for ( const i of items ) {
+      await Item.update_fts(i.id)
+    }
+  }
 }
