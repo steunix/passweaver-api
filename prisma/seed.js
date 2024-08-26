@@ -129,12 +129,8 @@ async function main() {
   })
 
   /** ITEMS TYPE */
-  id = "0"
-  const it0 = await prisma.itemtypes.upsert({
-    where: { id: id },
-    update: {},
-    create: {
-      id: id,
+  const it0 = await prisma.itemtypes.create({
+    data: {
       description: "default",
       icon: "key"
     }

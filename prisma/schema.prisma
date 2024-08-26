@@ -107,7 +107,7 @@ model items {
   id          String    @id @db.VarChar(30)
   folderid    String    @db.VarChar(30)
   personal    Boolean   @default(false)
-  type        String?   @db.VarChar(30)
+  type        String?   @db.Uuid
   title       String    @db.VarChar(200)
   data        String
   dataiv      String
@@ -128,7 +128,7 @@ model itemsdeleted {
   id          String    @id @db.VarChar(30)
   folderid    String    @db.VarChar(30)
   personal    Boolean   @default(false)
-  type        String?   @db.VarChar(30)
+  type        String?   @db.VarChar(50)
   title       String    @db.VarChar(200)
   data        String
   dataiv      String
@@ -142,7 +142,7 @@ model itemsdeleted {
 }
 
 model itemtypes {
-  id          String   @id @db.VarChar(30)
+  id          String   @id @db.Uuid @default(uuid(7))
   description String   @db.VarChar(20)
   icon        String?  @db.VarChar(50)
   createdat   DateTime @default(now())

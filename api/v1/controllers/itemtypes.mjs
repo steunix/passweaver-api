@@ -6,7 +6,6 @@
 
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
@@ -117,17 +116,15 @@ export async function create(req, res, next) {
     }
 
     // Creates the item type
-    const newid = newId()
-    await DB.itemtypes.create({
+    const created = await DB.itemtypes.create({
       data: {
-        id: newid,
         description: req.body.description,
         icon: req.body?.icon
       }
     })
 
-    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, newid)
-    res.status(201).send(R.ok({id: newid}))
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
+    res.status(201).send(R.ok({id: created.id}))
   } catch (err) {
     next(err)
   }

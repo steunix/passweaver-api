@@ -57,7 +57,7 @@ describe("Item types", ()=>{
 
   it("Get item type unexistent", async()=>{
     const res1 = await agent
-      .get(`${global.host}/api/v1/itemtypes/000`)
+      .get(`${global.host}/api/v1/itemtypes/01918da0-9777-7486-8aa4-aa989d5047d7`)
       .set("Authorization",`Bearer ${adminJWT}`)
       .catch(v=>v)
 

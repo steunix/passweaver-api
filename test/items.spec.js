@@ -96,7 +96,7 @@ describe ("Items", ()=> {
     const res2 = await agent
       .patch(`${host}/api/v1/items/${itemid}`)
       .set("Authorization",`Bearer ${global.userJWT}`)
-      .send({type: "test"})
+      .send({type: "01918da0-9777-7486-8aa4-aa989d5047d7"})
       .catch(v=>v)
 
     assert.strictEqual( res2.status, 422)
@@ -111,9 +111,8 @@ describe ("Items", ()=> {
 
   it("Get item, unexistent", async()=>{
     const res1 = await agent
-      .patch(`${host}/api/v1/items/000`)
+      .get(`${host}/api/v1/items/000`)
       .set("Authorization",`Bearer ${global.userJWT}`)
-      .send({type: "test"})
       .catch(v=>v)
 
     assert.strictEqual( res1.status, 404)
