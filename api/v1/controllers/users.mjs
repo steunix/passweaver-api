@@ -230,10 +230,8 @@ export async function create(req, res, next) {
       })
 
       // Add user to 'Everyone' group
-      const newMemberId = newId()
       await DB.groupsmembers.create({
         data: {
-          id: newMemberId,
           groupid: Const.PW_GROUP_EVERYONEID,
           userid: newUserId
         }
