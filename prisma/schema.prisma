@@ -151,7 +151,7 @@ model itemtypes {
 }
 
 model onetimetokens {
-  id          String   @id @db.VarChar(30)
+  id          String   @id @db.Uuid @default(uuid(7))
   token       String   @db.VarChar(100)
   expiresat   DateTime
   data        String

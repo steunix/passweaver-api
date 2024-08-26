@@ -96,14 +96,12 @@ export async function create(req, res, next) {
     })
 
     // Creates the item type
-    const newid = newId()
     const newToken = Crypt.randomString(20)
     const encData = Crypt.encrypt(req.body.data)
     const exp = new Date(Date.now() + req.body.hours * (60 * 60 * 1000) );
 
-    await DB.onetimetokens.create({
+    const created = await DB.onetimetokens.create({
       data: {
-        id: newid,
         token: newToken,
         expiresat: exp,
         data: encData.encrypted,
@@ -112,7 +110,7 @@ export async function create(req, res, next) {
       }
     })
 
-    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, newid)
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
     res.status(201).send(R.ok({token: newToken}))
   } catch (err) {
     next(err)
