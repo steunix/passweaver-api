@@ -157,45 +157,24 @@ async function main() {
 
   /** USERS GROUP ASSOCIATION */
   // Admin in Admins
-  id = "gu0"
-  const gu1 = await prisma.groupsmembers.upsert({
-    where: { id: id },
-    update: {
-      groupid: Const.PW_GROUP_ADMINSID,
-      userid: Const.PW_USER_ADMINID
-    },
-    create: {
-      id: id,
+  const gu1 = await prisma.groupsmembers.create({
+    data: {
       groupid: Const.PW_GROUP_ADMINSID,
       userid: Const.PW_USER_ADMINID
     }
   })
 
   // Admin in Everyone
-  id = "gu1"
-  const gu2 = await prisma.groupsmembers.upsert({
-    where: { id: id },
-    update: {
-      groupid: Const.PW_GROUP_EVERYONEID,
-      userid: Const.PW_USER_ADMINID
-    },
-    create: {
-      id: id,
+  const gu2 = await prisma.groupsmembers.create({
+    data: {
       groupid: Const.PW_GROUP_EVERYONEID,
       userid: Const.PW_USER_ADMINID
     }
   })
 
   // user1 in Everyone
-  id = "gu2"
-  const gu3 = await prisma.groupsmembers.upsert({
-    where: { id: id },
-    update: {
-      groupid: Const.PW_GROUP_EVERYONEID,
-      userid: "user1"
-    },
-    create: {
-      id: id,
+  const gu3 = await prisma.groupsmembers.create({
+    data: {
       groupid: Const.PW_GROUP_EVERYONEID,
       userid: "user1"
     }

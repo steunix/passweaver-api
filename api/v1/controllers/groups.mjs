@@ -436,10 +436,8 @@ export async function addUser(req, res, next) {
       return
     }
 
-    const newid = newId()
     await DB.groupsmembers.create({
       data: {
-        id: newid,
         groupid: group,
         userid: user
       }

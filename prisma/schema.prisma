@@ -74,7 +74,7 @@ model usersettings {
 }
 
 model groupsmembers {
-  id        String   @id @db.VarChar(30)
+  id        String   @id @db.Uuid @default(uuid(7))
   userid    String   @db.VarChar(30)
   groupid   String   @db.VarChar(30)
   createdat DateTime @default(now())
