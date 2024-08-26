@@ -13,11 +13,11 @@ datasource db {
 
 // Folders
 model folders {
-  id          String   @id @db.VarChar(30)
-  parent      String?  @db.VarChar(30)
+  id          String   @id @db.VarChar(40)
+  parent      String?  @db.VarChar(40)
   description String   @db.VarChar(100)
   personal    Boolean  @default(false)
-  userid      String?  @db.VarChar(30)
+  userid      String?  @db.VarChar(40)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -30,9 +30,9 @@ model folders {
 }
 
 model groups {
-  id          String   @id @db.VarChar(30)
+  id          String   @id @db.VarChar(40)
   description String   @db.VarChar(100)
-  parent      String?  @db.VarChar(30)
+  parent      String?  @db.VarChar(40)
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -43,7 +43,7 @@ model groups {
 }
 
 model users {
-  id              String   @id @db.VarChar(30)
+  id              String   @id @db.VarChar(40)
   login           String   @db.VarChar(50)
   lastname        String   @db.VarChar(100)
   firstname       String?  @db.VarChar(100)
@@ -66,8 +66,8 @@ model users {
 
 model usersettings {
   id              String   @id @db.Uuid @default(uuid(7))
-  userid          String   @db.VarChar(30)
-  setting         String   @db.VarChar(30)
+  userid          String   @db.VarChar(40)
+  setting         String   @db.VarChar(40)
   value           String   @db.VarChar(100)
 
   user  users     @relation(fields: [userid], references: [id])
@@ -75,8 +75,8 @@ model usersettings {
 
 model groupsmembers {
   id        String   @id @db.Uuid @default(uuid(7))
-  userid    String   @db.VarChar(30)
-  groupid   String   @db.VarChar(30)
+  userid    String   @db.VarChar(40)
+  groupid   String   @db.VarChar(40)
   createdat DateTime @default(now())
   updatedat DateTime @updatedAt
 
@@ -89,8 +89,8 @@ model groupsmembers {
 
 model folderspermissions {
   id        String   @id @db.Uuid @default(uuid(7))
-  folderid  String   @db.VarChar(30)
-  groupid   String   @db.VarChar(30)
+  folderid  String   @db.VarChar(40)
+  groupid   String   @db.VarChar(40)
   read      Boolean
   write     Boolean
   createdat DateTime @default(now())
@@ -104,8 +104,8 @@ model folderspermissions {
 }
 
 model items {
-  id          String    @id @db.VarChar(30)
-  folderid    String    @db.VarChar(30)
+  id          String    @id @db.VarChar(40)
+  folderid    String    @db.VarChar(40)
   personal    Boolean   @default(false)
   type        String?   @db.Uuid
   title       String    @db.VarChar(200)
@@ -125,8 +125,8 @@ model items {
 }
 
 model itemsdeleted {
-  id          String    @id @db.VarChar(30)
-  folderid    String    @db.VarChar(30)
+  id          String    @id @db.VarChar(40)
+  folderid    String    @db.VarChar(40)
   personal    Boolean   @default(false)
   type        String?   @db.VarChar(50)
   title       String    @db.VarChar(200)
@@ -170,7 +170,7 @@ model events {
   entity    Int
   entityid1 String   @db.VarChar(100)
   entityid2 String?  @db.VarChar(100)
-  user      String?  @db.VarChar(30)
+  user      String?  @db.VarChar(40)
 
   @@index([timestamp])
   @@index([entityid1])

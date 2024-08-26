@@ -34,7 +34,7 @@ const updateSchema = {
     "title" : { "type": "string", "maxLength": 200 },
     "data" : { "type": "string" },
     "metadata": { "type": "string" },
-    "folder" : { "type": "string", "maxLength": 30 }
+    "folder" : { "type": "string", "maxLength": 40 }
   }
 }
 

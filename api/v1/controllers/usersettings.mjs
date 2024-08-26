@@ -16,7 +16,7 @@ const setSchema = {
   "items": {
     "type": "object",
     "properties": {
-      "setting": { "type": "string", "maxLength": 30 },
+      "setting": { "type": "string", "maxLength": 40 },
       "value": { "type": "string", "maxLength": 100 }
     },
     required: ["setting","value"]

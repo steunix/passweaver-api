@@ -30,7 +30,7 @@ const updateSchema = {
   "type": "object",
   "properties": {
     "description" : { "type": "string", "maxLength": 100 },
-    "parent" : { "type": "string", "maxLength": 30 }
+    "parent" : { "type": "string", "maxLength": 40 }
   }
 }
 const groupSchema = {
