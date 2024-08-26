@@ -403,10 +403,8 @@ export async function addGroup(req, res, next) {
     }
 
     // Adds the permission
-    const newid = newId()
     await DB.folderspermissions.create({
       data: {
-        id: newid,
         groupid: req.params.group,
         folderid: req.params.folder,
         read: req.body.read,

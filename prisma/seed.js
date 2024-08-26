@@ -126,11 +126,8 @@ async function main() {
 
   /** FOLDER GROUP PERMISSIONS */
   // Admins r/w to root
-  id = "fg0"
-  const fg0 = await prisma.folderspermissions.upsert({
-    where: { id: id},
-    update: {},
-    create: {
+  const fg0 = await prisma.folderspermissions.create({
+    data: {
       id: id,
       folderid: Const.PW_FOLDER_ROOTID,
       groupid: Const.PW_GROUP_ADMINSID,

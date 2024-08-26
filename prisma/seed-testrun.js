@@ -203,12 +203,8 @@ async function main() {
 
   /** FOLDER GROUP PERMISSIONS */
   // Admins r/w to root
-  id = "fg0"
-  const fg0 = await prisma.folderspermissions.upsert({
-    where: { id: id},
-    update: {},
-    create: {
-      id: id,
+  const fg0 = await prisma.folderspermissions.create({
+    data: {
       folderid: Const.PW_FOLDER_ROOTID,
       groupid: Const.PW_GROUP_ADMINSID,
       read: true,
@@ -217,12 +213,8 @@ async function main() {
   })
 
   // Everyone r+w on sample1
-  id = "fg1"
-  const fg1 = await prisma.folderspermissions.upsert({
-    where: { id: id},
-    update: {},
-    create: {
-      id: id,
+  const fg1 = await prisma.folderspermissions.create({
+    data: {
       folderid: "sample1",
       groupid: "E",
       read: true,
