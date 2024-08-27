@@ -1,6 +1,6 @@
 {
   "name": "passweaver-api",
-  "version": "0.9.6",
+  "version": "0.10.0",
   "description": "Collaborative password manager API",
   "main": "passweaver-api.mjs",
   "scripts": {
@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "^10.4.0",
-    "superagent": "^9.0.0"
+    "superagent": "^10.0.0"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
@@ -33,6 +33,6 @@
     "uuidv7": "^1.0.0"
   },
   "prisma": {
-    "seed": "node prisma/seed-testrun.js"
+    "seed": "node prisma/seed.js"
   }
 }
