@@ -6,7 +6,6 @@
 
 import jsonschema from 'jsonschema'
 
-import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import DB from '../../../lib/db.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
