@@ -22,7 +22,7 @@ import DB from '../../../lib/db.mjs'
 const createSchema = {
   "id": "create",
   "properties": {
-    "type" : { "type": "string", "format": "uuid" },
+    "type" : { "type": "string" },
     "title" : { "type": "string", "maxLength": 200 },
     "data" : { "type": "string" },
     "metadata": { "type": "string" }
@@ -32,7 +32,7 @@ const createSchema = {
 const updateSchema = {
   "id": "update",
   "properties": {
-    "type" : { "type": "string", "format": "uuid" },
+    "type" : { "type": "string" },
     "title" : { "type": "string", "maxLength": 200 },
     "data" : { "type": "string" },
     "metadata": { "type": "string" },
