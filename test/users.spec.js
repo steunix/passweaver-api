@@ -24,6 +24,15 @@ describe("Users", function() {
     assert.strictEqual(res2.status, 200)
   })
 
+  it("Delete unexistent user", async()=> {
+    const res1 = await agent
+      .delete(`${host}/api/v1/users/000`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 404)
+  })
+
   it("Create duplicate login", async()=> {
     var data = { ...userCreateData }
     var rnd = (new Date%9e6).toString(36)
