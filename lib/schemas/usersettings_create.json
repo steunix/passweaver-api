@@ -1,0 +1,12 @@
+{
+  "$id": "usersettings_create",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "setting": { "type": "string", "maxLength": 40 },
+      "value": { "type": "string", "maxLength": 100 }
+    },
+    "required": ["setting","value"]
+  }
+}

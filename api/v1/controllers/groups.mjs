@@ -4,8 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
@@ -14,17 +12,10 @@ import * as User from '../../../model/user.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Const from '../../../lib/const.mjs'
+import * as JV from '../../../lib/jsonvalidator.mjs'
+
 import DB from '../../../lib/db.mjs'
 
-// Payload schemas
-const createSchema = {
-  "id": "create",
-  "type": "object",
-  "properties": {
-    "description" : { "type": "string", "maxLength": 100 }
-  },
-  "required": ["description"]
-}
 const updateSchema = {
   "id": "create",
   "type": "object",
@@ -165,8 +156,7 @@ export async function create(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, createSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "group_create") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -218,8 +208,7 @@ export async function update(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, updateSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "group_update") ) {
       res.status(400).send(R.badRequest())
       return
     }

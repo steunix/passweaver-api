@@ -1,0 +1,8 @@
+{
+  "$id": "personal",
+  "type": "object",
+  "properties": {
+    "password" : { "type": "string" }
+  },
+  "required": ["password"]
+}

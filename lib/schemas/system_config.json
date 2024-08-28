@@ -1,0 +1,56 @@
+{
+  "$id": "system_config",
+  "type": "object",
+  "properties": {
+    "master_key_file" : { "type": "string" },
+    "jwt_duration" : { "type": "string" },
+    "listen_port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+    "log": {
+      "type": "object",
+      "properties": {
+        "dir": { "type": "string" },
+        "rotation": { "type": "string" },
+        "retention": { "type": "integer", "minimum": 1 }
+      },
+      "required": [ "dir", "rotation", "retention" ]
+    },
+    "ldap": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string" },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "baseDn": { "type": "string" },
+        "userDn": { "type": "string" }
+      },
+      "dependencies": {
+        "url": [ "port", "baseDn", "userDn"]
+      }
+    },
+    "https": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "certificate": { "type": "string" },
+        "private_key": { "type": "string" },
+        "hsts": { "type": "boolean" }
+      },
+      "required": [ "enabled" ]
+    },
+    "redis": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "url": { "type": "string" }
+      },
+      "required": [ "enabled" ]
+    },
+    "onetimetokens": {
+      "type": "object",
+      "properties": {
+        "max_hours": { "type": "integer", "minimum": 1 }
+      },
+      "required": [ "max_hours" ]
+    }
+  },
+  "required": ["master_key_file", "jwt_duration", "listen_port", "log", "https", "redis", "onetimetokens"]
+}

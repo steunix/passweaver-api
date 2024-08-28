@@ -4,8 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
@@ -13,37 +11,9 @@ import * as Const from '../../../lib/const.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
-import DB from '../../../lib/db.mjs'
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
-// Payload schemas
-const createSchema = {
-  "id": "create",
-  "type": "object",
-  "properties": {
-    "login" : { "type": "string", "maxLength": 50 },
-    "firstname" : { "type": "string", "maxLength": 100 },
-    "lastname": { "type": "string", "maxLength": 100 },
-    "authmethod": { "type": "string", "pattern": /local|ldap/, "maxLength": 10 },
-    "locale": { "type": "string", "maxLength": 10 },
-    "email" : { "type": "string", "maxLength": 50 },
-    "secret" : { "type": "string", "maxLength": 100 }
-  },
-  "required": ["login", "firstname","email","secret"]
-}
-const updateSchema = {
-  "id": "update",
-  "type": "object",
-  "properties": {
-    "login" : { "type": "string", "maxLength": 50 },
-    "firstname" : { "type": "string", "maxLength": 100 },
-    "lastname": { "type": "string", "maxLength": 100 },
-    "authmethod": { "type": "string", "pattern": /local|ldap/, "maxLength": 10 },
-    "locale": { "type": "string", "maxLength": 10 },
-    "email" : { "type": "string", "maxLength": 50 },
-    "secret" : { "type": "string", "maxLength": 100 },
-    "active": { "type": "boolean" }
-  }
-}
+import DB from '../../../lib/db.mjs'
 
 /**
  * Gets a user
@@ -184,8 +154,7 @@ export async function create(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, createSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "user_create") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -267,8 +236,7 @@ export async function update(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, updateSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "user_update") ) {
       res.status(400).send(R.badRequest())
       return
     }

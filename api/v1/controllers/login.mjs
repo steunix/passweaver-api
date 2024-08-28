@@ -4,7 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
 import * as LDAP from 'ldap-authentication'
 
 import * as R from '../../../lib/response.mjs'
@@ -13,6 +12,7 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -37,8 +37,7 @@ const schemaLogin = {
 export async function login(req, res, next) {
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, schemaLogin)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "login") ) {
       res.status(400).send(R.badRequest())
       return
     }

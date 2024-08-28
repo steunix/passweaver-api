@@ -1,0 +1,11 @@
+{
+  "$id": "item_update",
+  "type": "object",
+  "properties": {
+    "type" : { "type": "string" },
+    "title" : { "type": "string", "maxLength": 200 },
+    "data" : { "type": "string" },
+    "metadata": { "type": "string" },
+    "folder" : { "type": "string", "maxLength": 40 }
+  }
+}

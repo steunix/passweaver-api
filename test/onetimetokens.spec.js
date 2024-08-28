@@ -38,7 +38,7 @@ describe ( "One time tokens", ()=> {
       .set("Authorization",`Bearer ${global.userJWT}`)
       .catch(v=>v)
 
-    assert.strictEqual( res1.status, 422)
+    assert.strictEqual( res1.status, 400)
   })
 
   it("Get one time token", async()=>{

@@ -4,8 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
@@ -14,34 +12,9 @@ import * as Group from '../../../model/group.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Const from '../../../lib/const.mjs'
-import DB from '../../../lib/db.mjs'
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
-// Payload schemas
-const createSchema = {
-  "id": "create",
-  "type": "object",
-  "properties": {
-    "description" : { "type": "string", "maxLength": 100 }
-  },
-  "required": ["description"]
-}
-const updateSchema = {
-  "id": "update",
-  "type": "object",
-  "properties": {
-    "description" : { "type": "string", "maxLength": 100 },
-    "parent" : { "type": "string", "maxLength": 40 }
-  }
-}
-const groupSchema = {
-  "id": "addgroup",
-  "type": "object",
-  "properties": {
-    "read" : { "type": "boolean" },
-    "write" : { "type": "boolean" }
-  },
-  "required": ["read", "write"]
-}
+import DB from '../../../lib/db.mjs'
 
 /**
  * Gets a folder
@@ -89,8 +62,7 @@ export async function get(req, res, next) {
 export async function create(req, res, next) {
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, createSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "folder_create") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -147,8 +119,7 @@ export async function create(req, res, next) {
 export async function update (req, res, next) {
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, updateSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "folder_update") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -373,8 +344,7 @@ export async function addGroup(req, res, next) {
     }
 
     // Checks for valid payload
-    const validate = jsonschema.validate(req.body, groupSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "folder_group") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -444,8 +414,7 @@ export async function setGroup(req, res, next) {
     }
 
     // Checks for valid payload
-    const validate = jsonschema.validate(req.body, groupSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "folder_group") ) {
       res.status(400).send(R.badRequest())
       return
     }

@@ -4,7 +4,6 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
 import { Prisma } from '@prisma/client'
 
 import { newId } from '../../../lib/id.mjs'
@@ -15,20 +14,10 @@ import * as Folder from '../../../model/folder.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Const from '../../../lib/const.mjs'
+import * as JV from '../../../lib/jsonvalidator.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
 
-// Payload schemas
-const createSchema = {
-  "id": "create",
-  "properties": {
-    "type" : { "type": "string" },
-    "title" : { "type": "string", "maxLength": 200 },
-    "data" : { "type": "string" },
-    "metadata": { "type": "string" }
-  },
-  "required": ["title","data","metadata"]
-}
 const updateSchema = {
   "id": "update",
   "properties": {
@@ -266,8 +255,7 @@ export async function create(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, createSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "item_create") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -363,8 +351,7 @@ export async function update(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, updateSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "item_update") ) {
       res.status(400).send(R.badRequest())
       return
     }

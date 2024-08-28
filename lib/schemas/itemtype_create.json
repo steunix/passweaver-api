@@ -1,0 +1,9 @@
+{
+  "$id": "itemtype_create",
+  "type": "object",
+  "properties": {
+    "description" : { "type": "string", "maxLength": 20 },
+    "icon" : { "type": "string", "maxLength": 50 }
+  },
+  "required": ["description"]
+}

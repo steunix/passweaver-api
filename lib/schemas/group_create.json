@@ -1,0 +1,8 @@
+{
+  "$id": "group_create",
+  "type": "object",
+  "properties": {
+    "description" : { "type": "string", "maxLength": 100 }
+  },
+  "required": ["description"]
+}

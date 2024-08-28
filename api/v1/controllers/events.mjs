@@ -4,23 +4,9 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
-
-// Payload schemas
-const createSchema = {
-  "id": "create",
-  "type": "object",
-  "properties": {
-    "event" : { "type": "numeric" },
-    "entity" : { "type": "numeric" },
-    "entityid": { "type": "string", "maxLength": 100 },
-    "entityid2": { "type": "string", "maxLength": 100 }
-  },
-  "required": ["event", "entity", "entityid"]
-}
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
 /**
  * Store an event
@@ -32,8 +18,7 @@ export async function create(req, res, next) {
 
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, createSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "event_create")) {
       res.status(400).send(R.badRequest())
       return
     }

@@ -4,24 +4,14 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
-import DB from '../../../lib/db.mjs'
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
-// Payload schemas
-const personalSchema = {
-  "id": "unlock",
-  "type": "object",
-  "properties": {
-    "password" : { "type": "string" }
-  },
-  "required": ["password"]
-}
+import DB from '../../../lib/db.mjs'
 
 /**
  * Personal folder unlock
@@ -33,8 +23,7 @@ const personalSchema = {
 export async function unlock(req, res, next) {
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, personalSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "personal.json") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -75,8 +64,7 @@ export async function unlock(req, res, next) {
  */
 export async function setPassword(req, res, next) {
   try {
-    const validate = jsonschema.validate(req.body, personalSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "personal") ) {
       res.status(400).send(R.badRequest())
       return
     }

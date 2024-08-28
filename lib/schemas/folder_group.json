@@ -1,0 +1,9 @@
+{
+  "$id": "folder_group",
+  "type": "object",
+  "properties": {
+    "read" : { "type": "boolean" },
+    "write" : { "type": "boolean" }
+  },
+  "required": ["read", "write"]
+}

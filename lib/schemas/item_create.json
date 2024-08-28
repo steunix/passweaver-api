@@ -1,0 +1,11 @@
+{
+  "$id": "item_create",
+  "type": "object",
+  "properties": {
+    "type" : { "type": "string" },
+    "title" : { "type": "string", "maxLength": 200 },
+    "data" : { "type": "string" },
+    "metadata": { "type": "string" }
+  },
+  "required": ["title","data","metadata"]
+}

@@ -4,24 +4,13 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import * as R from '../../../lib/response.mjs'
 import DB from '../../../lib/db.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
-
-// Payload schemas
-const createSchema = {
-  "id": "create",
-  "properties": {
-    "data" : { "type": "string"},
-    "hours": { "type": "numeric", "max": 24*7}
-  },
-  "required": ["data", "hours"]
-}
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
 /**
  * Decrypt and return a one time secret
@@ -67,8 +56,7 @@ export async function get(req, res, next) {
 export async function create(req, res, next) {
   try {
     // Validate payload
-    const validate = jsonschema.validate(req.body, createSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "onetimesecret_create") ) {
       res.status(400).send(R.badRequest())
       return
     }

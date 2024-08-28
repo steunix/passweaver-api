@@ -4,24 +4,9 @@
  * @author Stefano Rivoir <rs4000@gmail.com>
  */
 
-import jsonschema from 'jsonschema'
-
 import * as R from '../../../lib/response.mjs'
 import DB from '../../../lib/db.mjs'
-
-// Payload schemas
-const setSchema = {
-  "id": "create",
-  "type": "array",
-  "items": {
-    "type": "object",
-    "properties": {
-      "setting": { "type": "string", "maxLength": 40 },
-      "value": { "type": "string", "maxLength": 100 }
-    },
-    required: ["setting","value"]
-  }
-}
+import * as JV from '../../../lib/jsonvalidator.mjs'
 
 /**
  * Get user settings
@@ -73,8 +58,7 @@ export async function set(req, res, next) {
     }
 
     // Validate payload
-    const validate = jsonschema.validate(req.body, setSchema)
-    if ( !validate.valid ) {
+    if ( !JV.validate(req.body, "usersettings_create") ) {
       res.status(400).send(R.badRequest())
       return
     }

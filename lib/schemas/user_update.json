@@ -1,0 +1,14 @@
+{
+  "$id": "user_update",
+  "type": "object",
+  "properties": {
+    "login" : { "type": "string", "maxLength": 50 },
+    "firstname" : { "type": "string", "maxLength": 100 },
+    "lastname": { "type": "string", "maxLength": 100 },
+    "authmethod": { "type": "string", "enum": ["local","ldap"] },
+    "locale": { "type": "string", "maxLength": 10 },
+    "email" : { "type": "string", "maxLength": 50 },
+    "secret" : { "type": "string", "maxLength": 100 },
+    "active": { "type": "boolean" }
+  }
+}
