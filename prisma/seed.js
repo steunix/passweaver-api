@@ -117,10 +117,8 @@ async function main() {
   })
 
   /** FOLDER GROUP PERMISSIONS */
-  // Admins r/w to root
   const fg0 = await prisma.folderspermissions.create({
     data: {
-      id: id,
       folderid: Const.PW_FOLDER_ROOTID,
       groupid: Const.PW_GROUP_ADMINSID,
       read: true,
