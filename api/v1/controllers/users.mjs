@@ -191,10 +191,11 @@ export async function create(req, res, next) {
     }
 
     // Check for login uniqueness
-    const login = await DB.users.findMany({
-      where: { login: req.body.login.toLowerCase() }
+    const login = await DB.users.findFirst({
+      where: { login: req.body.login.toLowerCase() },
+      select: { id: true }
     })
-    if ( login.length>0 ) {
+    if ( login ) {
       res.status(422).send(R.ko("Login already exist"))
       return
     }
@@ -293,10 +294,11 @@ export async function update(req, res, next) {
 
     // Check for login uniqueness, if changed
     if ( req.body.login && req.body.login != user.login ) {
-      const login = DB.users.findMany({
-        where: { login: req.body.login}
+      const login = DB.users.findFirst({
+        where: { login: req.body.login },
+        select: { id: true }
       })
-      if ( login.length ) {
+      if ( login ) {
         res.status(400).send(R.ko("Login already exist"))
         return
       }
@@ -362,7 +364,8 @@ export async function remove(req, res, next) {
 
     // Search user
     const user = await DB.users.findUnique({
-      where: { id: id }
+      where: { id: id },
+      select: { id: true }
     })
 
     if ( user===null ) {
@@ -390,7 +393,8 @@ export async function remove(req, res, next) {
 
       // Personal folders
       const personal = await DB.folders.findMany({
-        where: { personal: true, userid: id }
+        where: { personal: true, userid: id },
+        select: { id: true }
       })
       for ( const pers of personal ) {
         // Delete items in personal folder

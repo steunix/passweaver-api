@@ -261,7 +261,8 @@ export async function update(req, res, next) {
 
       // New parent cannot be one of its current children, otherwise it would break the tree
       const group = await DB.groups.findUnique({
-        where: { id: id}
+        where: { id: id },
+        select: { id: true }
       })
 
       const children = await Group.children(group.id)
@@ -349,7 +350,8 @@ export async function remove(req, res, next) {
 
     // Looks for members
     const members = await DB.groupsmembers.findFirst({
-      where: { groupid: id }
+      where: { groupid: id },
+      select: { id: true }
     })
     if ( members!==null ) {
       res.status(422).send(R.ko("Group has members"))
@@ -428,7 +430,8 @@ export async function addUser(req, res, next) {
       where: {
         groupid: group,
         userid: user
-      }
+      },
+      select: { id: true }
     })
     if ( ex!==null ) {
       res.status(422).send(R.ko("User is already in the group"))
@@ -498,7 +501,8 @@ export async function removeUser(req, res, next) {
       where: {
         groupid: group,
         userid: user
-      }
+      },
+      select: { id: true }
     })
     if ( ex==null ) {
       res.status(422).send(R.ko("User is not in the group"))

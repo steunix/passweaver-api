@@ -58,7 +58,7 @@ export async function get(req, res, next) {
     const folder = await DB.folders.findUnique({
       where: { id: id }
     })
-    if ( folder===null ) {
+    if ( !folder ) {
       res.status(404).send(R.ko("Folder not found"))
       return
     }
@@ -212,7 +212,7 @@ export async function update (req, res, next) {
       // Search parent folder
       const pfolder = await DB.folders.findUnique({
         where: { id: req.body.parent }
-      });
+      })
       if ( !pfolder ) {
         res.status(404).send(R.ko("Target folder not found"))
         return
@@ -257,7 +257,7 @@ export async function update (req, res, next) {
 
     await Folder.update_fts(id)
 
-    // If reparenting, recalc old folder too
+    // If reparenting, recalc fts for old folder too
     if ( req.body.parent ) {
       await Folder.update_fts(folder.id)
     }
@@ -398,13 +398,14 @@ export async function addGroup(req, res, next) {
     }
 
     // Checks is group is alread assigned
-    const perm = await DB.folderspermissions.findMany({
+    const perm = await DB.folderspermissions.findFirst({
       where: {
         folderid: req.params.folder,
         groupid: req.params.group
-      }
+      },
+      select: { id: true }
     })
-    if ( perm.length>0 ) {
+    if ( perm ) {
       res.status(422).send(R.ko("Group is already associated to folder"))
       return
     }
@@ -472,9 +473,10 @@ export async function setGroup(req, res, next) {
       where: {
         folderid: req.params.folder,
         groupid: req.params.group
-      }
+      },
+      select: { id: true }
     })
-    if ( perm.length==0 ) {
+    if ( !perm ) {
       res.status(422).send(R.ko("Group is not associated to this folder"))
       return
     }
@@ -523,15 +525,16 @@ export async function removeGroup(req, res, next) {
       return
     }
 
-    // Checks is group is alread assigned
-    const perm = await DB.folderspermissions.findMany({
+    // Checks is group is assigned
+    const perm = await DB.folderspermissions.findFirst({
       where: {
         folderid: req.params.folder,
         groupid: req.params.group
-      }
+      },
+      select: { id: true }
     })
     if ( perm===null ) {
-      res.status(422).send(R.ko("Group is not associated to folder"))
+      res.status(404).send(R.ko("Group is not associated to folder"))
       return
     }
 
@@ -541,10 +544,9 @@ export async function removeGroup(req, res, next) {
       return
     }
 
-    await DB.folderspermissions.deleteMany({
+    await DB.folderspermissions.delete({
       where: {
-        groupid: req.params.group,
-        folderid: req.params.folder
+        id: perm.id
       }
     })
 

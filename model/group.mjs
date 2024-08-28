@@ -14,14 +14,11 @@ import DB from '../lib/db.mjs'
  * @returns
  */
 export async function exists(id) {
-  try {
-    const group = await DB.groups.findUniqueOrThrow({
-      where: { id: id}
-    })
-    return true
-  } catch ( exc ) {
-    return false
-  }
+  const group = await DB.groups.findUnique({
+    where: { id: id },
+    select: { id: true }
+  })
+  return ( group !== null )
 }
 
 /**

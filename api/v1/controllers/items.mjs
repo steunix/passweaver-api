@@ -52,7 +52,8 @@ async function checkPersonalAccess(req) {
   }
 
   const user = await DB.users.findUnique({
-    where: { id: req.user }
+    where: { id: req.user },
+    select: { personalsecret: true }
   })
 
   // User has not defined its personal secret
@@ -171,7 +172,8 @@ export async function list(req, res, next) {
       }
 
       const fld = await DB.folders.findUnique({
-        where: { id: folder }
+        where: { id: folder },
+        select: { personal: true }
       })
 
       // Admin can see all folders, but cannot access any personal folder
@@ -306,7 +308,8 @@ export async function create(req, res, next) {
     // If type is specified, check that it exists
     if ( req?.body?.type ) {
       const itemtype = await DB.itemtypes.findUnique({
-        where: { id: req.body.type }
+        where: { id: req.body.type },
+        select: { id: true }
       })
       if ( itemtype===null ) {
         res.status(422).send(R.ko("Specified type does not exist"))
@@ -413,7 +416,8 @@ export async function update(req, res, next) {
     // If type is specified, check that it exists
     if ( req?.body?.type ) {
       const itemtype = await DB.itemtypes.findUnique({
-        where: { id: req.body.type }
+        where: { id: req.body.type },
+        select: { id: true }
       })
       if ( itemtype===null ) {
         res.status(422).send(R.ko("Specified type does not exist"))
@@ -488,7 +492,8 @@ export async function remove(req, res, next) {
 
     // Search folder
     const folder = await DB.folders.findUnique({
-      where: { id: item.folderid }
+      where: { id: item.folderid },
+      select: { id: true }
     })
 
     if ( folder===null ) {

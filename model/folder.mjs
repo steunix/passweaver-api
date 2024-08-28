@@ -15,14 +15,11 @@ import DB from '../lib/db.mjs'
  * @returns
  */
 export async function exists(id) {
-  try {
-    const folder = await DB.folders.findUniqueOrThrow({
-      where: { id: id}
-    })
-    return true
-  } catch ( exc ) {
-    return false
-  }
+  const folder = await DB.folders.findUnique({
+    where: { id: id },
+    select: { id: true }
+  })
+  return ( folder !== null )
 }
 
 /**
@@ -329,7 +326,8 @@ export async function update_fts(id) {
 
   for ( const f of cfolders ) {
     const items = await DB.items.findMany({
-      where: { folderid: f }
+      where: { folderid: f },
+      select: { id: true }
     })
 
     for ( const i of items ) {

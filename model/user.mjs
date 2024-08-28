@@ -13,14 +13,11 @@ import DB from '../lib/db.mjs'
  * @returns {boolean} True if the user exists
  */
 export async function exists(id) {
-  try {
-    const folder = await DB.users.findUniqueOrThrow({
-      where: { id: id}
-    })
-    return true
-  } catch ( exc ) {
-    return false
-  }
+  const user = await DB.users.findUnique({
+    where: { id: id },
+    select: { id: true }
+  })
+  return ( user !== null )
 }
 
 /**
