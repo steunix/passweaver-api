@@ -308,6 +308,9 @@ export async function update(req, res, next) {
     })
 
     Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_USER, id)
+    if ( req.body.secret ) {
+      Events.add(req.user, Const.EV_ACTION_PWDUPDATE, Const.EV_ENTITY_USER, id)
+    }
     res.status(200).send(R.ok())
   } catch (err) {
     next(err)
