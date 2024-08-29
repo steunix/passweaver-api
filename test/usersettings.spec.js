@@ -11,6 +11,17 @@ describe("User settings", function() {
     assert.strictEqual( res1.status, 201 )
   })
 
+
+  it("Set settings, bad data", async()=> {
+    const res1 = await agent
+      .post(`${host}/api/v1/users/0/settings`)
+      .send([{"setting": "theme"}])
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400 )
+  })
+
   it("Get settings", async()=> {
     const res1 = await agent
       .post(`${host}/api/v1/users/0/settings`)

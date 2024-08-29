@@ -23,6 +23,13 @@ global.itemCreateData = {
   "metadata": ""
 }
 
+global.itemCreateDataBad = {
+  "title": "",
+  "description": "description",
+  "data": "",
+  "metadata": ""
+}
+
 global.folderCreateData = {
   "description": "folder description"
 }

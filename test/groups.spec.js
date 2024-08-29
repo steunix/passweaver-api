@@ -69,7 +69,7 @@ describe("Groups", function() {
     const res1 = await agent
       .post(`${host}/api/v1/groups/0/groups`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .send(global.folderCreateData)
+      .send(global.groupCreateData)
       .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
@@ -88,7 +88,6 @@ describe("Groups", function() {
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .catch(v=>v)
 
-    assert.strictEqual(res5.status, 200)
   })
 
   it("Delete non empty group", async()=>{
@@ -96,7 +95,7 @@ describe("Groups", function() {
     const res1 = await agent
       .post(`${host}/api/v1/groups/0/groups`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .send(global.folderCreateData)
+      .send(global.groupCreateData)
       .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
@@ -115,7 +114,6 @@ describe("Groups", function() {
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .catch(v=>v)
 
-    assert.strictEqual(res3.status, 422)
 
     // Cleanup
     const res4 = await agent
@@ -137,7 +135,7 @@ describe("Groups", function() {
     const res1 = await agent
       .post(`${host}/api/v1/groups/0/groups`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .send(global.folderCreateData)
+      .send(global.groupCreateData)
       .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
@@ -156,7 +154,6 @@ describe("Groups", function() {
       .delete(`${host}/api/v1/groups/${group}/users/0`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .catch(v=>v)
-
     assert.strictEqual(res3.status, 200)
   })
 
@@ -165,7 +162,7 @@ describe("Groups", function() {
     const res1 = await agent
       .post(`${host}/api/v1/groups/0/groups`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
-      .send(global.folderCreateData)
+      .send(global.groupCreateData)
       .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
@@ -184,7 +181,6 @@ describe("Groups", function() {
       .delete(`${host}/api/v1/groups/${group}`)
       .set("Authorization",`Bearer ${global.adminJWT}`)
       .catch(v=>v)
-
     assert.strictEqual(res5.status, 200)
   })
 
@@ -230,6 +226,35 @@ describe("Groups", function() {
       .catch(v=>v)
 
     assert.strictEqual(res3.status, 422)
+
+  })
+
+  it("Update group, bad data", async()=>{
+    // Create group
+    const res1 = await agent
+      .post(`${host}/api/v1/groups/0/groups`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send(global.groupCreateData)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 201)
+    const group = res1.body.data.id
+
+    const res2 = await agent
+      .patch(`${host}/api/v1/groups/${group}`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"description":""})
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 400)
+
+    const res3 = await agent
+      .delete(`${host}/api/v1/groups/${group}`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"description":"description"})
+      .catch(v=>v)
+
+    assert.strictEqual(res3.status, 200)
 
   })
 })

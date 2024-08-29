@@ -47,6 +47,16 @@ describe("Folders", function() {
     assert.strictEqual(res1.status, 400)
   })
 
+  it("Update, bad data", async()=>{
+    const res1 = await agent
+      .patch(`${host}/api/v1/folders/sample1`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({"description": ""})
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 400)
+  })
+
   it("Get folder", async()=>{
     const res1 = await agent
       .get(`${host}/api/v1/folders/sample1`)

@@ -103,6 +103,33 @@ describe ( "Folders permissions", ()=> {
     assert.strictEqual(res6.status, 200)
   })
 
+  it("Add permissions, bad data", async()=>{
+    const res1 = await agent
+      .post(`${host}/api/v1/folders/sample1/folders`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .send(global.folderCreateData)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 201)
+    const folder = res1.body.data.id
+
+    // Add permissions to Everyone
+    const res2 = await agent
+      .post(`${host}/api/v1/folders/${folder}/groups/E`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send({read: true})
+      .catch(v=>v)
+
+    assert.strictEqual(res2.status, 400)
+
+    const res3 = await agent
+      .delete(`${host}/api/v1/folders/${folder}`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res3.status, 200)
+  })
+
   it("Add duplicate group permissions", async()=>{
     const res1 = await agent
       .post(`${host}/api/v1/folders/sample1/folders`)

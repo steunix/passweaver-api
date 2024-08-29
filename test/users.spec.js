@@ -24,6 +24,21 @@ describe("Users", function() {
     assert.strictEqual(res2.status, 200)
   })
 
+  it("Create user, bad data", async()=> {
+    var data = { ...userCreateData }
+    var rnd = (new Date%9e6).toString(36)
+    data.login = `${data.login}_${rnd}`
+    data.authmethod = "none"
+
+    const res1 = await agent
+      .post(`${host}/api/v1/users`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 400)
+  })
+
   it("Delete unexistent user", async()=> {
     const res1 = await agent
       .delete(`${host}/api/v1/users/000`)
