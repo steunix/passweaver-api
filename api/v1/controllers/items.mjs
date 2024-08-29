@@ -18,17 +18,6 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
 
-const updateSchema = {
-  "id": "update",
-  "properties": {
-    "type" : { "type": "string" },
-    "title" : { "type": "string", "maxLength": 200 },
-    "data" : { "type": "string" },
-    "metadata": { "type": "string" },
-    "folder" : { "type": "string", "maxLength": 40 }
-  }
-}
-
 /**
  * Check if a personal secret has been set or used in a given session
  * @param {*} req Express request

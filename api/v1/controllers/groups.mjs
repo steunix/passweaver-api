@@ -16,15 +16,6 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 
 import DB from '../../../lib/db.mjs'
 
-const updateSchema = {
-  "id": "create",
-  "type": "object",
-  "properties": {
-    "description" : { "type": "string", "maxLength": 100 },
-    "parent" : { "type": "string", "maxLength": 40 }
-  }
-}
-
 /**
  * Gets a group
  * @param {Object} req Express request

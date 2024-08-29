@@ -16,17 +16,6 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 
 import DB from '../../../lib/db.mjs'
 
-// Payload schemas
-const schemaLogin = {
-  "id": "/login",
-  "type": "object",
-  "properties": {
-    "username" : { "type": "string", "maxLength": 50 },
-    "password" : { "type": "string", "maxLength": 100 }
-  },
-  "required": ["username", "password"]
-}
-
 /**
  * Login
  * @param {Object} req Express request
