@@ -318,7 +318,7 @@ export async function tree(user) {
 
 /**
  * Updates ts_vector for folder and its children
- * @param {} id
+ * @param {string} id Folder id
  */
 export async function update_fts(id) {
   const cfolders = await children(id)
@@ -326,7 +326,7 @@ export async function update_fts(id) {
 
   for ( const f of cfolders ) {
     const items = await DB.items.findMany({
-      where: { folderid: f },
+      where: { folderid: f.id },
       select: { id: true }
     })
 
