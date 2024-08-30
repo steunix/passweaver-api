@@ -23,7 +23,7 @@ import DB from '../../../lib/db.mjs'
 export async function unlock(req, res, next) {
   try {
     // Validate payload
-    if ( !JV.validate(req.body, "personal.json") ) {
+    if ( !JV.validate(req.body, "personal") ) {
       res.status(400).send(R.badRequest())
       return
     }
@@ -46,7 +46,7 @@ export async function unlock(req, res, next) {
     }
 
     // Creates JWT token
-    const token = await Auth.createToken(user.id, true)
+    const token = await Auth.createToken(user.id, req.body.password)
 
     Events.add(user.id, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, user.id)
     res.status(200).send(R.ok({jwt:token}))

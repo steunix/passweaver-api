@@ -8,6 +8,7 @@ import { Prisma } from '@prisma/client'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'
+import * as Auth from '../../../lib/auth.mjs'
 import * as Events from '../../../lib/event.mjs'
 import * as Item from '../../../model/item.mjs'
 import * as Folder from '../../../model/folder.mjs'
@@ -21,12 +22,13 @@ import DB from '../../../lib/db.mjs'
 /**
  * Check if a personal secret has been set or used in a given session
  * @param {*} req Express request
- * @returns
+ * @returns 0: OK, 412: Personal password not set, 417: Personal folder unlocked
  */
 async function checkPersonalAccess(req) {
-  // User has used its personal secret
-  if ( req?.personalfolderunlocked ) {
-    return 0
+  // Validate personal key, if present
+  if ( req.personalkey ) {
+    const valid = Auth.validatePersonalKey(req.personalkey)
+    return valid ? 0 : 401
   }
 
   const user = await DB.users.findUnique({
@@ -34,17 +36,13 @@ async function checkPersonalAccess(req) {
     select: { personalsecret: true }
   })
 
-  // User has not defined its personal secret
+  // User has not defined its personal secret yet
   if ( user.personalsecret===null ) {
     return 412
   }
 
-  // User has not used its personal secret
-  if ( req?.personalfolderunlocked === false ) {
-    return 417
-  }
-
-  return 500
+  // User has set the password, but has not unlocked yet
+  return 417
 }
 
 /**
@@ -91,7 +89,11 @@ export async function get(req, res, next) {
     }
 
     // Decrypt content
-    item.data = JSON.parse(Crypt.decrypt(item.data, item.dataiv, item.dataauthtag))
+    if ( item.personal ) {
+      item.data = JSON.parse(Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, req.personalkey))
+    } else {
+      item.data = JSON.parse(Crypt.decrypt(item.data, item.dataiv, item.dataauthtag))
+    }
 
     // Removes unneeded info
     delete(item.dataauthtag)
@@ -295,7 +297,12 @@ export async function create(req, res, next) {
     }
 
     // Encrypt data
-    const encData = Crypt.encrypt(req.body.data)
+    var encData
+    if ( personal ) {
+      encData = Crypt.encryptPersonal(req.body.data, req.personalkey)
+    } else {
+      encData = Crypt.encrypt(req.body.data)
+    }
 
     // Creates the item
     const newid = newId()
@@ -404,7 +411,12 @@ export async function update(req, res, next) {
     // Updates
     let updateStruct = {}
     if ( req.body.data ) {
-      const encData = Crypt.encrypt(req.body.data)
+      var encData
+      if ( item.personal ) {
+        encData = Crypt.encryptPersonal(req.body.data, req.personalkey)
+      } else {
+        encData = Crypt.encrypt(req.body.data)
+      }
       updateStruct.algo = encData.algo,
       updateStruct.data = encData.encrypted
       updateStruct.dataiv = encData.iv
@@ -557,7 +569,12 @@ export async function clone(req, res, next) {
     }
 
     // Reencrypt data
-    var oldData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    var oldData
+    if ( item.personal ) {
+      oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, req.personalkey)
+    } else {
+      oldData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    }
     var newData = Crypt.encrypt(oldData)
 
     // Creates the item

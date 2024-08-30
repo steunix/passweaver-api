@@ -154,6 +154,23 @@ Items are encrypted in the database using AES-GCM, using a master key that is re
 
 **WARNING**: as with any other software using symmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure to keep your master key safe and *properly backed up*.
 
+### Personal items
+
+Personal items are double-encrypted using an user's secret, so that they cannot be accessed by anyone even if the account is compromised.
+
+- User chooses a password the first time he accesses his personal folder. This will be stored in the db using bcrypt algo.
+- User then needs to unlock the personal folder, providing the password: the JWT will be updated adding a claim with his seeded and encrypted password
+  - That the password is seeded with random bytes initialized on Password-API startup, and then encrypted with AES-256-ECB
+  - this updated JWT needs to be used for subsequent calls.
+- When a user wants to access a personal folder, the seeded and encrypted password in the JWT is validated against the one stored into the DB in order to grant access
+
+Then, when creating an item in a personal folder:
+- A personal AES-256-ECB key is derived on the fly by his password using PBKDF2, using master key as salt; the password is retrieved from the JWT
+- Data is encrypted with AES-256-ECB
+- Data is then re-encrypted with AES-256-GCM with master key
+
+This way
+
 ## Operations log
 
 Every operation is logged into the database, from logins to CRUD operations, to items accesses.
