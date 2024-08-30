@@ -202,8 +202,8 @@ export async function list(req, res, next) {
       left   join itemtypes t
       on     t.id = i.type
       where  i.folderid in (${Prisma.join(folderList)})
-      ${ tsquery && folder ? Prisma.sql` and i.fts_vectoritem @@ ${tsquery}::tsquery` : Prisma.empty }
-      ${ tsquery && !folder ? Prisma.sql` and i.fts_vectorfull @@ ${tsquery}::tsquery` : Prisma.empty }
+      ${ tsquery && folder ? Prisma.sql` and i.fts_vectoritem @@ to_tsquery('simple',${tsquery})` : Prisma.empty }
+      ${ tsquery && !folder ? Prisma.sql` and i.fts_vectorfull @@ to_tsquery('simple',${tsquery})` : Prisma.empty }
       ${ type ? Prisma.sql` and i.type=${type}::uuid` : Prisma.empty}
       order  by i.title
       ${ folder ? Prisma.empty : Prisma.sql` limit 100` }
