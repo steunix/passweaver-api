@@ -18,4 +18,6 @@ router.post("/unlock", personalController.unlock)
 
 router.post("/password", personalController.setPassword)
 
+router.patch("/password", personalController.updatePassword)
+
 export default router

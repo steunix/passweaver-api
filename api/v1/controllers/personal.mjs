@@ -16,7 +16,7 @@ import * as crypto from 'crypto'
 import DB from '../../../lib/db.mjs'
 
 /**
- * Personal folder unlock
+ * Unlock personal folder. A new JWT is sent containing the personal token.
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -47,7 +47,7 @@ export async function unlock(req, res, next) {
       return
     }
 
-    // Creates JWT token
+    // Create JWT token
     const token = await Auth.createToken(user.id, req.body.password)
 
     Events.add(user.id, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, user.id)
@@ -92,10 +92,62 @@ export async function setPassword(req, res, next) {
       }
     })
 
+    // Create new JWT token
+    const token = await Auth.createToken(req.user, req.body.password)
+
     Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
-    res.status(200).send(R.ok('Done'))
+    res.status(200).send(R.ok({jwt:token}))
   } catch (err) {
     next(err)
   }
 }
 
+/**
+ * Update personal password. The personal key is also reencrypted.
+ * @param {*} req Express request
+ * @param {*} res Express response
+ * @param {Function} next Express next callback
+ * @returns
+ */
+export async function updatePassword(req, res, next) {
+  try {
+    if ( !JV.validate(req.body, "personal") ) {
+      res.status(400).send(R.badRequest())
+      return
+    }
+    if ( !req.jwt ) {
+      res.status(403).send(R.unauthorized())
+      return
+    }
+
+    // Get personal key and decrypt using the current JWT
+    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+    const pkey = Crypt.decryptPersonalKey(Buffer.from(user.personalkey,'base64'), req.personaltoken)
+
+    // Encrypt personal key with personal password
+    const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')
+    let cipher = crypto.createCipheriv('aes-256-ecb',hash,'')
+
+    var ekey = cipher.update(pkey, '', 'base64')
+    ekey += cipher.final('base64')
+
+    // Personal password
+    const pwd = await Crypt.hashPassword(req.body.password)
+
+    await DB.users.update({
+      where: { id: req.user },
+      data: {
+        personalsecret: pwd,
+        personalkey: ekey
+      }
+    })
+
+    // Create new JWT token
+    const token = await Auth.createToken(req.user, req.body.password)
+
+    Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
+    res.status(200).send(R.ok({jwt:token}))
+  } catch (err) {
+    next(err)
+  }
+}
