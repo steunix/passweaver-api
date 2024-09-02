@@ -26,8 +26,8 @@ import DB from '../../../lib/db.mjs'
  */
 async function checkPersonalAccess(req) {
   // Validate personal key, if present
-  if ( req.personalkey ) {
-    const valid = Auth.validatePersonalKey(req.personalkey)
+  if ( req.personaltoken ) {
+    const valid = Auth.validatePersonalToken(req.personaltoken)
     return valid ? 0 : 401
   }
 
@@ -90,7 +90,8 @@ export async function get(req, res, next) {
 
     // Decrypt content
     if ( item.personal ) {
-      item.data = JSON.parse(Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, req.personalkey))
+      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+      item.data = JSON.parse(Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken))
     } else {
       item.data = JSON.parse(Crypt.decrypt(item.data, item.dataiv, item.dataauthtag))
     }
@@ -299,7 +300,8 @@ export async function create(req, res, next) {
     // Encrypt data
     var encData
     if ( personal ) {
-      encData = Crypt.encryptPersonal(req.body.data, req.personalkey)
+      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+      encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
     } else {
       encData = Crypt.encrypt(req.body.data)
     }
@@ -413,8 +415,9 @@ export async function update(req, res, next) {
     if ( req.body.data ) {
       var encData
       if ( item.personal ) {
-        encData = Crypt.encryptPersonal(req.body.data, req.personalkey)
-      } else {
+        const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+        encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
+        } else {
         encData = Crypt.encrypt(req.body.data)
       }
       updateStruct.algo = encData.algo,
@@ -571,7 +574,8 @@ export async function clone(req, res, next) {
     // Reencrypt data
     var oldData
     if ( item.personal ) {
-      oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, req.personalkey)
+      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+      oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
     } else {
       oldData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
     }

@@ -10,6 +10,8 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Config from '../../../lib/config.mjs'
+import * as crypto from 'crypto'
 
 import DB from '../../../lib/db.mjs'
 
@@ -69,11 +71,24 @@ export async function setPassword(req, res, next) {
       return
     }
 
+    // Create personal storage key
+    const pkey = Crypt.randomAESKey()
+
+    // Encrypt personal storage key with personal password
+    const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')
+    let cipher = crypto.createCipheriv('aes-256-ecb',hash,'')
+
+    var ekey = cipher.update(pkey, '', 'base64')
+    ekey += cipher.final('base64')
+
+    // Personal password
     const pwd = await Crypt.hashPassword(req.body.password)
+
     await DB.users.update({
       where: { id: req.user },
       data: {
-        personalsecret: pwd
+        personalsecret: pwd,
+        personalkey: ekey
       }
     })
 

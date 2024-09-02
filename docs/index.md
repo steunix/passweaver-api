@@ -156,20 +156,29 @@ Items are encrypted in the database using AES-GCM, using a master key that is re
 
 ### Personal items
 
-Personal items are double-encrypted using an user's secret, so that they cannot be accessed by anyone even if the account is compromised.
+Personal items are encrypted with "envelope encryption" first and then reencrypted with master key:
 
-- User chooses a password the first time he accesses his personal folder. This will be stored in the db using bcrypt algo.
-- User then needs to unlock the personal folder, providing the password: the JWT will be updated adding a claim with his seeded and encrypted password
-  - That the password is seeded with random bytes initialized on Password-API startup, and then encrypted with AES-256-ECB
-  - this updated JWT needs to be used for subsequent calls.
-- When a user wants to access a personal folder, the seeded and encrypted password in the JWT is validated against the one stored into the DB in order to grant access
+- When a user set its personal password for the first time, a random key (PKEY) is automatically generated
+- PKEY is encrypted with a key derived from the user password using PBKDF2, and stored in the database
+- The personal password (PPWD) is stored in the db using bcrypt algo
+- When user unlocks the personal folder providing his PPWD, the authentication JWT will be updated adding a claim with his seeded and encrypted password:
+  - the PPWD is seeded with random bytes initialized on Password-API startup, and then encrypted with AES-256-ECB using random key and i.v. also initialized at startup
+  - this updated JWT needs to be used for subsequent calls
+- When a user wants to access a personal folder, the seeded and encrypted PPWD in the JWT is validated against the one stored into the DB in order to grant access
 
 Then, when creating an item in a personal folder:
-- A personal AES-256-ECB key is derived on the fly by his password using PBKDF2, using master key as salt; the password is retrieved from the JWT
-- Data is encrypted with AES-256-ECB
+- PPWD is extracted from JWT
+- PKEY is decrypted using the key derived from user password
+- Data is encrypted with AES-256-ECB using PKEY
 - Data is then re-encrypted with AES-256-GCM with master key
 
-This way
+When reading a personal item:
+- PPWD is extracted from JWT
+- PKEY is decrypted using the key derived from user password
+- Data is decrypted with AES-256-GCM with master key
+- Data obtained is then decrypted with AES-256-ECB using PKEY
+
+No keys are retained in memory or cache, everything is recalculated when needed.
 
 ## Operations log
 

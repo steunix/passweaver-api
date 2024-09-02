@@ -53,6 +53,7 @@ model users {
   secret          String   @db.VarChar(100)
   secretexpiresat DateTime
   personalsecret  String?  @db.VarChar(100)
+  personalkey     String?  @db.VarChar(200)
   active          Boolean  @default(true)
   createdat       DateTime @default(now())
   updatedat       DateTime @updatedAt
