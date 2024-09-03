@@ -33,6 +33,6 @@
     "uuidv7": "^1.0.0"
   },
   "prisma": {
-    "seed": "node prisma/seed-testrun.js"
+    "seed": "node prisma/seed.js"
   }
 }
