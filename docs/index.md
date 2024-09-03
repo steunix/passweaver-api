@@ -290,13 +290,14 @@ Copy `config-skel.json` to `config.json` and adjust the options:
 
 ### Environment
 
-Your environment must expose this variable:
+Passweaver API reads this environment variable:
 
 - `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
 
 See [Prisma Documentation](https://www.prisma.io/docs/orm/overview/databases/postgresql#connection-details) for further details.
 
-If your is a production environment, don't forget to set variable `NODE_ENV` to `production`, since some of Passweaver API dependencies use that variable to optimize operations.
+If you're installing a production environment, don't forget to set variable `NODE_ENV` to `production`, since some of Passweaver API dependencies
+use that variable to optimize operations.
 
 ### Database
 
@@ -304,13 +305,13 @@ PassWeaver API uses PostgreSQL as RDBMS and Prisma ORM to access it.
 
 Create an empty database on your existent PostgreSQL instance, and set the environment variable `PASSWEAVERAPI_PRISMA_URL` accordingly.
 
-Then, inside PassWeaver-API directory, run the following commands:
+Then, from PassWeaver-API directory, run the following commands:
 
 - `npx prisma db push`
 - `npx prisma db seed`
 - `npx prisma generate`
 
-The default user `admin` will be created with password `0`: change it as soon as you login.
+A default user `admin` will be created with password `0`: of course you should change it as soon as possible.
 
 ## Run
 
