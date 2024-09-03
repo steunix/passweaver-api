@@ -29,7 +29,7 @@ export async function generatePassword(req, res, next) {
       strict: true
     })
 
-    res.status(200).send(R.ok({password: pwd}))
+    res.send(R.ok({password: pwd}))
   } catch (err) {
     next(err)
   }
@@ -45,7 +45,7 @@ export async function info(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -66,7 +66,7 @@ export async function info(req, res, next) {
       startup: Config.get().startuptime
     }
 
-    res.status(200).send(R.ok(data))
+    res.send(R.ok(data))
   } catch (err) {
     next(err)
   }

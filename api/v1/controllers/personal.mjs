@@ -26,7 +26,7 @@ export async function unlock(req, res, next) {
   try {
     // Validate payload
     if ( !JV.validate(req.body, "personal") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
@@ -36,14 +36,14 @@ export async function unlock(req, res, next) {
     })
     if ( user===null ) {
       Events.add(req.user, Const.EV_ACTION_UNLOCKNF, Const.EV_ENTITY_USER, req.user)
-      res.status(401).send(R.ko("Bad user or wrong password"))
+      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
       return
     }
 
     // Check password
     if ( !await( Crypt.checkPassword(req.body.password, user.personalsecret) ) ) {
       Events.add(user.id, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, user.id)
-      res.status(401).send(R.ko("Wrong password"))
+      res.status(R.UNAUTHORIZED).send(R.ko("Wrong password"))
       return
     }
 
@@ -51,7 +51,7 @@ export async function unlock(req, res, next) {
     const token = await Auth.createToken(user.id, req.body.password)
 
     Events.add(user.id, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, user.id)
-    res.status(200).send(R.ok({jwt:token}))
+    res.send(R.ok({jwt:token}))
   } catch(err) {
     next(err)
   }
@@ -67,7 +67,7 @@ export async function unlock(req, res, next) {
 export async function setPassword(req, res, next) {
   try {
     if ( !JV.validate(req.body, "personal") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
@@ -96,7 +96,7 @@ export async function setPassword(req, res, next) {
     const token = await Auth.createToken(req.user, req.body.password)
 
     Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
-    res.status(200).send(R.ok({jwt:token}))
+    res.send(R.ok({jwt:token}))
   } catch (err) {
     next(err)
   }
@@ -112,11 +112,11 @@ export async function setPassword(req, res, next) {
 export async function updatePassword(req, res, next) {
   try {
     if ( !JV.validate(req.body, "personal") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
     if ( !req.jwt ) {
-      res.status(403).send(R.unauthorized())
+      res.status(R.UNAUTHORIZED).send(R.unauthorized())
       return
     }
 
@@ -146,7 +146,7 @@ export async function updatePassword(req, res, next) {
     const token = await Auth.createToken(req.user, req.body.password)
 
     Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
-    res.status(200).send(R.ok({jwt:token}))
+    res.send(R.ok({jwt:token}))
   } catch (err) {
     next(err)
   }

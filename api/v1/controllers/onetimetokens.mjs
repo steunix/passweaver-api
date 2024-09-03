@@ -21,15 +21,15 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
  */
 export async function get(req, res, next) {
   try {
-    const id = req.params.id
+    const tokenid = req.params.id
 
     // Search token
     const ottoken = await DB.onetimetokens.findUnique({
-      where: { token: id }
+      where: { token: tokenid }
     })
 
     if ( ottoken===null ) {
-      res.status(404).send(R.ko("Token not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Token not found"))
       return
     }
 
@@ -37,11 +37,11 @@ export async function get(req, res, next) {
 
     // Delete token
     await DB.onetimetokens.deleteMany({
-      where: { token: id }
+      where: { token: tokenid }
     })
 
-    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, id)
-    res.status(200).send(R.ok(data))
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, tokenid)
+    res.send(R.ok(data))
   } catch (err) {
     next(err)
   }
@@ -57,19 +57,19 @@ export async function create(req, res, next) {
   try {
     // Validate payload
     if ( !JV.validate(req.body, "onetimesecret_create") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
     // Check data is not empty
     if ( req.body.data=="" ) {
-      res.status(422).send(R.ko("Data cannot be empty"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Data cannot be empty"))
       return
     }
 
     // Check if expiration is within limits
     if ( parseInt(req.body.hours) > parseInt(Config.get().onetimetokens.max_hours) ) {
-      res.status(422).send(R.ko("Hours exceed server limit"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Hours exceed server limit"))
       return
     }
 
@@ -98,7 +98,7 @@ export async function create(req, res, next) {
     })
 
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
-    res.status(201).send(R.ok({token: newToken}))
+    res.status(R.CREATED).send(R.ok({token: newToken}))
   } catch (err) {
     next(err)
   }

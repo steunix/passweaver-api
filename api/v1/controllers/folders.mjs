@@ -25,28 +25,28 @@ import DB from '../../../lib/db.mjs'
  */
 export async function get(req, res, next) {
   try {
-    const id = req.params.id
+    const folderid = req.params.id
 
     // Search folder
     const folder = await DB.folders.findUnique({
-      where: { id: id }
+      where: { id: folderid }
     })
     if ( !folder ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
     // Check permissions
-    const perm = await Folder.permissions(id, req.user);
+    const perm = await Folder.permissions(folderid, req.user);
     if ( !perm.read ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Add permissions to the payload
     folder.permissions = perm
 
-    res.status(200).send(R.ok(folder))
+    res.send(R.ok(folder))
   } catch ( err ) {
     next(err)
   }
@@ -63,29 +63,29 @@ export async function create(req, res, next) {
   try {
     // Validate payload
     if ( !JV.validate(req.body, "folder_create") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
     // Search parent folder
     if ( !Folder.exists(req.params.parent) ) {
-      res.status(404).send(R.ko("Parent folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Parent folder not found"))
       return
     }
 
     // Check write permissions on parent folder
     const perm = await Folder.permissions(req.params.parent, req.user);
     if ( !perm.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // If leaf of a personal folder, it must be personal too
-    const personal = await Folder.isPersonal(req.params.parent)
+    const ispersonal = await Folder.isPersonal(req.params.parent)
 
     // Admin cannot create personal folders
-    if ( await Auth.isAdmin(req) && personal ) {
-      res.status(403).send(R.forbidden())
+    if ( await Auth.isAdmin(req) && ispersonal ) {
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -95,15 +95,15 @@ export async function create(req, res, next) {
       data: {
         id: newid,
         description: req.body.description,
-        personal: personal,
+        personal: ispersonal,
         parent: req.params.parent,
-        userid: personal ? req.user : null
+        userid: ispersonal ? req.user : null
       }
     })
 
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, newid)
     await Cache.resetFoldersTree()
-    res.status(201).send(R.ok({id: newid}))
+    res.status(R.CREATED).send(R.ok({id: newid}))
   } catch ( err ) {
     next(err)
   }
@@ -120,63 +120,63 @@ export async function update (req, res, next) {
   try {
     // Validate payload
     if ( !JV.validate(req.body, "folder_update") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
-    const id = req.params.id
+    const folderid = req.params.id
 
     // Check for root folder
-    if ( id==Const.PW_FOLDER_ROOTID ) {
-      res.status(422).send(R.ko("Root folder cannot be updated"))
+    if ( folderid==Const.PW_FOLDER_ROOTID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root folder cannot be updated"))
       return
     }
 
     // Check for Personal root folder
-    if ( id==Const.PW_FOLDER_PERSONALROOTID ) {
-      res.status(422).send(R.ko("Personal root folder cannot be updated"))
+    if ( folderid==Const.PW_FOLDER_PERSONALROOTID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Personal root folder cannot be updated"))
       return
     }
 
     // Search folder
     const folder = await DB.folders.findUnique({
-      where: { id: id }
+      where: { id: folderid }
     });
 
     if ( !folder ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
     // Admin cannot update personal folders
     if ( await Auth.isAdmin(req) && folder.personal ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Personal folders roots cannot be altered, subfolders can
     if ( folder.personal && folder.parent==Const.PW_FOLDER_PERSONALROOTID ) {
-      res.status(422).send(R.ko("Personal folders cannot be updated"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Personal folders cannot be updated"))
       return
     }
 
     // Check write permissions on current folder
     const perm1 = await Folder.permissions(folder.id, req.user)
     if ( !perm1.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // If parent is given, check for correctness
     if ( req.body.parent ) {
       if ( folder.personal ) {
-        res.status(422).send(R.ko("Personal folders cannot be moved"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Personal folders cannot be moved"))
         return
       }
 
       // Parent cannot be itself
       if ( req.body.parent == folder.id ) {
-        res.status(422).send(R.ko("Target folder is invalid"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Target folder is invalid"))
         return
       }
 
@@ -185,27 +185,27 @@ export async function update (req, res, next) {
         where: { id: req.body.parent }
       })
       if ( !pfolder ) {
-        res.status(404).send(R.ko("Target folder not found"))
+        res.status(R.NOT_FOUND).send(R.ko("Target folder not found"))
         return
       }
 
       // Parent cannot be a personal folder
       if ( pfolder.personal ) {
-        res.status(422).send(R.ko("Target folder cannot be personal"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Target folder cannot be personal"))
         return
       }
 
       // Parent cannot be one of its current children, otherwise it would break the tree
       const children = await Folder.children(folder.id)
       if ( children.find( (elem)=> { return elem.id == req.body.parent} ) ) {
-        res.status(422).send(R.ko("Target folder is invalid"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Target folder is invalid"))
         return
       }
 
       // Check write permissions on new parent folder
       const perm2 = await Folder.permissions(req.body.parent, req.user);
       if ( !perm2.write ) {
-        res.status(403).send(R.forbidden())
+        res.status(R.FORBIDDEN).send(R.forbidden())
         return
       }
     }
@@ -222,20 +222,20 @@ export async function update (req, res, next) {
     await DB.folders.update({
       data: updateStruct,
       where: {
-        id: id
+        id: folderid
       }
     })
 
-    await Folder.update_fts(id)
+    await Folder.update_fts(folderid)
 
     // If reparenting, recalc fts for old folder too
     if ( req.body.parent ) {
       await Folder.update_fts(folder.id)
     }
 
-    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, folderid)
     await Cache.resetFoldersTree()
-    res.status(200).send(R.ok())
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -250,79 +250,79 @@ export async function update (req, res, next) {
  */
 export async function remove(req, res, next) {
   try {
-    const id = req.params.id
+    const folderid = req.params.id
 
     // Root folder cannot be deleted
-    if ( id==Const.PW_FOLDER_ROOTID ) {
-      res.status(422).send(R.ko("Root folder cannot be deleted"))
+    if ( folderid==Const.PW_FOLDER_ROOTID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root folder cannot be deleted"))
       return
     }
 
     // Personal folder root cannot be deleted
-    if ( id==Const.PW_FOLDER_PERSONALROOTID ) {
-      res.status(422).send(R.ko("Personal folders root cannot be deleted"))
+    if ( folderid==Const.PW_FOLDER_PERSONALROOTID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Personal folders root cannot be deleted"))
       return
     }
 
     // Search folder
     const folder = await DB.folders.findUnique({
-      where: { id: id }
+      where: { id: folderid }
     })
     if ( !folder ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
     // Personal folders roots cannot be removed, subfolders can
     if ( folder.personal && folder.parent==Const.PW_FOLDER_PERSONALROOTID) {
-      res.status(422).send(R.ko("Personal folders cannot be deleted"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Personal folders cannot be deleted"))
       return
     }
 
     // Admin cannot remove personal folders
     if ( await Auth.isAdmin(req) && folder.personal ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Check write permissions on folder
-    const perm = await Folder.permissions(id, req.user)
+    const perm = await Folder.permissions(folderid, req.user)
     if ( !perm.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Search folder items
     const items = await DB.items.findFirst({
-      where: { folderid: id }
+      where: { folderid: folderid }
     });
     if ( items!==null ) {
-      res.status(422).send(R.ko("Folder not empty, items found"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Folder not empty, items found"))
       return
     }
 
     // Search children folders
     const children = await DB.folders.findFirst({
-      where: { parent: id }
+      where: { parent: folderid }
     });
     if ( children!==null ) {
-      res.status(422).send(R.ko("Folder not empty, subfolders found"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Folder not empty, subfolders found"))
       return
     }
 
     // Deletes folder permissions
     await DB.folderspermissions.deleteMany({
-      where: { folderid: id }
+      where: { folderid: folderid }
     })
 
     // Deletes folder
     await DB.folders.delete({
-      where: { id: id }
+      where: { id: folderid }
     })
 
-    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, folderid)
     await Cache.resetFoldersTree()
-    res.status(200).send(R.ok('Done'))
+    res.send(R.ok('Done'))
   } catch (err) {
     next(err)
   }
@@ -339,31 +339,31 @@ export async function addGroup(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Checks for valid payload
     if ( !JV.validate(req.body, "folder_group") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
     // Check for permissions
     if ( req.body.write && !req.body.read) {
-      res.status(422).send(R.ko("If write is true, also read must be true"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("If write is true, also read must be true"))
       return
     }
 
     // Checks the group
     if ( !await Group.exists(req.params.group) ) {
-      res.status(404).send(R.ko("Group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
     // Checks the folder
     if ( !await Folder.exists(req.params.folder) ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
@@ -376,7 +376,7 @@ export async function addGroup(req, res, next) {
       select: { id: true }
     })
     if ( perm ) {
-      res.status(422).send(R.ko("Group is already associated to folder"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Group is already associated to folder"))
       return
     }
 
@@ -392,7 +392,7 @@ export async function addGroup(req, res, next) {
 
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder)
     await Cache.resetFoldersTree()
-    res.status(200).send(R.ok('Done'))
+    res.send(R.ok('Done'))
   } catch (err) {
     next(err)
   }
@@ -409,31 +409,31 @@ export async function setGroup(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Checks for valid payload
     if ( !JV.validate(req.body, "folder_group") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
     // Check for permissions
     if ( req.body.write && !req.body.read) {
-      res.status(422).send(R.ko("If write is true, also read must be true"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("If write is true, also read must be true"))
       return
     }
 
     // Checks the group
     if ( !await Group.exists(req.params.group) ) {
-      res.status(404).send(R.ko("Group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
     // Check the folder
     if ( !await Folder.exists(req.params.folder) ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
@@ -446,7 +446,7 @@ export async function setGroup(req, res, next) {
       select: { id: true }
     })
     if ( !perm ) {
-      res.status(422).send(R.ko("Group is not associated to this folder"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Group is not associated to this folder"))
       return
     }
 
@@ -461,7 +461,7 @@ export async function setGroup(req, res, next) {
 
     Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, req.params.folder)
     await Cache.resetFoldersTree()
-    res.status(200).send(R.ok('Done'))
+    res.send(R.ok('Done'))
   } catch (err) {
     next(err)
   }
@@ -478,19 +478,19 @@ export async function removeGroup(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Checks the group
     if ( !await Group.exists(req.params.group) ) {
-      res.status(404).send(R.ko("Group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
     // Checks the folder
     if ( !await Folder.exists(req.params.folder) ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
@@ -503,13 +503,13 @@ export async function removeGroup(req, res, next) {
       select: { id: true }
     })
     if ( perm===null ) {
-      res.status(404).send(R.ko("Group is not associated to folder"))
+      res.status(R.NOT_FOUND).send(R.ko("Group is not associated to folder"))
       return
     }
 
     // Admins group cannot be removed from Root group
     if ( req.params.group==Const.PW_GROUP_ADMINSID && req.params.folder==Const.PW_FOLDER_ROOTID ) {
-      res.status(422).send(R.ko("Admin cannot be removed from root folder"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admin cannot be removed from root folder"))
       return
     }
 
@@ -521,7 +521,7 @@ export async function removeGroup(req, res, next) {
 
     Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, req.params.folder)
     await Cache.resetFoldersTree()
-    res.status(200).send(R.ok('Done'))
+    res.send(R.ok('Done'))
   } catch (err) {
     next(err)
   }
@@ -538,13 +538,13 @@ export async function groups(req,res,next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Checks the folder
     if ( !await Folder.exists(req.params.id) ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
@@ -592,7 +592,7 @@ export async function groups(req,res,next) {
       return 0
     })
 
-    res.status(200).send(R.ok(groups))
+    res.send(R.ok(groups))
   } catch (err) {
     next(err)
   }
@@ -608,7 +608,7 @@ export async function groups(req,res,next) {
 export async function tree(req,res,next) {
   try {
     const tree = await Folder.tree(req.user);
-    res.status(200).send(R.ok(tree))
+    res.send(R.ok(tree))
   } catch (err) {
     next(err)
   }

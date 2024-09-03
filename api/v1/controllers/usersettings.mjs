@@ -21,7 +21,7 @@ export async function get(req, res, next) {
 
     // Settings can be read only by the owner
     if ( req.user!==userid) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -34,7 +34,7 @@ export async function get(req, res, next) {
       }
     })
 
-    res.status(200).send(R.ok(settings))
+    res.send(R.ok(settings))
   } catch (err) {
     next(err)
   }
@@ -53,13 +53,13 @@ export async function set(req, res, next) {
 
     // Settings can be written only by the owner
     if ( req.user!==userid) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "usersettings_create") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
@@ -82,7 +82,7 @@ export async function set(req, res, next) {
       }
     })
 
-    res.status(201).send(R.ok())
+    res.status(R.CREATED).send(R.ok())
   } catch (err) {
     next(err)
   }

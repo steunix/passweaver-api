@@ -21,26 +21,26 @@ import DB from '../../../lib/db.mjs'
  */
 export async function get(req, res, next) {
   try {
-    const id = req.params.id
+    const typeid = req.params.id
 
     // Must be admin
     if ( !await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Search item
     const itemtype = await DB.itemtypes.findUnique({
-      where: { id: id }
+      where: { id: typeid }
     })
 
     if ( itemtype===null ) {
-      res.status(404).send(R.ko("Item type not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item type not found"))
       return
     }
 
-    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEMTYPE, id)
-    res.status(200).send(R.ok(itemtype))
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEMTYPE, typeid)
+    res.send(R.ok(itemtype))
   } catch (err) {
     next(err)
   }
@@ -66,11 +66,11 @@ export async function list(req, res, next) {
     })
 
     if ( itemtypes.length==0 ) {
-      res.status(404).send(R.ko("No item found"))
+      res.status(R.NOT_FOUND).send(R.ko("No item found"))
       return
     }
 
-    res.status(200).send(R.ok(itemtypes))
+    res.send(R.ok(itemtypes))
   } catch (err) {
     next(err)
   }
@@ -86,13 +86,13 @@ export async function create(req, res, next) {
   try {
     // Must be admin
     if ( !await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "itemtype_create") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
@@ -105,7 +105,7 @@ export async function create(req, res, next) {
     })
 
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
-    res.status(201).send(R.ok({id: created.id}))
+    res.status(R.CREATED).send(R.ok({id: created.id}))
   } catch (err) {
     next(err)
   }
@@ -121,25 +121,25 @@ export async function update(req, res, next) {
   try {
     // Must be admin
     if ( !await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "itemtype_update") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
-    const id = req.params.id
+    const typeid = req.params.id
 
     // Search item
     const itemtypes = await DB.itemtypes.findUnique({
-      where: { id: id }
+      where: { id: typeid }
     })
 
     if ( itemtypes===null ) {
-      res.status(404).send(R.ko("Item type not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item type not found"))
       return
     }
 
@@ -154,12 +154,12 @@ export async function update(req, res, next) {
     await DB.itemtypes.update({
       data: updateStruct,
       where: {
-        id: id
+        id: typeid
       }
     })
 
-    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEMTYPE, id)
-    res.status(200).send(R.ok())
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEMTYPE, typeid)
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -175,19 +175,19 @@ export async function remove(req, res, next) {
   try {
     // Must be admin
     if ( !await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
-    const id = req.params.id
+    const typeid = req.params.id
 
     // Search items type
     const itemtypes = await DB.itemtypes.findUnique({
-      where: { id: id }
+      where: { id: typeid }
     })
 
     if ( itemtypes===null ) {
-      res.status(404).send(R.ko("Item type not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item type not found"))
       return
     }
 
@@ -196,20 +196,20 @@ export async function remove(req, res, next) {
       await DB.items.updateMany({
         data: { type: null },
         where: {
-          type: id
+          type: typeid
         }
       })
 
       // Deletes item
       await DB.itemtypes.delete({
         where: {
-          id: id
+          id: typeid
         }
       })
     })
 
-    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, id)
-    res.status(200).send(R.ok('Done'))
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, typeid)
+    res.send(R.ok('Done'))
   } catch (err) {
     next(err)
   }

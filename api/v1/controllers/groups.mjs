@@ -25,19 +25,19 @@ import DB from '../../../lib/db.mjs'
  */
 export async function get(req, res, next) {
   try {
-    const id = req.params.id
+    const groupid = req.params.id
 
     // Search folder
     const group = await DB.groups.findUnique({
-      where: { id: id }
+      where: { id: groupid }
     });
 
     if ( group===null ) {
-      res.status(404).send(R.ko("Group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
-    res.status(200).send(R.ok(group))
+    res.send(R.ok(group))
   } catch (err) {
     next(err)
   }
@@ -53,11 +53,9 @@ export async function list(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
-
-    const id = req.params.id
 
     // Search group
     var groups
@@ -78,7 +76,7 @@ export async function list(req, res, next) {
       })
     }
 
-    res.status(200).send(R.ok(groups))
+    res.send(R.ok(groups))
   } catch (err) {
     next(err)
   }
@@ -125,7 +123,7 @@ export async function getUsers(req, res, next) {
     for ( const user of users ) {
       data.push(user.users)
     }
-    res.status(200).send(R.ok(data))
+    res.send(R.ok(data))
   } catch (err) {
     next(err)
   }
@@ -142,24 +140,24 @@ export async function create(req, res, next) {
     try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "group_create") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
     // Search parent
     if ( !await Group.exists(req.params.parent) ) {
-      res.status(404).send(R.ko("Parent group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Parent group not found"))
       return
     }
 
     if ( req.params.parent==Const.PW_GROUP_EVERYONEID ) {
-      res.status(422).send(R.ko("Cannot create groups in Everyone group"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot create groups in Everyone group"))
       return
     }
 
@@ -177,7 +175,7 @@ export async function create(req, res, next) {
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, newid)
 
     await Cache.resetGroupsTree()
-    res.status(201).send(R.ok({id:newid}))
+    res.status(R.CREATED).send(R.ok({id:newid}))
   } catch (err) {
     next(err)
   }
@@ -194,39 +192,39 @@ export async function update(req, res, next) {
     try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "group_update") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
-    const id = req.params.id
+    const groupid = req.params.id
 
     // Check for root group
-    if ( id==Const.PW_GROUP_ROOTID ) {
-      res.status(422).send(R.ko("Root group cannot be modified"))
+    if ( groupid==Const.PW_GROUP_ROOTID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root group cannot be modified"))
       return;
     }
 
     // Check for Admins group
-    if ( id==Const.PW_GROUP_ADMINSID ) {
-      res.status(422).send(R.ko("Admins group cannot be modified"))
+    if ( groupid==Const.PW_GROUP_ADMINSID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admins group cannot be modified"))
       return;
     }
 
     // Check for Everyone group
-    if ( id==Const.PW_GROUP_EVERYONEID ) {
-      res.status(422).send(R.ko("Everyone group cannot be modified"))
+    if ( groupid==Const.PW_GROUP_EVERYONEID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Everyone group cannot be modified"))
       return;
     }
 
     // Search group
-    if ( !await Group.exists(id) ) {
-      res.status(404).send(R.ko("Group not found"))
+    if ( !await Group.exists(groupid) ) {
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
@@ -235,19 +233,19 @@ export async function update(req, res, next) {
     // Search parent group
     if ( groupFromURL ) {
       if ( !await Group.exists(groupFromURL) ) {
-        res.status(404).send(R.ko("Parent group not found"))
+        res.status(R.NOT_FOUND).send(R.ko("Parent group not found"))
         return
       }
 
       // New parent cannot be one of its current children, otherwise it would break the tree
       const group = await DB.groups.findUnique({
-        where: { id: id },
+        where: { id: groupid },
         select: { id: true }
       })
 
       const children = await Group.children(group.id)
       if ( children.find( (elem)=> { return elem.id == req.body.parent} ) ) {
-        res.status(422).send(R.ko("Parent group is invalid"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Parent group is invalid"))
         return
       }
     }
@@ -264,14 +262,14 @@ export async function update(req, res, next) {
     await DB.groups.update({
       data: updateStruct,
       where: {
-        id: id
+        id: groupid
       }
     })
 
-    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_GROUP, id)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_GROUP, groupid)
     await Cache.resetFoldersTree()
     await Cache.resetGroupsTree()
-    res.status(200).send(R.ok())
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -289,52 +287,52 @@ export async function remove(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
-    const id = req.params.id
+    const groupid = req.params.id
 
     // Root group cannot be deleted
-    if ( id==Const.PW_GROUP_ROOTID ) {
-      res.status(422).send(R.ko("Root group cannot be deleted"))
+    if ( groupid==Const.PW_GROUP_ROOTID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root group cannot be deleted"))
       return
     }
 
     // Everyone group cannot be deleted
-    if ( id==Const.PW_GROUP_EVERYONEID ) {
-      res.status(422).send(R.ko("Root group cannot be deleted"))
+    if ( groupid==Const.PW_GROUP_EVERYONEID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root group cannot be deleted"))
       return
     }
 
     // Everyone group cannot be deleted
-    if ( id==Const.PW_GROUP_ADMINSID ) {
-      res.status(422).send(R.ko("Admins group cannot be deleted"))
+    if ( groupid==Const.PW_GROUP_ADMINSID ) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admins group cannot be deleted"))
       return
     }
 
     // Gets the group
-    if ( !await Group.exists(id) ) {
-      res.status(404).send(R.ko("Group not found"))
+    if ( !await Group.exists(groupid) ) {
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
     // Looks for children groups
     const children = await DB.groups.findFirst({
-      where: { parent: id }
+      where: { parent: groupid }
     })
     if ( children!==null ) {
-      res.status(422).send(R.ko("Group not empty"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Group not empty"))
       return
     }
 
     // Looks for members
     const members = await DB.groupsmembers.findFirst({
-      where: { groupid: id },
+      where: { groupid: groupid },
       select: { id: true }
     })
     if ( members!==null ) {
-      res.status(422).send(R.ko("Group has members"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Group has members"))
       return
     }
 
@@ -342,28 +340,28 @@ export async function remove(req, res, next) {
     // Delete user/groups
     await DB.groupsmembers.deleteMany({
       where: {
-        groupid: id
+        groupid: groupid
       }
     })
 
     // Delete folder/groups
     await DB.folderspermissions.deleteMany({
       where: {
-        groupid: id
+        groupid: groupid
       }
     })
 
     // Delete group
     await DB.groups.delete({
       where: {
-        id: id
+        id: groupid
       }
     })
 
-    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUP, id)
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUP, groupid)
     await Cache.resetFoldersTree()
     await Cache.resetGroupsTree()
-    res.status(200).send(R.ok())
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -380,7 +378,7 @@ export async function addUser(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -389,19 +387,19 @@ export async function addUser(req, res, next) {
 
     // Checks the group
     if ( !await Group.exists(group) ) {
-      res.status(404).send(R.ko("Group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
     // Cannot add user to Everyone
     if ( group==Const.PW_GROUP_EVERYONEID ) {
-      res.status(422).send(R.ko("Cannot add users to Everyone group"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot add users to Everyone group"))
       return
     }
 
     // Checks the user
     if ( !await User.exists(user) ) {
-      res.status(404).send(R.ko("User not found"))
+      res.status(R.NOT_FOUND).send(R.ko("User not found"))
       return
     }
 
@@ -414,7 +412,7 @@ export async function addUser(req, res, next) {
       select: { id: true }
     })
     if ( ex!==null ) {
-      res.status(422).send(R.ko("User is already in the group"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("User is already in the group"))
       return
     }
 
@@ -428,7 +426,7 @@ export async function addUser(req, res, next) {
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, group, user)
 
     await Cache.resetFoldersTree(user)
-    res.status(200).send(R.ok())
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -445,7 +443,7 @@ export async function removeUser(req, res, next) {
   try {
     // Must be admin
     if ( !await Auth.isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -454,25 +452,25 @@ export async function removeUser(req, res, next) {
 
     // Checks the group
     if ( !await Group.exists(group) ) {
-      res.status(404).send(R.ko("Group not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Group not found"))
       return
     }
 
     // Checks the user
     if ( !await User.exists(user) ) {
-      res.status(404).send(R.ko("User not found"))
+      res.status(R.NOT_FOUND).send(R.ko("User not found"))
       return
     }
 
     // Admin cannot be removed from Admins
     if ( group==Const.PW_GROUP_ADMINSID && user==Const.PW_USER_ADMINID ) {
-      res.status(422).send(R.ko("Admin cannot be removed from Admins group"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admin cannot be removed from Admins group"))
       return
     }
 
     // Cannot remove user from Everyone
     if ( group==Const.PW_GROUP_EVERYONEID ) {
-      res.status(422).send(R.ko("Cannot remove users from Everyone group"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot remove users from Everyone group"))
       return
     }
 
@@ -485,7 +483,7 @@ export async function removeUser(req, res, next) {
       select: { id: true }
     })
     if ( ex==null ) {
-      res.status(422).send(R.ko("User is not in the group"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("User is not in the group"))
       return
     }
 
@@ -498,7 +496,7 @@ export async function removeUser(req, res, next) {
     Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
 
     await Cache.resetFoldersTree(user)
-    res.status(200).send(R.ok())
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -514,7 +512,7 @@ export async function removeUser(req, res, next) {
 export async function tree(req, res, next) {
   try {
     const tree = await Group.tree(req.user);
-    res.status(200).send(R.ok(tree))
+    res.send(R.ok(tree))
   } catch (err) {
     next(err)
   }

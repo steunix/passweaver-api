@@ -19,7 +19,7 @@ export async function create(req, res, next) {
   try {
     // Validate payload
     if ( !JV.validate(req.body, "event_create")) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
@@ -31,7 +31,7 @@ export async function create(req, res, next) {
       req.body.entityid2
     )
 
-    res.status(200).send(R.ok())
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }

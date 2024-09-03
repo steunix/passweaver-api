@@ -83,6 +83,7 @@ describe("Folders", function() {
       .catch(v=>v)
 
     assert.strictEqual(res1.status, 201)
+    const folder = res1.body.data.id
 
     const res2 = await agent
       .delete(`${host}/api/v1/folders/sample1`)
@@ -90,6 +91,13 @@ describe("Folders", function() {
       .catch(v=>v)
 
     assert.strictEqual(res2.status, 422)
+
+    const res3 = await agent
+      .delete(`${host}/api/v1/folders/${folder}`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res3.status, 200)
   })
 
   it("Delete folder, unauthorized", async()=>{

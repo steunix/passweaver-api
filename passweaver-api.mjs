@@ -94,12 +94,12 @@ app.use((err, req, res, next)=> {
   logErrors.write(`${req.method} ${req.originalUrl}\n`)
   logErrors.write(`${err.stack}\n`)
   logErrors.write(`${err.message}\n`)
-  res.status(500).send(R.ko("Internal error"))
+  res.status(R.INTERNAL_SERVER_ERROR).send(R.ko("Internal error"))
 })
 
 // Error handler for invalid path/method
 app.all("*", (_req, res, _next) => {
-  res.status(500).send({
+  res.status(R.INTERNAL_SERVER_ERROR).send({
     status: "failed",
     message: "Path not found, or invalid method",
     data: {}

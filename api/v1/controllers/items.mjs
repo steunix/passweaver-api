@@ -28,7 +28,7 @@ async function checkPersonalAccess(req) {
   // Validate personal key, if present
   if ( req.personaltoken ) {
     const valid = Auth.validatePersonalToken(req.personaltoken)
-    return valid ? 0 : 401
+    return valid ? 0 : R.UNAUTHORIZED
   }
 
   const user = await DB.users.findUnique({
@@ -38,11 +38,11 @@ async function checkPersonalAccess(req) {
 
   // User has not defined its personal secret yet
   if ( user.personalsecret===null ) {
-    return 412
+    return R.PRECONDITION_FAILED
   }
 
   // User has set the password, but has not unlocked yet
-  return 417
+  return R.EXPECTATION_FAILED
 }
 
 /**
@@ -54,21 +54,21 @@ async function checkPersonalAccess(req) {
  */
 export async function get(req, res, next) {
   try {
-    const id = req.params.id
+    const itemid = req.params.id
 
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Search item
     const item = await DB.items.findUnique({
-      where: { id: id }
+      where: { id: itemid }
     })
 
     if ( item===null ) {
-      res.status(404).send(R.ko("Item not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item not found"))
       return
     }
 
@@ -84,7 +84,7 @@ export async function get(req, res, next) {
     // Check read permissions on folder
     const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.read ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -106,12 +106,12 @@ export async function get(req, res, next) {
         accessedat: new Date()
       },
       where: {
-        id: id
+        id: itemid
       }
     })
 
-    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, id)
-    res.status(200).send(R.ok(item))
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
+    res.send(R.ok(item))
   } catch (err) {
     next(err)
   }
@@ -128,7 +128,7 @@ export async function list(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -141,14 +141,14 @@ export async function list(req, res, next) {
     if ( folder ) {
       // Single folder search, if from .../folder/items
       if ( !await Folder.exists(folder) ) {
-        res.status(404).send(R.ko("Folder not found"))
+        res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
         return
       }
 
       // Check read permissions on folder
       const perm = await Folder.permissions(folder, req.user)
       if ( !perm.read ) {
-        res.status(403).send(R.forbidden())
+        res.status(R.FORBIDDEN).send(R.forbidden())
         return
       }
 
@@ -159,7 +159,7 @@ export async function list(req, res, next) {
 
       // Admin can see all folders, but cannot access any personal folder
       if ( fld.personal && req.user===Const.PW_USER_ADMINID ) {
-        res.status(403).send(R.forbidden())
+        res.status(R.FORBIDDEN).send(R.forbidden())
         return
       }
 
@@ -211,7 +211,7 @@ export async function list(req, res, next) {
       `
 
     if ( items.length==0 ) {
-      res.status(404).send(R.ko("No item found"))
+      res.status(R.NOT_FOUND).send(R.ko("No item found"))
       return
     }
 
@@ -225,7 +225,7 @@ export async function list(req, res, next) {
       delete items[i].folderdescription
     }
 
-    res.status(200).send(R.ok(items))
+    res.send(R.ok(items))
   } catch (err) {
     next(err)
   }
@@ -242,13 +242,13 @@ export async function create(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "item_create") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
@@ -256,20 +256,20 @@ export async function create(req, res, next) {
 
     // Search folder
     if ( !await Folder.exists(folder) ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
     // No items on root or personal folders root
     if ( folder==Const.PW_FOLDER_PERSONALROOTID || folder==Const.PW_FOLDER_ROOTID ) {
-      res.status(422).send(R.ko("You cannot create items in this folder"))
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("You cannot create items in this folder"))
       return
     }
 
     // Check write permissions on folder
     const perm = await Folder.permissions(folder, req.user)
     if ( !perm.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -292,7 +292,7 @@ export async function create(req, res, next) {
         select: { id: true }
       })
       if ( itemtype===null ) {
-        res.status(422).send(R.ko("Specified type does not exist"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Specified type does not exist"))
         return
       }
     }
@@ -327,7 +327,7 @@ export async function create(req, res, next) {
     await Item.update_fts(newid)
 
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
-    res.status(201).send(R.ok({id: newid}))
+    res.status(R.CREATED).send(R.ok({id: newid}))
   } catch (err) {
     next(err)
   }
@@ -344,25 +344,25 @@ export async function update(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // Validate payload
     if ( !JV.validate(req.body, "item_update") ) {
-      res.status(400).send(R.badRequest())
+      res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
 
-    const id = req.params.id
+    const itemid = req.params.id
 
     // Search item
     const item = await DB.items.findUnique({
-      where: { id: id }
+      where: { id: itemid }
     })
 
     if ( item===null ) {
-      res.status(404).send(R.ko("Item not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item not found"))
       return
     }
 
@@ -371,20 +371,20 @@ export async function update(req, res, next) {
     // Check write permissions on current folder
     const perm1 = await Folder.permissions(item.folderid, req.user)
     if ( !perm1.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
     // If a folder is given through path or payload, check for existance and permissions
     if ( folderFromURL ) {
       if ( !await Folder.exists(folderFromURL) ) {
-        res.status(404).send(R.ko("Folder not found"))
+        res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
         return
       }
 
       const perm2 = await Folder.permissions(folderFromURL, req.user)
       if ( !perm2.write ) {
-        res.status(403).send(R.forbidden())
+        res.status(R.FORBIDDEN).send(R.forbidden())
         return
       }
     }
@@ -405,7 +405,7 @@ export async function update(req, res, next) {
         select: { id: true }
       })
       if ( itemtype===null ) {
-        res.status(422).send(R.ko("Specified type does not exist"))
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Specified type does not exist"))
         return
       }
     }
@@ -440,15 +440,15 @@ export async function update(req, res, next) {
     await DB.items.update({
       data: updateStruct,
       where: {
-        id: id
+        id: itemid
       }
     })
 
     // Update tsvector
-    await Item.update_fts(id)
+    await Item.update_fts(itemid)
 
-    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, id)
-    res.status(200).send(R.ok())
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid)
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
@@ -465,19 +465,19 @@ export async function remove(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
-    const id = req.params.id
+    const itemid = req.params.id
 
     // Search item
     const item = await DB.items.findUnique({
-      where: { id: id }
+      where: { id: itemid }
     })
 
     if ( item===null ) {
-      res.status(404).send(R.ko("Item not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item not found"))
       return
     }
 
@@ -488,14 +488,14 @@ export async function remove(req, res, next) {
     })
 
     if ( folder===null ) {
-      res.status(404).send(R.ko("Folder not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Folder not found"))
       return
     }
 
     // Check write permissions on folder
     const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -516,13 +516,13 @@ export async function remove(req, res, next) {
 
       await DB.items.delete({
         where: {
-          id: id
+          id: itemid
         }
       })
     })
 
-    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, id)
-    res.status(200).send(R.ok('Done'))
+    Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, itemid)
+    res.send(R.ok('Done'))
   } catch (err) {
     next(err)
   }
@@ -539,26 +539,26 @@ export async function clone(req, res, next) {
   try {
     // Admins have no access to items
     if ( await isAdmin(req) ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
-    const id = req.params.id
+    const itemid = req.params.id
 
     // Search item
     const item = await DB.items.findUnique({
-      where: { id: id }
+      where: { id: itemid }
     })
 
     if ( item===null ) {
-      res.status(404).send(R.ko("Item not found"))
+      res.status(R.NOT_FOUND).send(R.ko("Item not found"))
       return
     }
 
     // Check write permissions on folder
     const perm = await Folder.permissions(item.folderid, req.user)
     if ( !perm.write ) {
-      res.status(403).send(R.forbidden())
+      res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
 
@@ -602,9 +602,9 @@ export async function clone(req, res, next) {
     // Update tsvector
     await Item.update_fts(newid)
 
-    Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, id)
+    Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, itemid)
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
-    res.status(201).send(R.ok({id: newid}))
+    res.status(R.CREATED).send(R.ok({id: newid}))
   } catch (err) {
     next(err)
   }
