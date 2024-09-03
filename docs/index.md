@@ -77,7 +77,9 @@ PassWeaver API has 2 predefined folders that cannot be modified or deleted:
 
 ### Personal folders
 
-Each user has a 'personal' folder for storing private, not-shared-with-anyone items. Each user will have to set a personal password that will be used for unlocking personal folders. The key for encryption is (at the moment) the same of non-personal items.
+Each user has a 'personal' folder for storing private, not-shared-with-anyone items. In order to use personal folders, users have to set a personal password that will be use for
+encrypting items inside those folders. Since this password is used to encrypt the key that will be used to encrypt his items ("envelope encryption"), there is no way to recover
+the items if a user forgets his password.
 
 ### Users and groups
 
@@ -164,6 +166,8 @@ Personal items are encrypted with "envelope encryption" first and then reencrypt
 - When user unlocks the personal folder providing his PPWD, the authentication JWT will be updated adding a claim with his seeded and encrypted password:
   - the PPWD is seeded with random bytes initialized on Password-API startup, and then encrypted with AES-256-ECB using random key and i.v. also initialized at startup
   - this updated JWT needs to be used for subsequent calls
+  - adding the encrypted password in the JWT is needed because Passweaver API is stateless and sessionless, so the only way to recognize the user calling the API is
+    the JWT itself
 - When a user wants to access a personal folder, the seeded and encrypted PPWD in the JWT is validated against the one stored into the DB in order to grant access
 
 Then, when creating an item in a personal folder:
@@ -182,11 +186,18 @@ No keys are retained in memory or cache, everything is recalculated when needed.
 
 ## Operations log
 
-Every operation is logged into the database, from logins to CRUD operations, to items accesses.
+Passweaver API keeps a log about:
+- operations on items (creation, deletion, update, clone)
+- accesses to items
+- operations on folders (creation, deletion, update)
+- operations on users (creation, deletion, update)
+- operations on groups (creation, deletion, update)
+- login and passwords changes
+- personal folders unlock
 
 ## Application logs
 
-PassWeaver API logs every call in a 'combined log format'. Errors are tracked in a separate log.
+PassWeaver API logs every call in a 'combined log format'. Errors are tracked in a separate log. There are configuration options to customize log files rotation and retention.
 
 ## Cache
 
@@ -197,9 +208,9 @@ PassWeaver API makes use of a cache in order to avoid too much pressure on the d
 
 ## The API
 
-### Authorization
+### Authentication
 
-PassWeaver API is **stateless* and uses JWTs for authorization with a SHA-512 algorithm.
+PassWeaver API is **stateless** and **sessionless** and uses SHA-512 signed JWTs for authentication.
 
 A JWT is returned on successful login, and it must be provided in all subsequent calls - until it expires - in requests header as an "Authorization bearer".
 
@@ -284,6 +295,8 @@ Your environment must expose this variable:
 - `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
 
 See [Prisma Documentation](https://www.prisma.io/docs/orm/overview/databases/postgresql#connection-details) for further details.
+
+If your is a production environment, don't forget to set variable `NODE_ENV` to `production`, since some of Passweaver API dependencies use that variable to optimize operations.
 
 ### Database
 
