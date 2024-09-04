@@ -198,13 +198,15 @@ export async function list(req, res, next) {
     items = await DB.$queryRaw`
       select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, f.description folderdescription, t.description typedescription, t.icon, t.id typeid
       from   items i
+      join   itemsfts fts
+      on     fts.id = i.id
       join   folders f
       on     f.id = i.folderid
       left   join itemtypes t
       on     t.id = i.type
       where  i.folderid in (${Prisma.join(folderList)})
-      ${ tsquery && folder ? Prisma.sql` and i.fts_vectoritem @@ to_tsquery('simple',${tsquery})` : Prisma.empty }
-      ${ tsquery && !folder ? Prisma.sql` and i.fts_vectorfull @@ to_tsquery('simple',${tsquery})` : Prisma.empty }
+      ${ tsquery && folder ? Prisma.sql` and fts.fts_vectoritem @@ to_tsquery('simple',${tsquery})` : Prisma.empty }
+      ${ tsquery && !folder ? Prisma.sql` and fts.fts_vectorfull @@ to_tsquery('simple',${tsquery})` : Prisma.empty }
       ${ type ? Prisma.sql` and i.type=${type}::uuid` : Prisma.empty}
       order  by i.title
       ${ folder ? Prisma.empty : Prisma.sql` limit 100` }
@@ -512,6 +514,12 @@ export async function remove(req, res, next) {
     await DB.$transaction(async(tx)=> {
       await DB.itemsdeleted.create({
         data: item
+      })
+
+      await DB.itemsfts.delete({
+        where: {
+          id: itemid
+        }
       })
 
       await DB.items.delete({

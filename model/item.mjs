@@ -26,12 +26,14 @@ export async function update_fts(id) {
       ftsf += f.description + ' '
     }
   }
-  ftsf += item.title + ' ' + item.metadata
-  const ftsi = item.title + ' ' + item.metadata
+  ftsf += item.title + ' ' + (item.metadata || '')
+  const ftsi = item.title + ' ' + (item.metadata || '')
 
   await DB.$queryRaw`
-    update items
-    set    fts_vectorfull = to_tsvector('simple',${ftsf}), fts_vectoritem = to_tsvector('simple',${ftsi})
-    where  id = ${id}`
+    insert into itemsfts (id,fts_vectorfull,fts_vectoritem)
+    values ( ${id}, to_tsvector('simple',${ftsf}), to_tsvector('simple',${ftsi}) )
+    on     conflict(id) do
+    update set fts_vectorfull = to_tsvector('simple',${ftsf}),
+      fts_vectoritem = to_tsvector('simple',${ftsi})`
 }
 

@@ -115,16 +115,23 @@ model items {
   dataauthtag String
   algo        String?
   metadata    String?
-  fts_vectorfull  Unsupported("tsvector")?
-  fts_vectoritem  Unsupported("tsvector")?
   createdat   DateTime  @default(now())
   updatedat   DateTime  @updatedAt
   accessedat  DateTime?
 
   folder   folders    @relation(fields: [folderid], references: [id], onUpdate: Cascade, onDelete: Restrict )
   itemtype itemtypes? @relation(fields: [type], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  fts      itemsfts[]
 
   @@index([folderid])
+}
+
+model itemsfts {
+  id          String    @id @db.VarChar(40)
+  fts_vectorfull  Unsupported("tsvector")?
+  fts_vectoritem  Unsupported("tsvector")?
+
+  item   items @relation(fields: [id], references: [id], onUpdate: Cascade, onDelete: Restrict )
 }
 
 model itemsdeleted {
