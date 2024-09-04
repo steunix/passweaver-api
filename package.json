@@ -1,6 +1,6 @@
 {
   "name": "passweaver-api",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "description": "Collaborative password manager API",
   "main": "passweaver-api.mjs",
   "scripts": {
@@ -33,6 +33,6 @@
     "uuidv7": "^1.0.0"
   },
   "prisma": {
-    "seed": "node prisma/seed-testrun.js"
+    "seed": "node prisma/seed.js"
   }
 }
