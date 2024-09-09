@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("Personal folders", function() {
 

@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("General", function() {
   it("Bad path", async()=> {

@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("User settings", function() {
   it("Set settings", async()=> {

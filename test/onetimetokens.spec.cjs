@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe ( "One time tokens", ()=> {
   it("Create one time token bad data", async()=>{

@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("Item types", ()=>{
   it("Create, get and delete item type", async()=>{

@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("Login", function() {
   it("Login bad data", async()=> {

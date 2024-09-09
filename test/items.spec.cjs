@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe ("Items", ()=> {
   it("Create, update and remove item", async()=> {

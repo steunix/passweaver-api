@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("Folders", function() {
   it("Create, update and delete folder", async()=>{

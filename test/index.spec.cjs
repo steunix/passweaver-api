@@ -1,0 +1,10 @@
+require("./common.cjs")
+
+require("./login.spec.cjs")
+require("./itemtypes.spec.cjs")
+require("./users.spec.cjs")
+require("./usersettings.spec.cjs")
+require("./onetimetokens.spec.cjs")
+require("./items.spec.cjs")
+require("./folderspermissions.cjs")
+require("./util.spec.cjs")

@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe("Groups", function() {
   it("Create, update and delete group", async()=>{

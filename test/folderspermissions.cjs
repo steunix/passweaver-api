@@ -1,4 +1,4 @@
-require("./common.js")
+require("./common.cjs")
 
 describe ( "Folders permissions", ()=> {
   it("Create, change and remove folders permissions", async()=>{
