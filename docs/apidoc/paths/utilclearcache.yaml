@@ -1,0 +1,18 @@
+post:
+  tags:
+    - Utilities
+  operationId: clearcache
+  summary: Clear the entire cache
+  description: Clear the entire cache
+  security:
+    - bearerAuth: []
+
+  responses:
+    "200":
+      $ref: '..\responsebodies\util.yaml#/clearcachesuccess'
+      description: Info successfully returned
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+      description: User cannot be logged in, wrong credentials

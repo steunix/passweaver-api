@@ -57,3 +57,14 @@ generatepasswordsuccess:
                 example: 09a8sd0fh
                 description: The generated password
 
+clearcachesuccess:
+  description: New password generated
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object

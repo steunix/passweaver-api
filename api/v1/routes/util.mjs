@@ -18,4 +18,6 @@ router.get("/generatepassword", utilController.generatePassword)
 
 router.get("/info", utilController.info)
 
+router.post("/clearcache", utilController.clearCache)
+
 export default router
