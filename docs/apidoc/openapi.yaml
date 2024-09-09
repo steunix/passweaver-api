@@ -91,6 +91,8 @@ paths:
     $ref: '.\paths\utilinfo.yaml'
   /util/generatepassword:
     $ref: '.\paths\utilgeneratepassword.yaml'
+  /util/clearcache:
+    $ref: '.\paths\utilclearcache.yaml'
   /events:
     $ref: '.\paths\events.yaml'
   /onetimetokens:

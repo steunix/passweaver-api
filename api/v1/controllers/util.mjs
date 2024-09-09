@@ -10,6 +10,7 @@ import * as R from '../../../lib/response.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
+
 import DB from '../../../lib/db.mjs'
 
 /**
@@ -67,6 +68,29 @@ export async function info(req, res, next) {
     }
 
     res.send(R.ok(data))
+  } catch (err) {
+    next(err)
+  }
+}
+
+/**
+ * Clear the entire cache
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function clearCache(req,res,next) {
+  try {
+    // Must be admin
+    if ( !await Auth.isAdmin(req) ) {
+      res.status(R.FORBIDDEN).send(R.forbidden())
+      return
+    }
+
+    Cache.resetFoldersTree()
+    Cache.resetGroupsTree()
+
+    res.send(R.ok())
   } catch (err) {
     next(err)
   }
