@@ -1,5 +1,5 @@
 {
-  "master_key_env": "PASSWEAVERAPI_MASTER_KEY",
+  "master_key_file": "/path/to/key",
   "jwt_duration": "2h",
   "listen_port": 15000,
   "ldap": {
