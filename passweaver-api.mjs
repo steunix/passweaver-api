@@ -112,9 +112,9 @@ if ( cfg.https.enabled ) {
   https.createServer({
     key: FS.readFileSync(cfg.https.private_key),
     cert: FS.readFileSync(cfg.https.certificate)
-  },app).listen(cfg.listen_port)
-  console.log(`Listening on port ${cfg.listen_port} (https)`)
+  },app).listen(cfg.listen.port, cfg.listen.host)
+  console.log(`Listening on '${cfg.listen.host}' port ${cfg.listen.port} (https)`)
 } else {
-  console.log(`Listening on port ${cfg.listen_port} (http)`)
-  app.listen(cfg.listen_port)
+  console.log(`Listening on '${cfg.listen.host}' port ${cfg.listen.port} (http)`)
+  app.listen(cfg.listen.port, cfg.listen.host)
 }

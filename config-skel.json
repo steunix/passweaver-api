@@ -1,7 +1,10 @@
 {
   "master_key_file": "/path/to/key",
   "jwt_duration": "2h",
-  "listen_port": 15000,
+  "listen": {
+    "host": "",
+    "port": 15000
+  },
   "ldap": {
     "url": "",
     "port": 0,
