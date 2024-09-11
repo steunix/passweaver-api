@@ -46,8 +46,14 @@ before((done)=>{
     fs.readFileSync(
       'config.json'
     )
-  ).listen_port
-  global.host = `http://localhost:${port}`
+  ).listen.port
+  var ip = JSON.parse(
+    fs.readFileSync(
+      'config.json'
+    )
+  ).listen.host
+
+  global.host = `http://${ip}:${port}`
   console.log(`Running tests on ${global.host}`)
 
   // Get both admin jwt and user jwt
