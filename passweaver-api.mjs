@@ -98,14 +98,13 @@ app.use((err, req, res, next)=> {
 })
 
 // Error handler for invalid path/method
-app.all("*", (_req, res, _next) => {
+app.all(/.*/, (_req, res, _next) => {
   res.status(R.INTERNAL_SERVER_ERROR).send({
     status: "failed",
     message: "Path not found, or invalid method",
     data: {}
   })
 })
-
 
 // HTTP(S) server startup
 if ( cfg.https.enabled ) {
