@@ -109,7 +109,13 @@ export async function list(req, res, next) {
 export async function getGroups(req, res, next) {
   const userid = req.params.id
 
-  // FIXME: admin can query any user, other only themselves; add check
+  // Must be admin if reading another user
+  if ( req.user != userid ) {
+    if ( !await Auth.isAdmin(req) ) {
+      res.status(R.FORBIDDEN).send(R.forbidden())
+      return
+    }
+  }
 
   var data = []
 

@@ -193,4 +193,31 @@ describe("Users", function() {
 
     assert.strictEqual( res1.status, 403)
   })
+
+  it("Get user groups", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/0/groups`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 200)
+  })
+
+  it("Get user groups as user, unauthorized", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/0/groups`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 403)
+  })
+
+  it("Get user own groups", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/user1/groups`)
+      .set("Authorization",`Bearer ${global.userJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 200)
+  })
 })
