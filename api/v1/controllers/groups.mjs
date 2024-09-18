@@ -315,26 +315,27 @@ export async function remove(req, res, next) {
     return
   }
 
-  // FIXME: use transaction
   // Delete user/groups
-  await DB.groupsmembers.deleteMany({
-    where: {
-      groupid: groupid
-    }
-  })
+  await DB.$transaction(async(tx)=> {
+    await DB.groupsmembers.deleteMany({
+      where: {
+        groupid: groupid
+      }
+    })
 
-  // Delete folder/groups
-  await DB.folderspermissions.deleteMany({
-    where: {
-      groupid: groupid
-    }
-  })
+    // Delete folder/groups
+    await DB.folderspermissions.deleteMany({
+      where: {
+        groupid: groupid
+      }
+    })
 
-  // Delete group
-  await DB.groups.delete({
-    where: {
-      id: groupid
-    }
+    // Delete group
+    await DB.groups.delete({
+      where: {
+        id: groupid
+      }
+    })
   })
 
   Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUP, groupid)
