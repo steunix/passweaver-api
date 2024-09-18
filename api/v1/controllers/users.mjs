@@ -37,7 +37,6 @@ export async function get(req, res, next) {
       authmethod: true,
       locale: true,
       email: true,
-      personalsecret: true,
       active: true,
       createdat: true,
       updatedat: true
