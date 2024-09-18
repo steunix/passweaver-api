@@ -2,8 +2,8 @@
   "$id": "event_create",
   "type": "object",
   "properties": {
-    "event" : { "type": "numeric" },
-    "entity" : { "type": "numeric" },
+    "event" : { "type": "integer" },
+    "entity" : { "type": "integer" },
     "entityid": { "type": "string", "maxLength": 100 },
     "entityid2": { "type": "string", "maxLength": 100 }
   },
