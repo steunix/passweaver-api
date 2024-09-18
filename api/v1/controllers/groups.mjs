@@ -83,8 +83,6 @@ export async function list(req, res, next) {
 export async function getUsers(req, res, next) {
   const id = req.params.id
 
-  var data = []
-
   // Search group members
   const users = await DB.groupsmembers.findMany({
     where: { groupid: id },
@@ -110,11 +108,7 @@ export async function getUsers(req, res, next) {
     }
   })
 
-  // FIXME: is this loop necessary? Why not sending users directly?
-  for ( const user of users ) {
-    data.push(user.users)
-  }
-  res.send(R.ok(data))
+  res.send(R.ok(users))
 }
 
 /**
