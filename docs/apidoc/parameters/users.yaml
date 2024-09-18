@@ -15,3 +15,19 @@ search:
   required: false
   schema:
     type: string
+
+lastid:
+  name: lastid
+  in: query
+  description: The last ID you have read in the previous page.
+  required: false
+  schema:
+    type: string
+
+sort:
+  name: sort
+  in: query
+  description: 0 to return records is reverse timestamp order, 1 for ascending order
+  required: false
+  schema:
+    type: string

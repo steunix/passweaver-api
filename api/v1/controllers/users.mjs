@@ -382,3 +382,19 @@ export async function remove(req, res, next) {
   res.send(R.ok('Done'))
 }
 
+/**
+ * Get user activity
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @param {Object} next Next
+ */
+export async function activity(req, res, next) {
+  // Must be admin
+  if ( !await Auth.isAdmin(req) ) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  const act = await Events.activity(req.query?.lastid, req.user, null, req.query?.sort)
+  res.send(R.ok(act))
+}

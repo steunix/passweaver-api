@@ -220,4 +220,48 @@ describe("Users", function() {
 
     assert.strictEqual( res1.status, 200)
   })
+
+  it("Get user activity desc", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/0/activity`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 200)
+
+    const lastid1 = res1.body.data[0].id
+
+    const res2 = await agent
+      .get(`${host}/api/v1/users/0/activity?lastid=${lastid1}&sort=0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    const lastid2 = res2.body.data[0].id
+
+    assert.strictEqual( res2.status, 200)
+    assert( lastid1!=lastid2 )
+
+  })
+
+  it("Get user activity asc", async()=> {
+    const res1 = await agent
+      .get(`${host}/api/v1/users/0/activity`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual( res1.status, 200)
+
+    const lastid1 = res1.body.data[0].id
+
+    const res2 = await agent
+      .get(`${host}/api/v1/users/0/activity?lastid=${lastid1}&sort=1`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    const lastid2 = res2.body.data[0].id
+
+    assert.strictEqual( res2.status, 200)
+    assert( lastid1!=lastid2 )
+
+  })
 })

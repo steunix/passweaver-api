@@ -1,0 +1,24 @@
+get:
+  tags:
+    - Users
+  operationId: "getUserActivity"
+  summary: Get user activity.
+  description: It returns 50 records of activity log; you can paginate by specifying 'lastid' parameter with the last ID you have read in the previous bulk
+    and sort asc or desc specifying the sort parameter
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\users.yaml#/userid'
+    - $ref: '..\parameters\users.yaml#/lastid'
+    - $ref: '..\parameters\users.yaml#/sort'
+  responses:
+    "200":
+      description: User found
+      $ref: '..\responsebodies\users.yaml#/getactivity'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: User not found
+      $ref: '..\responsebodies\default.yaml#/notfound'

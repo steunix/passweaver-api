@@ -31,4 +31,6 @@ router.get("/:id/settings", userSettingsController.get)
 
 router.post("/:id/settings", userSettingsController.set)
 
+router.get("/:id/activity", usersController.activity)
+
 export default router
