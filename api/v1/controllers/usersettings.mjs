@@ -16,28 +16,24 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
  * @returns
  */
 export async function get(req, res, next) {
-  try {
-    const userid = req.params.id
+  const userid = req.params.id
 
-    // Settings can be read only by the owner
-    if ( req.user!==userid) {
-      res.status(R.FORBIDDEN).send(R.forbidden())
-      return
-    }
-
-    // Search item
-    const settings = await DB.usersettings.findMany({
-      where: { userid: userid },
-      select: {
-        setting: true,
-        value: true
-      }
-    })
-
-    res.send(R.ok(settings))
-  } catch (err) {
-    next(err)
+  // Settings can be read only by the owner
+  if ( req.user!==userid) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
   }
+
+  // Search item
+  const settings = await DB.usersettings.findMany({
+    where: { userid: userid },
+    select: {
+      setting: true,
+      value: true
+    }
+  })
+
+  res.send(R.ok(settings))
 }
 
 /**
@@ -48,42 +44,38 @@ export async function get(req, res, next) {
  * @returns
  */
 export async function set(req, res, next) {
-  try {
-    const userid = req.params.id
+  const userid = req.params.id
 
-    // Settings can be written only by the owner
-    if ( req.user!==userid) {
-      res.status(R.FORBIDDEN).send(R.forbidden())
-      return
-    }
-
-    // Validate payload
-    if ( !JV.validate(req.body, "usersettings_create") ) {
-      res.status(R.BAD_REQUEST).send(R.badRequest())
-      return
-    }
-
-    // Set settings. Empty values will delete the setting
-    await DB.$transaction(async(tx)=> {
-      for ( const setting of req.body ) {
-        await DB.usersettings.deleteMany({
-          where: { userid: userid, setting: setting.setting }
-        })
-        if ( setting.value!=="" ) {
-          // Delete setting
-          await DB.usersettings.create({
-            data: {
-              userid: userid,
-              setting: setting.setting,
-              value: setting.value
-            }
-          })
-        }
-      }
-    })
-
-    res.status(R.CREATED).send(R.ok())
-  } catch (err) {
-    next(err)
+  // Settings can be written only by the owner
+  if ( req.user!==userid) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
   }
+
+  // Validate payload
+  if ( !JV.validate(req.body, "usersettings_create") ) {
+    res.status(R.BAD_REQUEST).send(R.badRequest())
+    return
+  }
+
+  // Set settings. Empty values will delete the setting
+  await DB.$transaction(async(tx)=> {
+    for ( const setting of req.body ) {
+      await DB.usersettings.deleteMany({
+        where: { userid: userid, setting: setting.setting }
+      })
+      if ( setting.value!=="" ) {
+        // Delete setting
+        await DB.usersettings.create({
+          data: {
+            userid: userid,
+            setting: setting.setting,
+            value: setting.value
+          }
+        })
+      }
+    }
+  })
+
+  res.status(R.CREATED).send(R.ok())
 }

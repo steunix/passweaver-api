@@ -20,20 +20,16 @@ import DB from '../../../lib/db.mjs'
  * @param {Function} next Express next callback
  */
 export async function generatePassword(req, res, next) {
-  try {
-    var pwd = generator.generate({
-      length: 15,
-      numbers: true,
-      symbols: true,
-      lowercase: true,
-      uppercase: true,
-      strict: true
-    })
+  var pwd = generator.generate({
+    length: 15,
+    numbers: true,
+    symbols: true,
+    lowercase: true,
+    uppercase: true,
+    strict: true
+  })
 
-    res.send(R.ok({password: pwd}))
-  } catch (err) {
-    next(err)
-  }
+  res.send(R.ok({password: pwd}))
 }
 
 /**
@@ -43,34 +39,30 @@ export async function generatePassword(req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function info(req, res, next) {
-  try {
-    // Must be admin
-    if ( !await Auth.isAdmin(req) ) {
-      res.status(R.FORBIDDEN).send(R.forbidden())
-      return
-    }
-
-    const users = await DB.users.count()
-    const items = await DB.items.count()
-    const folders = await DB.folders.count()
-
-    const version = Config.packageJson().version
-    const cache = await Cache.size()
-
-    const data = {
-      users: users,
-      items: items,
-      folders: folders,
-      version: version,
-      cacheProvider: Config.get().redis.enabled ? "redis" : "node-cache",
-      cacheSize: cache,
-      startup: Config.get().startuptime
-    }
-
-    res.send(R.ok(data))
-  } catch (err) {
-    next(err)
+  // Must be admin
+  if ( !await Auth.isAdmin(req) ) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
   }
+
+  const users = await DB.users.count()
+  const items = await DB.items.count()
+  const folders = await DB.folders.count()
+
+  const version = Config.packageJson().version
+  const cache = await Cache.size()
+
+  const data = {
+    users: users,
+    items: items,
+    folders: folders,
+    version: version,
+    cacheProvider: Config.get().redis.enabled ? "redis" : "node-cache",
+    cacheSize: cache,
+    startup: Config.get().startuptime
+  }
+
+  res.send(R.ok(data))
 }
 
 /**
@@ -80,18 +72,14 @@ export async function info(req, res, next) {
  * @param {Object} next Express next
  */
 export async function clearCache(req,res,next) {
-  try {
-    // Must be admin
-    if ( !await Auth.isAdmin(req) ) {
-      res.status(R.FORBIDDEN).send(R.forbidden())
-      return
-    }
-
-    Cache.resetFoldersTree()
-    Cache.resetGroupsTree()
-
-    res.send(R.ok())
-  } catch (err) {
-    next(err)
+  // Must be admin
+  if ( !await Auth.isAdmin(req) ) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
   }
+
+  Cache.resetFoldersTree()
+  Cache.resetGroupsTree()
+
+  res.send(R.ok())
 }

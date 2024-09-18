@@ -15,24 +15,19 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
  * @param {function} next Next
  */
 export async function create(req, res, next) {
-
-  try {
-    // Validate payload
-    if ( !JV.validate(req.body, "event_create")) {
-      res.status(R.BAD_REQUEST).send(R.badRequest())
-      return
-    }
-
-    await Events.add(
-      req.user,
-      req.body.event,
-      req.body.entity,
-      req.body.entityid,
-      req.body.entityid2
-    )
-
-    res.send(R.ok())
-  } catch (err) {
-    next(err)
+  // Validate payload
+  if ( !JV.validate(req.body, "event_create")) {
+    res.status(R.BAD_REQUEST).send(R.badRequest())
+    return
   }
+
+  await Events.add(
+    req.user,
+    req.body.event,
+    req.body.entity,
+    req.body.entityid,
+    req.body.entityid2
+  )
+
+  res.send(R.ok())
 }

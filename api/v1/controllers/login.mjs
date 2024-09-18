@@ -24,63 +24,59 @@ import DB from '../../../lib/db.mjs'
  * @returns
  */
 export async function login(req, res, next) {
-  try {
-    // Validate payload
-    if ( !JV.validate(req.body, "login") ) {
-      res.status(R.BAD_REQUEST).send(R.badRequest())
-      return
-    }
-
-    // Check user
-    const user = await DB.users.findUnique({
-      where: { login: req.body.username.toLowerCase() }
-    })
-    if ( user===null ) {
-      Events.add(req.body.username, Const.EV_ACTION_LOGINNF, Const.EV_ENTITY_USER, req.body.username)
-      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
-      return
-    }
-
-    // Check if user is valid
-    if ( !user.active ) {
-      Events.add(req.body.username, Const.EV_ACTION_LOGINNV, Const.EV_ENTITY_USER, req.body.username)
-      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
-      return
-    }
-
-    // Validate user password
-    if ( user.authmethod=="ldap" ) {
-      const ldap = Config.get().ldap
-
-      // LDAP authentication
-      try {
-        await LDAP.authenticate({
-          ldapOpts: {
-            url: `ldap://${ldap.url}:${ldap.port}`
-          },
-          userDn: `${ldap.userDn}=${req.body.username},${ldap.baseDn}`,
-          userPassword: req.body.password
-        })
-      } catch (err) {
-        Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
-        res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
-        return
-      }
-    } else {
-      // Local authentication
-      if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
-        Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
-        res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
-        return
-      }
-    }
-
-    // Creates JWT token
-    const token = await Auth.createToken(user.id, false)
-
-    Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
-    res.send(R.ok({jwt:token}))
-  } catch(err) {
-    next(err)
+  // Validate payload
+  if ( !JV.validate(req.body, "login") ) {
+    res.status(R.BAD_REQUEST).send(R.badRequest())
+    return
   }
+
+  // Check user
+  const user = await DB.users.findUnique({
+    where: { login: req.body.username.toLowerCase() }
+  })
+  if ( user===null ) {
+    Events.add(req.body.username, Const.EV_ACTION_LOGINNF, Const.EV_ENTITY_USER, req.body.username)
+    res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+    return
+  }
+
+  // Check if user is valid
+  if ( !user.active ) {
+    Events.add(req.body.username, Const.EV_ACTION_LOGINNV, Const.EV_ENTITY_USER, req.body.username)
+    res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+    return
+  }
+
+  // Validate user password
+  if ( user.authmethod=="ldap" ) {
+    const ldap = Config.get().ldap
+
+    // LDAP authentication
+    try {
+      await LDAP.authenticate({
+        ldapOpts: {
+          url: `ldap://${ldap.url}:${ldap.port}`
+        },
+        userDn: `${ldap.userDn}=${req.body.username},${ldap.baseDn}`,
+        userPassword: req.body.password
+      })
+    } catch (err) {
+      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
+      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+      return
+    }
+  } else {
+    // Local authentication
+    if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
+      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
+      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+      return
+    }
+  }
+
+  // Creates JWT token
+  const token = await Auth.createToken(user.id, false)
+
+  Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
+  res.send(R.ok({jwt:token}))
 }
