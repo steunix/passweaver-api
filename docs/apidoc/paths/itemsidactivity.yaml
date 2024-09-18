@@ -1,0 +1,24 @@
+get:
+  tags:
+    - Items
+  operationId: "getItemActivity"
+  summary: Get item activity.
+  description: It returns 50 records of activity log; you can paginate by specifying 'lastid' parameter with the last ID you have read in the previous bulk
+    and sort asc or desc specifying the sort parameter
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\items.yaml#/itemid'
+    - $ref: '..\parameters\items.yaml#/lastid'
+    - $ref: '..\parameters\items.yaml#/sort'
+  responses:
+    "200":
+      description: Activity returned
+      $ref: '..\responsebodies\items.yaml#/getactivity'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: User not found
+      $ref: '..\responsebodies\default.yaml#/notfound'

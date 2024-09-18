@@ -83,6 +83,8 @@ paths:
     $ref: '.\paths\folderstree.yaml'
   /items/{itemid}:
     $ref: '.\paths\itemsid.yaml'
+  /items/{itemid}/activity:
+    $ref: '.\paths\itemsidactivity.yaml'
   /items:
     $ref: '.\paths\items.yaml'
   /itemtypes:

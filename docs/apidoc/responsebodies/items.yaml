@@ -32,3 +32,55 @@ getsuccess:
               folderid:
                 type: string
                 description: Item folder
+
+getactivity:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            description: Activity
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Activity entry ID
+                  example: "019205a1-90db-76c0-aae6-7726086bf748"
+                timestamp:
+                  type: string
+                  description: Timestamp
+                  example: "2024-09-18T14:55:27.451Z"
+                action:
+                  type: string
+                  description: Action code
+                  example: "60"
+                action_description:
+                  type: string
+                  description: Action description
+                  example: "Login"
+                entity:
+                  type: string
+                  description: Entity code
+                  example: "10"
+                entity_description:
+                  type: string
+                  description: Entity description
+                  example: "User"
+                user:
+                  type: string
+                  description: User id
+                  example: "10"
+                user_description:
+                  type: string
+                  description: User description
+                  example: "User"
+                item_title:
+                  type: string
+                  description: If entity is an item, the item title
+                  example: "Item 1"

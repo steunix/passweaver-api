@@ -26,4 +26,6 @@ router.delete("/:id", itemsController.remove)
 
 router.post("/:id/clone", itemsController.clone)
 
+router.get("/:id/activity", itemsController.activity)
+
 export default router

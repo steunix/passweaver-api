@@ -593,3 +593,14 @@ export async function clone(req, res, next) {
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
   res.status(R.CREATED).send(R.ok({id: newid}))
 }
+
+/**
+ * Get item activity
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @param {Object} next Next
+ */
+export async function activity(req, res, next) {
+  const act = await Events.activity(req.query?.lastid, null, req.params.id, req.query?.sort)
+  res.send(R.ok(act))
+}
