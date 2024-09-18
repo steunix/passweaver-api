@@ -14,7 +14,7 @@ post:
           $ref: '..\requestbodies\events.yaml#/eventCreateBody'
 
   responses:
-    "200":
+    "201":
       $ref: '..\responsebodies\default.yaml#/success'
       description: Event successfully added
     "400":

@@ -29,5 +29,5 @@ export async function create(req, res, next) {
     req.body.entityid2
   )
 
-  res.send(R.ok())
+  res.status(201).send(R.ok())
 }
