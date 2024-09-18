@@ -395,6 +395,6 @@ export async function activity(req, res, next) {
     return
   }
 
-  const act = await Events.activity(req.query?.lastid, req.user, null, req.query?.sort)
+  const act = await Events.activity(req.query?.lastid, req.params.id, null, req.query?.sort)
   res.send(R.ok(act))
 }
