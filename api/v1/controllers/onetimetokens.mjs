@@ -39,7 +39,7 @@ export async function get(req, res, next) {
     where: { token: tokenid }
   })
 
-  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, tokenid)
+  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, ottoken.id)
   res.send(R.ok(data))
 }
 
