@@ -108,7 +108,12 @@ export async function getUsers(req, res, next) {
     }
   })
 
-  res.send(R.ok(users))
+  var data = []
+  for ( const user of users ) {
+    data.push(user.users)
+  }
+
+  res.send(R.ok(data))
 }
 
 /**
