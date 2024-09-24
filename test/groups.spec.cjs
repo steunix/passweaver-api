@@ -184,6 +184,24 @@ describe("Groups", function() {
     assert.strictEqual(res5.status, 200)
   })
 
+  it("Add member to Everyone, unprocessable", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/groups/E/users/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+  })
+
+  it("Add member to Root, unprocessable", async()=>{
+    const res1 = await agent
+      .delete(`${host}/api/v1/groups/0/users/0`)
+      .set("Authorization",`Bearer ${global.adminJWT}`)
+      .catch(v=>v)
+
+    assert.strictEqual(res1.status, 422)
+  })
+
   it("Remove admin from Admins, unprocessable", async()=>{
     const res1 = await agent
       .delete(`${host}/api/v1/groups/A/users/0`)

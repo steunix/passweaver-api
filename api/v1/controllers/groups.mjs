@@ -367,6 +367,12 @@ export async function addUser(req, res, next) {
     return
   }
 
+  // Cannot add user to Root group
+  if ( group==Const.PW_GROUP_ROOTID ) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot add users to Root group"))
+    return
+  }
+
   // Checks the user
   if ( !await User.exists(user) ) {
     res.status(R.NOT_FOUND).send(R.ko("User not found"))
