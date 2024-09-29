@@ -27,7 +27,7 @@ describe('Personal folders', function() {
       .catch(v=>v)
 
     assert.strictEqual( res2.status, 200)
-    assert(res2.body.data.hasOwnProperty('jwt'))
+    assert(Object.hasOwn(res2.body.data, 'jwt'))
   })
 
 })

@@ -287,7 +287,7 @@ export async function update (req, res, next) {
     updateStruct.secret = await Crypt.hashPassword(req.body.secret)
     updateStruct.secretexpiresat = new Date(2050, 12, 31, 23, 59, 59)
   }
-  if (req.body.hasOwnProperty('active')) {
+  if (Object.hasOwn(req.body, 'active')) {
     updateStruct.active = req.body.active
   }
 
