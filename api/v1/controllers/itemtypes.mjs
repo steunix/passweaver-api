@@ -2,6 +2,8 @@
  * Item types controller module
  * @module controllers/itemtypes
  * @author Stefano Rivoir <rs4000@gmail.com>
+ * @licence MIT
+ * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
 import * as R from '../../../lib/response.mjs'

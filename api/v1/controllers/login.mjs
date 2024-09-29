@@ -2,6 +2,8 @@
  * Login controller module
  * @module controllers/login
  * @author Stefano Rivoir <rs4000@gmail.com>
+ * @licence MIT
+ * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
 import * as LDAP from 'ldap-authentication'

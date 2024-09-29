@@ -1,10 +1,10 @@
 /**
  * PassWeaver, a collaborative password manager
  *
- * (c) 2023 - Stefano Rivoir <rs4000@gmail.com>
- *
  * @module main
  * @author Stefano Rivoir <rs4000@gmail.com>
+ * @licence MIT
+ * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
 import Express from 'express'

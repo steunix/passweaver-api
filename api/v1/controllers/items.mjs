@@ -2,6 +2,8 @@
  * Items controller module
  * @module controllers/items
  * @author Stefano Rivoir <rs4000@gmail.com>
+ * @licence MIT
+ * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { Prisma } from '@prisma/client'

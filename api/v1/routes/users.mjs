@@ -2,6 +2,8 @@
  * Users route module
  * @module routes/users
  * @author Stefano Rivoir <rs4000@gmail.com>
+ * @licence MIT
+ * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
 import { Router } from 'express'

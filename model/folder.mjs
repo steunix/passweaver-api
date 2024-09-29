@@ -2,6 +2,8 @@
  * Folder object module
  * @module model/folder
  * @author Stefano Rivoir <rs4000@gmail.com>
+ * @licence MIT
+ * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
 import * as Cache from '../lib/cache.mjs'
