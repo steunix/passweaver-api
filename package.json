@@ -22,7 +22,7 @@
     "express": "^5.0.0",
     "express-rate-limit": "^7.2.0",
     "generate-password": "^1.7.1",
-    "helmet": "^7.1.0",
+    "helmet": "^8.0.0",
     "ajv": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "ldap-authentication": "",
