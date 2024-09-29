@@ -1,47 +1,47 @@
-global.agent = require("superagent")
+global.agent = require('superagent')
 global.assert = require('assert')
 global.fs = require('fs')
 
-global.adminJWT = ""
-global.userJWT = ""
-global.host = ""
+global.adminJWT = ''
+global.userJWT = ''
+global.host = ''
 
 global.userCreateData = {
-  "login": "test",
-  "firstname": "test",
-  "lastname": "test",
-  "authmethod": "local",
-  "locale": "en_US",
-  "email": "me",
-  "secret": "123"
+  login: 'test',
+  firstname: 'test',
+  lastname: 'test',
+  authmethod: 'local',
+  locale: 'en_US',
+  email: 'me',
+  secret: '123'
 }
 
 global.itemCreateData = {
-  "title": "title",
-  "description": "description",
-  "data": "",
-  "metadata": ""
+  title: 'title',
+  description: 'description',
+  data: '',
+  metadata: ''
 }
 
 global.itemCreateDataBad = {
-  "title": "",
-  "description": "description",
-  "data": "",
-  "metadata": ""
+  title: '',
+  description: 'description',
+  data: '',
+  metadata: ''
 }
 
 global.folderCreateData = {
-  "description": "folder description"
+  description: 'folder description'
 }
 
 global.groupCreateData = {
-  "description": "group description"
+  description: 'group description'
 }
 
-before((done)=>{
-  console.log("Passweaver API test before hook")
+before((done) => {
+  console.log('Passweaver API test before hook')
   // Read listen port from config
-  console.log("Reading port from config")
+  console.log('Reading port from config')
   var port = JSON.parse(
     fs.readFileSync(
       'config.json'
@@ -59,12 +59,12 @@ before((done)=>{
   // Get both admin jwt and user jwt
   agent
     .post(`${global.host}/api/v1/login`)
-    .send({"username":"ADMIN", "password": "0"})
+    .send({'username':'ADMIN', 'password': '0'})
     .then(res=>{
       global.adminJWT = res.body.data.jwt
       agent
         .post(`${global.host}/api/v1/login`)
-        .send({"username":"USER1", "password": "0"})
+        .send({'username':'USER1', 'password': '0'})
         .then(res=>{
           global.userJWT = res.body.data.jwt
           done()
@@ -72,7 +72,7 @@ before((done)=>{
     })
 })
 
-function rnd(prefix) {
-  var rnd = (new Date%9e6).toString(36)
+function rnd (prefix) {
+  const rnd = (new Date%9e6).toString(36)
   return `${prefix}_${rnd}`
 }

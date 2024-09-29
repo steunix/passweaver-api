@@ -23,16 +23,16 @@ import DB from '../../../lib/db.mjs'
  * @param {Function} next Express next callback
  * @returns
  */
-export async function get(req, res, next) {
+export async function get (req, res, next) {
   const groupid = req.params.id
 
   // Search folder
   const group = await DB.groups.findUnique({
     where: { id: groupid }
-  });
+  })
 
-  if ( group===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("Group not found"))
+  if (group === null) {
+    res.status(R.NOT_FOUND).send(R.ko('Group not found'))
     return
   }
 
@@ -45,28 +45,28 @@ export async function get(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function list(req, res, next) {
+export async function list (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Search group
-  var groups
-  if ( req.query?.search ) {
+  let groups
+  if (req.query?.search) {
     groups = await DB.groups.findMany({
       where: {
         description: { contains: req.query.search, mode: 'insensitive' }
       },
       orderBy: {
-        description: "asc"
+        description: 'asc'
       }
     })
   } else {
     groups = await DB.groups.findMany({
       orderBy: {
-        description: "asc"
+        description: 'asc'
       }
     })
   }
@@ -80,7 +80,7 @@ export async function list(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function getUsers(req, res, next) {
+export async function getUsers (req, res, next) {
   const id = req.params.id
 
   // Search group members
@@ -103,13 +103,13 @@ export async function getUsers(req, res, next) {
     },
     orderBy: {
       users: {
-        lastname: "asc"
+        lastname: 'asc'
       }
     }
   })
 
-  var data = []
-  for ( const user of users ) {
+  const data = []
+  for (const user of users) {
     data.push(user.users)
   }
 
@@ -123,27 +123,27 @@ export async function getUsers(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function create(req, res, next) {
+export async function create (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "group_create") ) {
+  if (!JV.validate(req.body, 'group_create')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
 
   // Search parent
-  if ( !await Group.exists(req.params.parent) ) {
-    res.status(R.NOT_FOUND).send(R.ko("Parent group not found"))
+  if (!await Group.exists(req.params.parent)) {
+    res.status(R.NOT_FOUND).send(R.ko('Parent group not found'))
     return
   }
 
-  if ( req.params.parent==Const.PW_GROUP_EVERYONEID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot create groups in Everyone group"))
+  if (req.params.parent === Const.PW_GROUP_EVERYONEID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Cannot create groups in Everyone group'))
     return
   }
 
@@ -161,7 +161,7 @@ export async function create(req, res, next) {
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, newid)
 
   await Cache.resetGroupsTree()
-  res.status(R.CREATED).send(R.ok({id:newid}))
+  res.status(R.CREATED).send(R.ok({ id: newid }))
 }
 
 /**
@@ -171,15 +171,15 @@ export async function create(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function update(req, res, next) {
+export async function update (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "group_update") ) {
+  if (!JV.validate(req.body, 'group_update')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -187,35 +187,35 @@ export async function update(req, res, next) {
   const groupid = req.params.id
 
   // Check for root group
-  if ( groupid==Const.PW_GROUP_ROOTID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root group cannot be modified"))
-    return;
+  if (groupid === Const.PW_GROUP_ROOTID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Root group cannot be modified'))
+    return
   }
 
   // Check for Admins group
-  if ( groupid==Const.PW_GROUP_ADMINSID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admins group cannot be modified"))
-    return;
+  if (groupid === Const.PW_GROUP_ADMINSID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Admins group cannot be modified'))
+    return
   }
 
   // Check for Everyone group
-  if ( groupid==Const.PW_GROUP_EVERYONEID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Everyone group cannot be modified"))
-    return;
+  if (groupid === Const.PW_GROUP_EVERYONEID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Everyone group cannot be modified'))
+    return
   }
 
   // Search group
-  if ( !await Group.exists(groupid) ) {
-    res.status(R.NOT_FOUND).send(R.ko("Group not found"))
+  if (!await Group.exists(groupid)) {
+    res.status(R.NOT_FOUND).send(R.ko('Group not found'))
     return
   }
 
   const groupFromURL = req.params.parent || req.body.parent
 
   // Search parent group
-  if ( groupFromURL ) {
-    if ( !await Group.exists(groupFromURL) ) {
-      res.status(R.NOT_FOUND).send(R.ko("Parent group not found"))
+  if (groupFromURL) {
+    if (!await Group.exists(groupFromURL)) {
+      res.status(R.NOT_FOUND).send(R.ko('Parent group not found'))
       return
     }
 
@@ -226,17 +226,17 @@ export async function update(req, res, next) {
     })
 
     const children = await Group.children(group.id)
-    if ( children.find( (elem)=> { return elem.id == req.body.parent} ) ) {
-      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Parent group is invalid"))
+    if (children.find((elem) => { return elem.id === req.body.parent })) {
+      res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Parent group is invalid'))
       return
     }
   }
 
-  let updateStruct = {}
-  if ( req.body.description ) {
+  const updateStruct = {}
+  if (req.body.description) {
     updateStruct.description = req.body.description
   }
-  if ( groupFromURL ) {
+  if (groupFromURL) {
     updateStruct.parent = groupFromURL
   }
 
@@ -262,9 +262,9 @@ export async function update(req, res, next) {
  * @returns
  */
 
-export async function remove(req, res, next) {
+export async function remove (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -272,26 +272,26 @@ export async function remove(req, res, next) {
   const groupid = req.params.id
 
   // Root group cannot be deleted
-  if ( groupid==Const.PW_GROUP_ROOTID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root group cannot be deleted"))
+  if (groupid === Const.PW_GROUP_ROOTID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Root group cannot be deleted'))
     return
   }
 
   // Everyone group cannot be deleted
-  if ( groupid==Const.PW_GROUP_EVERYONEID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Root group cannot be deleted"))
+  if (groupid === Const.PW_GROUP_EVERYONEID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Root group cannot be deleted'))
     return
   }
 
   // Everyone group cannot be deleted
-  if ( groupid==Const.PW_GROUP_ADMINSID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admins group cannot be deleted"))
+  if (groupid === Const.PW_GROUP_ADMINSID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Admins group cannot be deleted'))
     return
   }
 
   // Gets the group
-  if ( !await Group.exists(groupid) ) {
-    res.status(R.NOT_FOUND).send(R.ko("Group not found"))
+  if (!await Group.exists(groupid)) {
+    res.status(R.NOT_FOUND).send(R.ko('Group not found'))
     return
   }
 
@@ -299,33 +299,33 @@ export async function remove(req, res, next) {
   const children = await DB.groups.findFirst({
     where: { parent: groupid }
   })
-  if ( children!==null ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Group not empty"))
+  if (children !== null) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Group not empty'))
     return
   }
 
   // Looks for members
   const members = await DB.groupsmembers.findFirst({
-    where: { groupid: groupid },
+    where: { groupid },
     select: { id: true }
   })
-  if ( members!==null ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Group has members"))
+  if (members !== null) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Group has members'))
     return
   }
 
   // Delete user/groups
-  await DB.$transaction(async(tx)=> {
+  await DB.$transaction(async (tx) => {
     await DB.groupsmembers.deleteMany({
       where: {
-        groupid: groupid
+        groupid
       }
     })
 
     // Delete folder/groups
     await DB.folderspermissions.deleteMany({
       where: {
-        groupid: groupid
+        groupid
       }
     })
 
@@ -350,9 +350,9 @@ export async function remove(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function addUser(req, res, next) {
+export async function addUser (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -361,26 +361,26 @@ export async function addUser(req, res, next) {
   const user = req.params.user
 
   // Checks the group
-  if ( !await Group.exists(group) ) {
-    res.status(R.NOT_FOUND).send(R.ko("Group not found"))
+  if (!await Group.exists(group)) {
+    res.status(R.NOT_FOUND).send(R.ko('Group not found'))
     return
   }
 
   // Cannot add user to Everyone
-  if ( group==Const.PW_GROUP_EVERYONEID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot add users to Everyone group"))
+  if (group === Const.PW_GROUP_EVERYONEID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Cannot add users to Everyone group'))
     return
   }
 
   // Cannot add user to Root group
-  if ( group==Const.PW_GROUP_ROOTID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot add users to Root group"))
+  if (group === Const.PW_GROUP_ROOTID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Cannot add users to Root group'))
     return
   }
 
   // Checks the user
-  if ( !await User.exists(user) ) {
-    res.status(R.NOT_FOUND).send(R.ko("User not found"))
+  if (!await User.exists(user)) {
+    res.status(R.NOT_FOUND).send(R.ko('User not found'))
     return
   }
 
@@ -392,8 +392,8 @@ export async function addUser(req, res, next) {
     },
     select: { id: true }
   })
-  if ( ex!==null ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("User is already in the group"))
+  if (ex !== null) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('User is already in the group'))
     return
   }
 
@@ -417,9 +417,9 @@ export async function addUser(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function removeUser(req, res, next) {
+export async function removeUser (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -428,26 +428,26 @@ export async function removeUser(req, res, next) {
   const user = req.params.user
 
   // Checks the group
-  if ( !await Group.exists(group) ) {
-    res.status(R.NOT_FOUND).send(R.ko("Group not found"))
+  if (!await Group.exists(group)) {
+    res.status(R.NOT_FOUND).send(R.ko('Group not found'))
     return
   }
 
   // Checks the user
-  if ( !await User.exists(user) ) {
-    res.status(R.NOT_FOUND).send(R.ko("User not found"))
+  if (!await User.exists(user)) {
+    res.status(R.NOT_FOUND).send(R.ko('User not found'))
     return
   }
 
   // Admin cannot be removed from Admins
-  if ( group==Const.PW_GROUP_ADMINSID && user==Const.PW_USER_ADMINID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admin cannot be removed from Admins group"))
+  if (group === Const.PW_GROUP_ADMINSID && user === Const.PW_USER_ADMINID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Admin cannot be removed from Admins group'))
     return
   }
 
   // Cannot remove user from Everyone
-  if ( group==Const.PW_GROUP_EVERYONEID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Cannot remove users from Everyone group"))
+  if (group === Const.PW_GROUP_EVERYONEID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Cannot remove users from Everyone group'))
     return
   }
 
@@ -459,8 +459,8 @@ export async function removeUser(req, res, next) {
     },
     select: { id: true }
   })
-  if ( ex==null ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("User is not in the group"))
+  if (ex === null) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('User is not in the group'))
     return
   }
 
@@ -483,7 +483,7 @@ export async function removeUser(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function tree(req, res, next) {
-  const tree = await Group.tree(req.user);
+export async function tree (req, res, next) {
+  const tree = await Group.tree(req.user)
   res.send(R.ok(tree))
 }

@@ -14,6 +14,6 @@ const router = Router()
 // Validation middleware
 router.use(auth.validateJWT)
 
-router.post("/", eventsController.create)
+router.post('/', eventsController.create)
 
 export default router

@@ -14,10 +14,10 @@ const router = Router()
 // Validation middleware
 router.use(auth.validateJWT)
 
-router.get("/generatepassword", utilController.generatePassword)
+router.get('/generatepassword', utilController.generatePassword)
 
-router.get("/info", utilController.info)
+router.get('/info', utilController.info)
 
-router.post("/clearcache", utilController.clearCache)
+router.post('/clearcache', utilController.clearCache)
 
 export default router

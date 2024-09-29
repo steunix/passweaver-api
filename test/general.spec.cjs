@@ -1,7 +1,7 @@
-require("./common.cjs")
+require('./common.cjs')
 
-describe("General", function() {
-  it("Bad path", async()=> {
+describe('General', function() {
+  it('Bad path', async()=> {
     const res1 = await agent
       .post(`${host}/api/v1/000`)
       .catch(v=>v)

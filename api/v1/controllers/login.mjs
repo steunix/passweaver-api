@@ -23,9 +23,9 @@ import DB from '../../../lib/db.mjs'
  * @param {Function} next Express next callback
  * @returns
  */
-export async function login(req, res, next) {
+export async function login (req, res, next) {
   // Validate payload
-  if ( !JV.validate(req.body, "login") ) {
+  if (!JV.validate(req.body, 'login')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -34,21 +34,21 @@ export async function login(req, res, next) {
   const user = await DB.users.findUnique({
     where: { login: req.body.username.toLowerCase() }
   })
-  if ( user===null ) {
+  if (user === null) {
     Events.add(req.body.username, Const.EV_ACTION_LOGINNF, Const.EV_ENTITY_USER, req.body.username)
-    res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+    res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
 
   // Check if user is valid
-  if ( !user.active ) {
+  if (!user.active) {
     Events.add(req.body.username, Const.EV_ACTION_LOGINNV, Const.EV_ENTITY_USER, req.body.username)
-    res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+    res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
 
   // Validate user password
-  if ( user.authmethod=="ldap" ) {
+  if (user.authmethod === 'ldap') {
     const ldap = Config.get().ldap
 
     // LDAP authentication
@@ -62,14 +62,14 @@ export async function login(req, res, next) {
       })
     } catch (err) {
       Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
-      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+      res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
     }
   } else {
     // Local authentication
-    if ( !await( Crypt.checkPassword(req.body.password, user.secret) ) ) {
+    if (!await Crypt.checkPassword(req.body.password, user.secret)) {
       Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
-      res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+      res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
     }
   }
@@ -78,5 +78,5 @@ export async function login(req, res, next) {
   const token = await Auth.createToken(user.id, false)
 
   Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
-  res.send(R.ok({jwt:token}))
+  res.send(R.ok({ jwt: token }))
 }

@@ -14,23 +14,23 @@ import DB from '../lib/db.mjs'
  * @param {string} id Folder ID
  * @returns
  */
-export async function exists(id) {
+export async function exists (id) {
   const folder = await DB.folders.findUnique({
-    where: { id: id },
+    where: { id },
     select: { id: true }
   })
-  return ( folder !== null )
+  return (folder !== null)
 }
 
 /**
  * Returns true if the folder is personal
  * @param {string} id Folder ID
  */
-export async function isPersonal(id) {
+export async function isPersonal (id) {
   const folders = await parents(id)
 
-  for ( const folder of folders ) {
-    if ( folder.id==Const.PW_FOLDER_PERSONALROOTID ) {
+  for (const folder of folders) {
+    if (folder.id === Const.PW_FOLDER_PERSONALROOTID) {
       return true
     }
   }
@@ -44,11 +44,11 @@ export async function isPersonal(id) {
  * @param {array} foldersRecordset If provided, it's used instead of doing a query
  * @returns Array
  */
-export async function parents(id, foldersRecordset) {
-  let array = [];
+export async function parents (id, foldersRecordset) {
+  const array = []
 
   // If no recordset is provided, query the DB
-  if ( !foldersRecordset ) {
+  if (!foldersRecordset) {
     const pFolders = await DB.$queryRaw`
       with recursive folder_parents as
       (
@@ -60,7 +60,7 @@ export async function parents(id, foldersRecordset) {
         from   folders fparent
         join   folder_parents fchild
         on     fparent.id = fchild.parent
-      )
+     )
       select * from folder_parents
       order by level, description
     `
@@ -69,50 +69,50 @@ export async function parents(id, foldersRecordset) {
 
   const folders = foldersRecordset
 
-  const item = folders.find(elem => elem.id == id)
+  const item = folders.find(elem => elem.id === id)
 
   // Adds itself as root
   item.tree_level = 0
   array.push(item)
 
   // If root, don't look any further
-  if ( id==Const.PW_FOLDER_ROOTID ) {
+  if (id === Const.PW_FOLDER_ROOTID) {
     return array
   }
 
   let parentid = item.parent
-  let search = true;
-  let level = 1;
+  let search = true
+  let level = 1
   let folder
 
   // Search parents
-  while ( search ) {
+  while (search) {
     try {
-      folder = folders.find(elem => elem.id == parentid)
+      folder = folders.find(elem => elem.id === parentid)
 
       folder.tree_level = level++
       array.push(folder)
 
-      if ( folder.id==Const.PW_FOLDER_ROOTID ) {
-        search = false;
+      if (folder.id === Const.PW_FOLDER_ROOTID) {
+        search = false
       }
-    } catch ( exc ) {
+    } catch (exc) {
       search = false
     }
     parentid = folder.parent
   }
 
   // Sort by tree_level
-  array.sort((a,b)=>{
-    if ( a.tree_level < b.tree_level) {
+  array.sort((a, b) => {
+    if (a.tree_level < b.tree_level) {
       return -1
     }
-    if ( a.tree_level > b.tree_level) {
+    if (a.tree_level > b.tree_level) {
       return 1
     }
     return 0
   })
-  return array;
+  return array
 }
 
 /**
@@ -122,10 +122,10 @@ export async function parents(id, foldersRecordset) {
  * @param {array} foldersRecordset If provided, it's used instead of doing a query
  * @returns
  */
-export async function children(id, foldersRecordset) {
-  let ret = []
+export async function children (id, foldersRecordset) {
+  const ret = []
 
-  if ( !foldersRecordset ) {
+  if (!foldersRecordset) {
     const pFolders = await DB.$queryRaw`
       with recursive folder_tree as
       (
@@ -137,7 +137,7 @@ export async function children(id, foldersRecordset) {
         from   folders fchild
         join   folder_tree fparent
         on     fchild.parent = fparent.id
-      )
+     )
       select * from folder_tree
       where  id!=${id}
       order  by level, parent, description`
@@ -147,10 +147,10 @@ export async function children(id, foldersRecordset) {
   const folders = foldersRecordset
 
   // Recursive to get all children
-  function addChildren(id) {
-    let items = folders.filter(elem => elem.parent == id)
-    for ( const child of items ) {
-      if ( child.id!=Const.PW_FOLDER_ROOTID ) {
+  function addChildren (id) {
+    const items = folders.filter(elem => elem.parent === id)
+    for (const child of items) {
+      if (child.id !== Const.PW_FOLDER_ROOTID) {
         ret.push(child)
         addChildren(child.id)
       }
@@ -170,8 +170,8 @@ export async function children(id, foldersRecordset) {
  * @param {string} id Folder id
  * @param {string} user User id
 */
-export async function permissions(id,user) {
-  let ret = {
+export async function permissions (id, user) {
+  const ret = {
     read: false,
     write: false
   }
@@ -188,7 +188,7 @@ export async function permissions(id,user) {
       from   folders fparent
       join   folder_parents fchild
       on     fparent.id = fchild.parent
-    )
+   )
     select f.personal, f.userid, p.read, p.write
     from   folder_parents f
     join   folderspermissions p
@@ -199,24 +199,24 @@ export async function permissions(id,user) {
     order  by level`
 
   // No perms?
-  if ( pPerms.length==0 ) {
+  if (pPerms.length === 0) {
     // The above query does not find personal folders, for which there is no explicit permission
     const folder = await DB.folders.findUnique({
-      where: { id: id }
+      where: { id }
     })
-    if ( folder.personal && folder.userid==user ) {
+    if (folder.personal && folder.userid === user) {
       ret.read = true
       ret.write = true
     }
     return ret
   }
 
-  for ( const perm of pPerms ) {
+  for (const perm of pPerms) {
     ret.read = ret.read || perm.read
     ret.write = ret.write || perm.write
 
     // If both perm are true, we can early exit
-    if ( ret.read && ret.write ) {
+    if (ret.read && ret.write) {
       return ret
     }
   }
@@ -229,9 +229,9 @@ export async function permissions(id,user) {
  *
  * @param {string} user User
  */
-export async function tree(user) {
+export async function tree (user) {
   const cache = await Cache.get(user, Cache.foldersTreeKey)
-  if ( cache ) {
+  if (cache) {
     return cache
   }
 
@@ -257,54 +257,53 @@ export async function tree(user) {
     and    pf.userid = ${user}`
 
   // For each allowed folder, add all parents and children
-  var readable = new Map()
-  var data = []
-  var added = new Map()
-  for ( const folder of readFolders ) {
-
+  const readable = new Map()
+  const data = []
+  const added = new Map()
+  for (const folder of readFolders) {
     const achildren = await children(folder.id, allFolders)
-    const aparents  = await parents(folder.id, allFolders)
+    const aparents = await parents(folder.id, allFolders)
 
     readable.set(folder.id, folder.id)
 
     // Each children is also added to read-permitted folders for caching
-    for ( const el of achildren ) {
+    for (const el of achildren) {
       // Only 'admin' user can see all personal folders
-      if ( el.personal==true && el.user!=user && user!='0' ) {
+      if (el.personal === true && el.user !== user && user !== '0') {
         continue
       }
 
-      if ( !added.get(el.id) ) {
+      if (!added.get(el.id)) {
         data.push(el)
-        added.set(el.id,el.id)
+        added.set(el.id, el.id)
 
         readable.set(el.id, el.id)
       }
     }
-    for ( const el of aparents ) {
-      if ( !added.get(el.id) ) {
+    for (const el of aparents) {
+      if (!added.get(el.id)) {
         data.push(el)
-        added.set(el.id,el.id)
+        added.set(el.id, el.id)
       }
     }
   }
 
   // Sort by description
-  data.sort( (a,b)=>{
-    if ( a.id==Const.PW_FOLDER_PERSONALROOTID && b.id!=Const.PW_FOLDER_ROOTID ) { return -1 }
-    if ( b.id==Const.PW_FOLDER_PERSONALROOTID && a.id!=Const.PW_FOLDER_ROOTID ) { return 1 }
-    if ( a.description<b.description ) { return -1 }
-    if ( a.description>b.description ) { return 1 }
+  data.sort((a, b) => {
+    if (a.id === Const.PW_FOLDER_PERSONALROOTID && b.id !== Const.PW_FOLDER_ROOTID) { return -1 }
+    if (b.id === Const.PW_FOLDER_PERSONALROOTID && a.id !== Const.PW_FOLDER_ROOTID) { return 1 }
+    if (a.description < b.description) { return -1 }
+    if (a.description > b.description) { return 1 }
     return 0
   })
 
   // Builds tree from array
   const hashTable = Object.create(null)
-  data.forEach(d => hashTable[d.id] = {...d, children: []})
+  data.forEach(d => { hashTable[d.id] = { ...d, children: [] } })
 
   const tree = []
   data.forEach(d => {
-    if(d.parent) {
+    if (d.parent) {
       hashTable[d.parent].children.push(hashTable[d.id])
     } else {
       tree.push(hashTable[d.id])
@@ -320,18 +319,18 @@ export async function tree(user) {
  * Updates ts_vector for folder and its children
  * @param {string} id Folder id
  */
-export async function update_fts(id) {
+export async function updateFTS (id) {
   const cfolders = await children(id)
   cfolders.push(id)
 
-  for ( const f of cfolders ) {
+  for (const f of cfolders) {
     const items = await DB.items.findMany({
       where: { folderid: f.id },
       select: { id: true }
     })
 
-    for ( const i of items ) {
-      await Item.update_fts(i.id)
+    for (const i of items) {
+      await Item.updateFTS(i.id)
     }
   }
 }

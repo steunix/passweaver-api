@@ -1,11 +1,11 @@
-require("./common.cjs")
+require('./common.cjs')
 
-describe("Generator", function() {
+describe('Generator', function() {
 
-  it("Generator", async()=> {
+  it('Generator', async()=> {
     const res1 = await agent
       .get(`${host}/api/v1/util/generatepassword`)
-      .set("Authorization",`Bearer ${global.userJWT}`)
+      .set('Authorization',`Bearer ${global.userJWT}`)
       .catch(v=>v)
 
     assert.strictEqual(res1.status, 200)

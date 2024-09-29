@@ -19,8 +19,8 @@ import DB from '../../../lib/db.mjs'
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function generatePassword(req, res, next) {
-  var pwd = generator.generate({
+export async function generatePassword (req, res, next) {
+  const pwd = generator.generate({
     length: 15,
     numbers: true,
     symbols: true,
@@ -29,7 +29,7 @@ export async function generatePassword(req, res, next) {
     strict: true
   })
 
-  res.send(R.ok({password: pwd}))
+  res.send(R.ok({ password: pwd }))
 }
 
 /**
@@ -38,9 +38,9 @@ export async function generatePassword(req, res, next) {
  * @param {Object} res Express response
  * @param {Function} next Express next callback
  */
-export async function info(req, res, next) {
+export async function info (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -53,11 +53,11 @@ export async function info(req, res, next) {
   const cache = await Cache.size()
 
   const data = {
-    users: users,
-    items: items,
-    folders: folders,
-    version: version,
-    cacheProvider: Config.get().redis.enabled ? "redis" : "node-cache",
+    users,
+    items,
+    folders,
+    version,
+    cacheProvider: Config.get().redis.enabled ? 'redis' : 'node-cache',
     cacheSize: cache,
     startup: Config.get().startuptime
   }
@@ -71,9 +71,9 @@ export async function info(req, res, next) {
  * @param {Object} res Express response
  * @param {Object} next Express next
  */
-export async function clearCache(req,res,next) {
+export async function clearCache (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }

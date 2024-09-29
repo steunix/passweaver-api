@@ -9,7 +9,7 @@ import * as auth from '../../../lib/auth.mjs'
 
 import * as oneTimeTokensController from '../controllers/onetimetokens.mjs'
 
-const router = Router({mergeParams:true})
+const router = Router({ mergeParams: true })
 
 // Validation middleware
 router.use(/\/$/, auth.validateJWT)

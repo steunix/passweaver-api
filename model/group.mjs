@@ -13,12 +13,12 @@ import DB from '../lib/db.mjs'
  * @param {string} id Group ID
  * @returns
  */
-export async function exists(id) {
+export async function exists (id) {
   const group = await DB.groups.findUnique({
-    where: { id: id },
+    where: { id },
     select: { id: true }
   })
-  return ( group !== null )
+  return (group !== null)
 }
 
 /**
@@ -27,57 +27,56 @@ export async function exists(id) {
  * @param {boolean} includeSelf If true, passed folder is returned in the array
  * @returns
  */
-export async function parents(id, includeSelf) {
-  let array = [];
+export async function parents (id, includeSelf) {
+  const array = []
 
-  if ( id==Const.PW_GROUP_ROOTID ) {
+  if (id === Const.PW_GROUP_ROOTID) {
     return array
   }
 
   let group = await DB.groups.findUnique({
-    where: {id:id}
+    where: { id }
   })
 
   // Adds itself if requested
-  if ( includeSelf ) {
+  if (includeSelf) {
     group.tree_level = 0
     array.push(group)
   }
 
   let parentid = group.parent
-  let search = true;
-  let level = 1;
-
+  let search = true
+  let level = 1
 
   // Search parents
-  while ( search ) {
+  while (search) {
     try {
       group = await DB.groups.findUnique({
-        where: {id:parentid}
+        where: { id: parentid }
       })
       group.tree_level = level++
       array.push(group)
 
-      if ( group.id==Const.PW_GROUP_ROOTID ) {
-        search = false;
+      if (group.id === Const.PW_GROUP_ROOTID) {
+        search = false
       }
-    } catch ( exc ) {
+    } catch (exc) {
       search = false
     }
     parentid = group.parent
   }
 
   // Sort by tree_level
-  array.sort((a,b)=>{
-    if ( a.tree_level < b.tree_level) {
+  array.sort((a, b) => {
+    if (a.tree_level < b.tree_level) {
       return -1
     }
-    if ( a.tree_level > b.tree_level) {
+    if (a.tree_level > b.tree_level) {
       return 1
     }
     return 0
   })
-  return array;
+  return array
 }
 
 /**
@@ -86,20 +85,20 @@ export async function parents(id, includeSelf) {
  * @param {string} id Group id
  * @returns
  */
-export async function children(id) {
-  let ret = []
+export async function children (id) {
+  const ret = []
 
   const groups = await DB.groups.findMany({
     orderBy: {
-      description: "asc"
+      description: 'asc'
     }
   })
 
   // Recursive to get all children
-  function addChildren(id) {
-    let items = groups.filter(elem => elem.parent == id)
-    for ( const child of items ) {
-      if ( child.id!=Const.PW_GROUP_ROOTID ) {
+  function addChildren (id) {
+    const items = groups.filter(elem => elem.parent === id)
+    for (const child of items) {
+      if (child.id !== Const.PW_GROUP_ROOTID) {
         ret.push(child)
         addChildren(child.id)
       }
@@ -116,10 +115,10 @@ export async function children(id) {
  * @param {id} id Folder ID
  * @returns {Array} Folders array
  */
-export async function parent(id) {
-  const res = await this.parents(id,false)
+export async function parent (id) {
+  const res = await this.parents(id, false)
 
-  if ( res.length==0 ) {
+  if (res.length === 0) {
     return []
   }
 
@@ -131,25 +130,25 @@ export async function parent(id) {
  * @param {string} user User
  * @returns {Object} Folders tree
  */
-export async function tree(user) {
+export async function tree (user) {
   const cache = await Cache.get(user, Cache.groupsTreeKey)
-  if ( cache ) {
+  if (cache) {
     return cache
   }
 
   // Get groups
   const data = await DB.groups.findMany({
     orderBy: {
-      description: "asc"
+      description: 'asc'
     }
   })
 
   // Builds tree from flat data
   const tree = []
-  const hashTable = Object.create(null);
-  data.forEach(d => hashTable[d.id] = {...d, children: []});
+  const hashTable = Object.create(null)
+  data.forEach(d => { hashTable[d.id] = { ...d, children: [] } })
   data.forEach(d => {
-    if(d.parent) {
+    if (d.parent) {
       hashTable[d.parent].children.push(hashTable[d.id])
     } else {
       tree.push(hashTable[d.id])

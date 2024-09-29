@@ -13,16 +13,16 @@ import DB from '../lib/db.mjs'
  * @param {string} id Item ID
  * @returns
  */
-export async function update_fts(id) {
+export async function updateFTS (id) {
   // Update tsvector
   const item = await DB.items.findUnique({
-    where: { id: id}
+    where: { id }
   })
 
   const pfolders = await Folder.parents(item.folderid)
-  var ftsf = ''
-  for ( const f of pfolders ) {
-    if ( f.id!=Const.PW_FOLDER_ROOTID && f.id!=Const.PW_FOLDER_PERSONALROOTID ) {
+  let ftsf = ''
+  for (const f of pfolders) {
+    if (f.id !== Const.PW_FOLDER_ROOTID && f.id !== Const.PW_FOLDER_PERSONALROOTID) {
       ftsf += f.description + ' '
     }
   }
@@ -36,4 +36,3 @@ export async function update_fts(id) {
     update set fts_vectorfull = to_tsvector('simple',${ftsf}),
       fts_vectoritem = to_tsvector('simple',${ftsi})`
 }
-

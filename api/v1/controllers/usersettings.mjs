@@ -15,18 +15,18 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
  * @param {Function} next Error callback
  * @returns
  */
-export async function get(req, res, next) {
+export async function get (req, res, next) {
   const userid = req.params.id
 
   // Settings can be read only by the owner
-  if ( req.user!==userid) {
+  if (req.user !== userid) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Search item
   const settings = await DB.usersettings.findMany({
-    where: { userid: userid },
+    where: { userid },
     select: {
       setting: true,
       value: true
@@ -43,32 +43,32 @@ export async function get(req, res, next) {
  * @param {Function} next Error callback
  * @returns
  */
-export async function set(req, res, next) {
+export async function set (req, res, next) {
   const userid = req.params.id
 
   // Settings can be written only by the owner
-  if ( req.user!==userid) {
+  if (req.user !== userid) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "usersettings_create") ) {
+  if (!JV.validate(req.body, 'usersettings_create')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
 
   // Set settings. Empty values will delete the setting
-  await DB.$transaction(async(tx)=> {
-    for ( const setting of req.body ) {
+  await DB.$transaction(async (tx) => {
+    for (const setting of req.body) {
       await DB.usersettings.deleteMany({
-        where: { userid: userid, setting: setting.setting }
+        where: { userid, setting: setting.setting }
       })
-      if ( setting.value!=="" ) {
+      if (setting.value !== '') {
         // Delete setting
         await DB.usersettings.create({
           data: {
-            userid: userid,
+            userid,
             setting: setting.setting,
             value: setting.value
           }

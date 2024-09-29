@@ -21,12 +21,12 @@ import DB from '../../../lib/db.mjs'
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function get(req, res, next) {
+export async function get (req, res, next) {
   const userid = req.params.id
 
   // Must be admin if reading another user
-  if ( req.user != userid ) {
-    if ( !await Auth.isAdmin(req) ) {
+  if (req.user !== userid) {
+    if (!await Auth.isAdmin(req)) {
       res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
@@ -49,14 +49,14 @@ export async function get(req, res, next) {
     }
   })
 
-  if ( user===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("User not found"))
+  if (user === null) {
+    res.status(R.NOT_FOUND).send(R.ko('User not found'))
     return
   }
 
   // Returns wether a personal password has been set
   user.haspersonalsecret = user.personalsecret !== null
-  delete(user.personalsecret)
+  delete (user.personalsecret)
 
   res.send(R.ok(user))
 }
@@ -67,16 +67,16 @@ export async function get(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function list(req, res, next) {
+export async function list (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Search user
-  var users
-  if ( req.query?.search ) {
+  let users
+  if (req.query?.search) {
     users = await DB.users.findMany({
       where: {
         OR: [
@@ -86,13 +86,13 @@ export async function list(req, res, next) {
         ]
       },
       orderBy: {
-        lastname: "asc"
+        lastname: 'asc'
       }
     })
   } else {
     users = await DB.users.findMany({
       orderBy: {
-        lastname: "asc"
+        lastname: 'asc'
       }
     })
   }
@@ -106,31 +106,31 @@ export async function list(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function getGroups(req, res, next) {
+export async function getGroups (req, res, next) {
   const userid = req.params.id
 
   // Must be admin if reading another user
-  if ( req.user != userid ) {
-    if ( !await Auth.isAdmin(req) ) {
+  if (req.user !== userid) {
+    if (!await Auth.isAdmin(req)) {
       res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
   }
 
-  var data = []
+  const data = []
 
   // Search user's groups
   const groups = await DB.groupsmembers.findMany({
-    where: { userid: userid },
+    where: { userid },
     include: { groups: true },
     orderBy: {
       groups: {
-        description: "asc"
+        description: 'asc'
       }
     }
   })
 
-  for ( const group of groups ) {
+  for (const group of groups) {
     data.push(group.groups)
   }
   res.send(R.ok(data))
@@ -142,15 +142,15 @@ export async function getGroups(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function create(req, res, next) {
+export async function create (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "user_create") ) {
+  if (!JV.validate(req.body, 'user_create')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -160,14 +160,14 @@ export async function create(req, res, next) {
     where: { login: req.body.login.toLowerCase() },
     select: { id: true }
   })
-  if ( login ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Login already exist"))
+  if (login) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Login already exist'))
     return
   }
 
   // Creates user
   const newUserId = newId()
-  await DB.$transaction(async(tx)=> {
+  await DB.$transaction(async (tx) => {
     const hash = await Crypt.hashPassword(req.body.secret)
     await DB.users.create({
       data: {
@@ -175,11 +175,11 @@ export async function create(req, res, next) {
         login: req.body.login.toLowerCase(),
         firstname: req.body.firstname,
         lastname: req.body?.lastname,
-        locale: req.body?.locale ?? "en_US",
-        authmethod: req.body?.authmethod ?? "local",
+        locale: req.body?.locale ?? 'en_US',
+        authmethod: req.body?.authmethod ?? 'local',
         email: req.body.email.toLowerCase(),
         secret: hash,
-        secretexpiresat: new Date(2050,12,31,23,59,59)
+        secretexpiresat: new Date(2050, 12, 31, 23, 59, 59)
       }
     })
 
@@ -207,7 +207,7 @@ export async function create(req, res, next) {
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_USER, newUserId)
   await Cache.resetFoldersTree()
 
-  res.status(R.CREATED).send(R.ok({id: newUserId}))
+  res.status(R.CREATED).send(R.ok({ id: newUserId }))
 }
 
 /**
@@ -216,78 +216,78 @@ export async function create(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function update(req, res, next) {
+export async function update (req, res, next) {
   const userid = req.params.id
 
   // Must be admin if updating another user
-  if ( req.user != userid ) {
-    if ( !await Auth.isAdmin(req) ) {
+  if (req.user !== userid) {
+    if (!await Auth.isAdmin(req)) {
       res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "user_update") ) {
+  if (!JV.validate(req.body, 'user_update')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
 
   // If not admin, the only change possible is the password
-  if ( !await Auth.isAdmin(req) ) {
-    if ( !req.body.secret ) {
+  if (!await Auth.isAdmin(req)) {
+    if (!req.body.secret) {
       res.status(R.BAD_REQUEST).send(R.badRequest())
       return
     }
-    req.body = { "secret": req.body.secret }
+    req.body = { secret: req.body.secret }
   }
 
   // Search user
   const user = await DB.users.findUnique({
     where: { id: userid }
-  });
+  })
 
-  if ( user===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("User not found"))
+  if (user === null) {
+    res.status(R.NOT_FOUND).send(R.ko('User not found'))
     return
   }
 
   // Check for login uniqueness, if changed
-  if ( req.body.login && req.body.login != user.login ) {
+  if (req.body.login && req.body.login !== user.login) {
     const login = DB.users.findFirst({
       where: { login: req.body.login },
       select: { id: true }
     })
-    if ( login ) {
-      res.status(R.BAD_REQUEST).send(R.ko("Login already exist"))
+    if (login) {
+      res.status(R.BAD_REQUEST).send(R.ko('Login already exist'))
       return
     }
   }
 
-  let updateStruct = {}
-  if ( req.body.login ) {
+  const updateStruct = {}
+  if (req.body.login) {
     updateStruct.login = req.body.login.toLowerCase()
   }
-  if ( req.body.firstname ) {
+  if (req.body.firstname) {
     updateStruct.firstname = req.body.firstname
   }
-  if ( req.body.lastname ) {
+  if (req.body.lastname) {
     updateStruct.lastname = req.body.lastname
   }
-  if ( req.body.authmethod ) {
+  if (req.body.authmethod) {
     updateStruct.authmethod = req.body.authmethod
   }
-  if ( req.body.locale ) {
+  if (req.body.locale) {
     updateStruct.locale = req.body.locale
   }
-  if ( req.body.email ) {
+  if (req.body.email) {
     updateStruct.email = req.body.email.toLowerCase()
   }
-  if ( req.body.secret ) {
+  if (req.body.secret) {
     updateStruct.secret = await Crypt.hashPassword(req.body.secret)
-    updateStruct.secretexpiresat = new Date(2050,12,31,23,59,59)
+    updateStruct.secretexpiresat = new Date(2050, 12, 31, 23, 59, 59)
   }
-  if ( req.body.hasOwnProperty("active") ) {
+  if (req.body.hasOwnProperty('active')) {
     updateStruct.active = req.body.active
   }
 
@@ -300,7 +300,7 @@ export async function update(req, res, next) {
   })
 
   Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_USER, userid)
-  if ( req.body.secret ) {
+  if (req.body.secret) {
     Events.add(req.user, Const.EV_ACTION_PWDUPDATE, Const.EV_ENTITY_USER, userid)
   }
   res.send(R.ok())
@@ -312,9 +312,9 @@ export async function update(req, res, next) {
  * @param {object} res Express response
  * @param {Function} next Express next callback
  */
-export async function remove(req, res, next) {
+export async function remove (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -327,35 +327,35 @@ export async function remove(req, res, next) {
     select: { id: true }
   })
 
-  if ( user===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("User not found"))
+  if (user === null) {
+    res.status(R.NOT_FOUND).send(R.ko('User not found'))
     return
   }
 
   // Admin user cannot be removed
-  if ( userid==Const.PW_USER_ADMINID ) {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko("Admin user cannot be removed"))
+  if (userid === Const.PW_USER_ADMINID) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Admin user cannot be removed'))
     return
   }
 
   // Search user personal folders
-  await DB.$transaction(async(tx)=> {
+  await DB.$transaction(async (tx) => {
     // Delete user groups
     await DB.groupsmembers.deleteMany({
-      where: { userid: userid }
+      where: { userid }
     })
 
     // Delete settings
     await DB.usersettings.deleteMany({
-      where: { userid: userid }
+      where: { userid }
     })
 
     // Personal folders
     const personal = await DB.folders.findMany({
-      where: { personal: true, userid: userid },
+      where: { personal: true, userid },
       select: { id: true }
     })
-    for ( const pers of personal ) {
+    for (const pers of personal) {
       // Delete items in personal folder
       await DB.items.deleteMany({
         where: { folderid: pers.id }
@@ -371,7 +371,6 @@ export async function remove(req, res, next) {
     await DB.users.delete({
       where: { id: userid }
     })
-
   })
 
   Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_USER, userid)
@@ -388,9 +387,9 @@ export async function remove(req, res, next) {
  * @param {Object} res Response
  * @param {Object} next Next
  */
-export async function activity(req, res, next) {
+export async function activity (req, res, next) {
   // Must be admin
-  if ( !await Auth.isAdmin(req) ) {
+  if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }

@@ -6,18 +6,17 @@
 
 import DB from '../lib/db.mjs'
 
-
 /**
  * Returns true if the user exists
  * @param {string} id User
  * @returns {boolean} True if the user exists
  */
-export async function exists(id) {
+export async function exists (id) {
   const user = await DB.users.findUnique({
-    where: { id: id },
+    where: { id },
     select: { id: true }
   })
-  return ( user !== null )
+  return (user !== null)
 }
 
 /**
@@ -25,7 +24,7 @@ export async function exists(id) {
  * @param {string} user User
  * @returns {Array} Array of groups
  */
-export async function groups(user) {
+export async function groups (user) {
   const groups = await DB.groupsmembers.findMany({
     where: { userid: user },
     include: {
@@ -33,10 +32,9 @@ export async function groups(user) {
     }
   })
 
-  let array = []
-  for ( const rec of groups ) {
+  const array = []
+  for (const rec of groups) {
     array.push(rec.groups)
   }
   return array
 }
-

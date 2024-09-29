@@ -14,9 +14,9 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
  * @param {object} res Express response
  * @param {function} next Next
  */
-export async function create(req, res, next) {
+export async function create (req, res, next) {
   // Validate payload
-  if ( !JV.validate(req.body, "event_create")) {
+  if (!JV.validate(req.body, 'event_create')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }

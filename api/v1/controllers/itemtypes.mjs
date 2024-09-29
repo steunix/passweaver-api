@@ -19,11 +19,11 @@ import DB from '../../../lib/db.mjs'
  * @param {Function} next Error callback
  * @returns
  */
-export async function get(req, res, next) {
+export async function get (req, res, next) {
   const typeid = req.params.id
 
   // Must be admin
-  if ( !await isAdmin(req) ) {
+  if (!await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -33,8 +33,8 @@ export async function get(req, res, next) {
     where: { id: typeid }
   })
 
-  if ( itemtype===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("Item type not found"))
+  if (itemtype === null) {
+    res.status(R.NOT_FOUND).send(R.ko('Item type not found'))
     return
   }
 
@@ -48,7 +48,7 @@ export async function get(req, res, next) {
  * @param {Object} res Express response
  * @returns
  */
-export async function list(req, res, next) {
+export async function list (req, res, next) {
   const search = req.query?.search ?? ''
 
   const itemtypes = await DB.itemtypes.findMany({
@@ -56,12 +56,12 @@ export async function list(req, res, next) {
       description: { contains: search, mode: 'insensitive' }
     },
     orderBy: {
-      description: "asc"
+      description: 'asc'
     }
   })
 
-  if ( itemtypes.length==0 ) {
-    res.status(R.NOT_FOUND).send(R.ko("No item found"))
+  if (itemtypes.length === 0) {
+    res.status(R.NOT_FOUND).send(R.ko('No item found'))
     return
   }
 
@@ -74,15 +74,15 @@ export async function list(req, res, next) {
  * @param {Object} res Express response
  * @returns
  */
-export async function create(req, res, next) {
+export async function create (req, res, next) {
   // Must be admin
-  if ( !await isAdmin(req) ) {
+  if (!await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "itemtype_create") ) {
+  if (!JV.validate(req.body, 'itemtype_create')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -96,7 +96,7 @@ export async function create(req, res, next) {
   })
 
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
-  res.status(R.CREATED).send(R.ok({id: created.id}))
+  res.status(R.CREATED).send(R.ok({ id: created.id }))
 }
 
 /**
@@ -105,15 +105,15 @@ export async function create(req, res, next) {
  * @param {Object} res Express response
  * @returns
  */
-export async function update(req, res, next) {
+export async function update (req, res, next) {
   // Must be admin
-  if ( !await isAdmin(req) ) {
+  if (!await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
 
   // Validate payload
-  if ( !JV.validate(req.body, "itemtype_update") ) {
+  if (!JV.validate(req.body, 'itemtype_update')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -125,17 +125,17 @@ export async function update(req, res, next) {
     where: { id: typeid }
   })
 
-  if ( itemtypes===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("Item type not found"))
+  if (itemtypes === null) {
+    res.status(R.NOT_FOUND).send(R.ko('Item type not found'))
     return
   }
 
   // Updates
-  let updateStruct = {}
-  if ( req.body.description ) {
+  const updateStruct = {}
+  if (req.body.description) {
     updateStruct.description = req.body.description
   }
-  if ( req.body.icon ) {
+  if (req.body.icon) {
     updateStruct.icon = req.body.icon
   }
   await DB.itemtypes.update({
@@ -155,9 +155,9 @@ export async function update(req, res, next) {
  * @param {Object} res Express response
  * @returns
  */
-export async function remove(req, res, next) {
+export async function remove (req, res, next) {
   // Must be admin
-  if ( !await isAdmin(req) ) {
+  if (!await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }
@@ -169,12 +169,12 @@ export async function remove(req, res, next) {
     where: { id: typeid }
   })
 
-  if ( itemtypes===null ) {
-    res.status(R.NOT_FOUND).send(R.ko("Item type not found"))
+  if (itemtypes === null) {
+    res.status(R.NOT_FOUND).send(R.ko('Item type not found'))
     return
   }
 
-  await DB.$transaction(async(tx)=>{
+  await DB.$transaction(async (tx) => {
     // Clear fields for existing items
     await DB.items.updateMany({
       data: { type: null },

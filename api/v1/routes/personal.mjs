@@ -14,10 +14,10 @@ const router = Router()
 // Validation middleware
 router.use(auth.validateJWT)
 
-router.post("/unlock", personalController.unlock)
+router.post('/unlock', personalController.unlock)
 
-router.post("/password", personalController.setPassword)
+router.post('/password', personalController.setPassword)
 
-router.patch("/password", personalController.updatePassword)
+router.patch('/password', personalController.updatePassword)
 
 export default router

@@ -22,9 +22,9 @@ import DB from '../../../lib/db.mjs'
  * @param {Function} next Express next callback
  * @returns
  */
-export async function unlock(req, res, next) {
+export async function unlock (req, res, next) {
   // Validate payload
-  if ( !JV.validate(req.body, "personal") ) {
+  if (!JV.validate(req.body, 'personal')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -33,16 +33,16 @@ export async function unlock(req, res, next) {
   const user = await DB.users.findUnique({
     where: { id: req.user }
   })
-  if ( user===null ) {
+  if (user === null) {
     Events.add(req.user, Const.EV_ACTION_UNLOCKNF, Const.EV_ENTITY_USER, req.user)
-    res.status(R.UNAUTHORIZED).send(R.ko("Bad user or wrong password"))
+    res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
 
   // Check password
-  if ( !await( Crypt.checkPassword(req.body.password, user.personalsecret) ) ) {
+  if (!await Crypt.checkPassword(req.body.password, user.personalsecret)) {
     Events.add(user.id, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, user.id)
-    res.status(R.UNAUTHORIZED).send(R.ko("Wrong password"))
+    res.status(R.UNAUTHORIZED).send(R.ko('Wrong password'))
     return
   }
 
@@ -50,7 +50,7 @@ export async function unlock(req, res, next) {
   const token = await Auth.createToken(user.id, req.body.password)
 
   Events.add(user.id, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, user.id)
-  res.send(R.ok({jwt:token}))
+  res.send(R.ok({ jwt: token }))
 }
 
 /**
@@ -60,8 +60,8 @@ export async function unlock(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function setPassword(req, res, next) {
-  if ( !JV.validate(req.body, "personal") ) {
+export async function setPassword (req, res, next) {
+  if (!JV.validate(req.body, 'personal')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
@@ -71,9 +71,9 @@ export async function setPassword(req, res, next) {
 
   // Encrypt personal storage key with personal password
   const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')
-  let cipher = crypto.createCipheriv('aes-256-ecb',hash,'')
+  const cipher = crypto.createCipheriv('aes-256-ecb', hash, '')
 
-  var ekey = cipher.update(pkey, '', 'base64')
+  let ekey = cipher.update(pkey, '', 'base64')
   ekey += cipher.final('base64')
 
   // Personal password
@@ -91,7 +91,7 @@ export async function setPassword(req, res, next) {
   const token = await Auth.createToken(req.user, req.body.password)
 
   Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
-  res.send(R.ok({jwt:token}))
+  res.send(R.ok({ jwt: token }))
 }
 
 /**
@@ -101,25 +101,25 @@ export async function setPassword(req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-export async function updatePassword(req, res, next) {
-  if ( !JV.validate(req.body, "personal") ) {
+export async function updatePassword (req, res, next) {
+  if (!JV.validate(req.body, 'personal')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
-  if ( !req.jwt ) {
+  if (!req.jwt) {
     res.status(R.UNAUTHORIZED).send(R.unauthorized())
     return
   }
 
   // Get personal key and decrypt using the current JWT
   const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-  const pkey = Crypt.decryptPersonalKey(Buffer.from(user.personalkey,'base64'), req.personaltoken)
+  const pkey = Crypt.decryptPersonalKey(Buffer.from(user.personalkey, 'base64'), req.personaltoken)
 
   // Encrypt personal key with personal password
   const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')
-  let cipher = crypto.createCipheriv('aes-256-ecb',hash,'')
+  const cipher = crypto.createCipheriv('aes-256-ecb', hash, '')
 
-  var ekey = cipher.update(pkey, '', 'base64')
+  let ekey = cipher.update(pkey, '', 'base64')
   ekey += cipher.final('base64')
 
   // Personal password
@@ -137,5 +137,5 @@ export async function updatePassword(req, res, next) {
   const token = await Auth.createToken(req.user, req.body.password)
 
   Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
-  res.send(R.ok({jwt:token}))
+  res.send(R.ok({ jwt: token }))
 }

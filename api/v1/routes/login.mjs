@@ -10,6 +10,6 @@ import * as loginController from '../controllers/login.mjs'
 
 const router = Router()
 
-router.post("/", loginController.login)
+router.post('/', loginController.login)
 
 export default router

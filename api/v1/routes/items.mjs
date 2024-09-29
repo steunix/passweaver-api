@@ -9,7 +9,7 @@ import { Router } from 'express'
 import * as auth from '../../../lib/auth.mjs'
 import * as itemsController from '../controllers/items.mjs'
 
-const router = Router({mergeParams:true})
+const router = Router({ mergeParams: true })
 
 // Validation middleware
 router.use(auth.validateJWT)
@@ -18,14 +18,14 @@ router.get('/:id', itemsController.get)
 
 router.get('/', itemsController.list)
 
-router.post("/", itemsController.create)
+router.post('/', itemsController.create)
 
-router.patch("/:id", itemsController.update)
+router.patch('/:id', itemsController.update)
 
-router.delete("/:id", itemsController.remove)
+router.delete('/:id', itemsController.remove)
 
-router.post("/:id/clone", itemsController.clone)
+router.post('/:id/clone', itemsController.clone)
 
-router.get("/:id/activity", itemsController.activity)
+router.get('/:id/activity', itemsController.activity)
 
 export default router

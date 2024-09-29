@@ -15,19 +15,19 @@ const router = Router()
 router.use(auth.validateJWT)
 
 // Groups routes
-router.get("/", groupsController.list)
+router.get('/', groupsController.list)
 
 router.get('/tree', groupsController.tree)
 
 router.get('/:id', groupsController.get)
 
-router.post("/:parent/groups", groupsController.create)
+router.post('/:parent/groups', groupsController.create)
 
-router.patch("/:id", groupsController.update)
+router.patch('/:id', groupsController.update)
 
-router.delete("/:id", groupsController.remove)
+router.delete('/:id', groupsController.remove)
 
-router.get("/:id/users", groupsController.getUsers)
+router.get('/:id/users', groupsController.getUsers)
 
 router.post('/:group/users/:user', groupsController.addUser)
 

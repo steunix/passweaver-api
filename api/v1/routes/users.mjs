@@ -15,22 +15,22 @@ const router = Router()
 // Validation middleware
 router.use(auth.validateJWT)
 
-router.get("/", usersController.list)
+router.get('/', usersController.list)
 
 router.get('/:id', usersController.get)
 
-router.post("/", usersController.create)
+router.post('/', usersController.create)
 
-router.patch("/:id", usersController.update)
+router.patch('/:id', usersController.update)
 
-router.delete("/:id", usersController.remove)
+router.delete('/:id', usersController.remove)
 
 router.get('/:id/groups', usersController.getGroups)
 
-router.get("/:id/settings", userSettingsController.get)
+router.get('/:id/settings', userSettingsController.get)
 
-router.post("/:id/settings", userSettingsController.set)
+router.post('/:id/settings', userSettingsController.set)
 
-router.get("/:id/activity", usersController.activity)
+router.get('/:id/activity', usersController.activity)
 
 export default router
