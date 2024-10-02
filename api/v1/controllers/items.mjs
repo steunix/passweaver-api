@@ -205,7 +205,10 @@ export async function list (req, res, next) {
     ${tsquery && folder ? Prisma.sql` and fts.fts_vectoritem @@ to_tsquery('simple',${tsquery})` : Prisma.empty}
     ${tsquery && !folder ? Prisma.sql` and fts.fts_vectorfull @@ to_tsquery('simple',${tsquery})` : Prisma.empty}
     ${type ? Prisma.sql` and i.type=${type}::uuid` : Prisma.empty}
-    order  by i.title
+    order  by
+    ${tsquery && folder ? Prisma.sql` ts_rank(fts.fts_vectoritem, to_tsquery('simple',${tsquery})) ` : Prisma.empty}
+    ${tsquery && !folder ? Prisma.sql` ts_rank(fts.fts_vectorfull, to_tsquery('simple',${tsquery})) ` : Prisma.empty}
+    ${!tsquery ? Prisma.sql` i.title ` : Prisma.empty}
     ${folder ? Prisma.empty : Prisma.sql` limit 100`}
     `
 
