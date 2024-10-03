@@ -48,7 +48,7 @@ async function checkPersonalAccess (req) {
 }
 
 /**
- *
+ * Get an item
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
