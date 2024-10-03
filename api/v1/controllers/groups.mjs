@@ -263,7 +263,6 @@ export async function update (req, res, next) {
  * @param {Function} next Express next callback
  * @returns
  */
-
 export async function remove (req, res, next) {
   // Must be admin
   if (!await Auth.isAdmin(req)) {

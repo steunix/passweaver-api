@@ -340,7 +340,7 @@ export async function remove (req, res, next) {
     return
   }
 
-  // Search user personal folders
+  // Delete user
   await DB.$transaction(async (tx) => {
     // Delete user groups
     await DB.groupsmembers.deleteMany({
@@ -369,7 +369,7 @@ export async function remove (req, res, next) {
       })
     }
 
-    // Deletes user
+    // Delete user
     await DB.users.delete({
       where: { id: userid }
     })

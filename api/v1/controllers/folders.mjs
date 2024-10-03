@@ -299,14 +299,16 @@ export async function remove (req, res, next) {
     return
   }
 
-  // Deletes folder permissions
-  await DB.folderspermissions.deleteMany({
-    where: { folderid }
-  })
+  await DB.$transaction(async (tx) => {
+    // Deletes folder permissions
+    await DB.folderspermissions.deleteMany({
+      where: { folderid }
+    })
 
-  // Deletes folder
-  await DB.folders.delete({
-    where: { id: folderid }
+    // Deletes folder
+    await DB.folders.delete({
+      where: { id: folderid }
+    })
   })
 
   Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, folderid)
