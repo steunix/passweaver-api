@@ -35,7 +35,7 @@ export async function generatePassword (req, res, next) {
 }
 
 /**
- * Returns statistics about PassWeaver-API
+ * Return statistics about PassWeaver-API
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback

@@ -18,7 +18,7 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import DB from '../../../lib/db.mjs'
 
 /**
- * Gets a user
+ * Get a user
  * @param {object} req Express request
  * @param {object} res Express response
  * @param {Function} next Express next callback
@@ -103,7 +103,7 @@ export async function list (req, res, next) {
 }
 
 /**
- * Gets a user groups
+ * Get a user groups
  * @param {object} req Express request
  * @param {object} res Express response
  * @param {Function} next Express next callback

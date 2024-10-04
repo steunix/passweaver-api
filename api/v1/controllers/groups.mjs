@@ -19,7 +19,7 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import DB from '../../../lib/db.mjs'
 
 /**
- * Gets a group
+ * Get a group
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -345,7 +345,7 @@ export async function remove (req, res, next) {
 }
 
 /**
- * Adds a user to a group
+ * Add a user to a group
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback

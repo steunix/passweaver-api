@@ -12,7 +12,7 @@ import * as Const from '../lib/const.mjs'
 import DB from '../lib/db.mjs'
 
 /**
- * Returns true if the folder exists
+ * Return true if the folder exists
  * @param {string} id Folder ID
  * @returns
  */
@@ -25,7 +25,7 @@ export async function exists (id) {
 }
 
 /**
- * Returns true if the folder is personal
+ * Return true if the folder is personal
  * @param {string} id Folder ID
  */
 export async function isPersonal (id) {
@@ -41,7 +41,7 @@ export async function isPersonal (id) {
 }
 
 /**
- * Returns the parents of a folder, ordered from last child to root
+ * Return the parents of a folder, ordered from last child to root
  * @param {*} id Folder id
  * @param {array} foldersRecordset If provided, it's used instead of doing a query
  * @returns Array
@@ -118,8 +118,7 @@ export async function parents (id, foldersRecordset) {
 }
 
 /**
- * Gets all children for a given folder
- *
+ * Get all children for a given folder
  * @param {string} id Folder id
  * @param {array} foldersRecordset If provided, it's used instead of doing a query
  * @returns
@@ -165,7 +164,7 @@ export async function children (id, foldersRecordset) {
 }
 
 /**
- * Gets the permissions for a user on a folder
+ * Get the permissions for a user on a folder
  *
  * Permissions are always inherited: the given folder's permission are OR'ed with parents,
  * so that if a user has read or write on a folder it has it on all the children
@@ -318,7 +317,7 @@ export async function tree (user) {
 }
 
 /**
- * Updates ts_vector for folder and its children
+ * Update ts_vector for folder and its children
  * @param {string} id Folder id
  */
 export async function updateFTS (id) {

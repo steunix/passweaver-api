@@ -19,7 +19,7 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import DB from '../../../lib/db.mjs'
 
 /**
- * Gets a folder
+ * Get a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -51,7 +51,7 @@ export async function get (req, res, next) {
 }
 
 /**
- * Creates a folder
+ * Create a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -104,7 +104,7 @@ export async function create (req, res, next) {
 }
 
 /**
- * Updates a folder
+ * Update a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -232,7 +232,7 @@ export async function update (req, res, next) {
 }
 
 /**
- * Deletes a folder
+ * Delete a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -448,7 +448,7 @@ export async function setGroup (req, res, next) {
 }
 
 /**
- * Deletes a group from a folder
+ * Delete a group from a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback
@@ -504,7 +504,7 @@ export async function removeGroup (req, res, next) {
 }
 
 /**
- * Get groups associated to a folder
+ * Get group associated to a folder
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Object} next Next
@@ -571,7 +571,7 @@ export async function groups (req, res, next) {
 }
 
 /**
- * Gets the tree of visible folders for current user
+ * Get the tree of visible folders for current user
  * @param {Object} req Express request
  * @param {Object} res Express response
  * @param {Function} next Express next callback

@@ -9,7 +9,7 @@
 import DB from '../lib/db.mjs'
 
 /**
- * Returns true if the user exists
+ * Return true if the user exists
  * @param {string} id User
  * @returns {boolean} True if the user exists
  */
@@ -22,7 +22,7 @@ export async function exists (id) {
 }
 
 /**
- * Returns groups for a user
+ * Return groups for a user
  * @param {string} user User
  * @returns {Array} Array of groups
  */

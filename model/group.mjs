@@ -11,7 +11,7 @@ import * as Const from '../lib/const.mjs'
 import DB from '../lib/db.mjs'
 
 /**
- * Returns true if group exists
+ * Return true if group exists
  * @param {string} id Group ID
  * @returns
  */
@@ -24,7 +24,7 @@ export async function exists (id) {
 }
 
 /**
- *
+ * Get folder parents
  * @param {string} id Folder
  * @param {boolean} includeSelf If true, passed folder is returned in the array
  * @returns
@@ -82,8 +82,7 @@ export async function parents (id, includeSelf) {
 }
 
 /**
- * Gets all children for a given group
- *
+ * Get all children for a given group
  * @param {string} id Group id
  * @returns
  */
@@ -113,7 +112,7 @@ export async function children (id) {
 }
 
 /**
- * Returns an array containing the parents of a folder
+ * Return folder parent
  * @param {id} id Folder ID
  * @returns {Array} Folders array
  */

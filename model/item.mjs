@@ -11,12 +11,11 @@ import * as Const from '../lib/const.mjs'
 import DB from '../lib/db.mjs'
 
 /**
- * Updates ts_vector fields for full text search
+ * Update ts_vector fields for full text search
  * @param {string} id Item ID
  * @returns
  */
 export async function updateFTS (id) {
-  // Update tsvector
   const item = await DB.items.findUnique({
     where: { id }
   })

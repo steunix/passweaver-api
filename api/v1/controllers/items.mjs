@@ -24,7 +24,7 @@ import DB from '../../../lib/db.mjs'
 /**
  * Check if a personal secret has been set or used in a given session
  * @param {*} req Express request
- * @returns 0: OK, 412: Personal password not set, 417: Personal folder unlocked
+ * @returns 0: OK, 412: Personal password not set, 417: Personal folder locked
  */
 async function checkPersonalAccess (req) {
   // Validate personal key, if present
