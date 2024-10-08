@@ -380,7 +380,7 @@ export async function remove (req, res, next) {
   await Cache.resetFoldersTree(user)
   await Cache.resetGroupsTree()
 
-  res.send(R.ok('Done'))
+  res.send(R.ok())
 }
 
 /**

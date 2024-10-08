@@ -194,5 +194,5 @@ export async function remove (req, res, next) {
   })
 
   Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, typeid)
-  res.send(R.ok('Done'))
+  res.send(R.ok())
 }
