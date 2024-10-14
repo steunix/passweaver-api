@@ -405,7 +405,7 @@ export async function addUser (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, group, user)
+  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
 
   await Cache.resetFoldersTree(user)
   res.send(R.ok())
