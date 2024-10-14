@@ -6,7 +6,7 @@ It's **collaborative**, meaning that users are organized in groups and protected
 
 ## What is it?
 
-PassWeaver API is a full API server, no GUI or CLI: you can easily integrate it with your systems and let it act as a centralized password vault. Instead, for a ready to use, simple yet complete Web GUI to run against the API, have a look at https://github.com/steunix/passweaver-gui
+PassWeaver API is a full API server, no GUI or CLI: you can easily integrate it with your systems and let it act as a centralized password vault. Instead, for a ready to use, simple yet complete Web GUI to run along the API, have a look at companion app PassWeaver GUI: https://github.com/steunix/passweaver-gui
 
 PassWeaver API is a NodeJS application, released under MIT license, and it uses these (great) opensource libraries, among several others:
 
@@ -171,16 +171,16 @@ Personal items are encrypted with "envelope encryption" first and then reencrypt
 - When a user wants to access a personal folder, the seeded and encrypted PPWD in the JWT is validated against the one stored into the DB in order to grant access
 
 Then, when creating an item in a personal folder:
-- PPWD is extracted from JWT
-- PKEY is decrypted using the key derived from user password
+- PPWD is extracted from JWT and decrypted
+- PKEY is decrypted using the key derived from user password (PBKDF2)
 - Data is encrypted with AES-256-ECB using PKEY
 - Data is then re-encrypted with AES-256-GCM with master key
 
 When reading a personal item:
-- PPWD is extracted from JWT
-- PKEY is decrypted using the key derived from user password
+- PPWD is extracted from JWT and decrypted
+- PKEY is decrypted using the key derived from user password (PBKDF2)
 - Data is decrypted with AES-256-GCM with master key
-- Data obtained is then decrypted with AES-256-ECB using PKEY
+- Obtained data is then decrypted with AES-256-ECB using PKEY
 
 No keys are retained in memory or cache, everything is recalculated when needed.
 
@@ -201,7 +201,7 @@ PassWeaver API logs every call in a 'combined log format'. Errors are tracked in
 
 ## Cache
 
-PassWeaver API makes use of a cache in order to avoid too much pressure on the database, especially in relation to permissions and folders tree. You can choose between these cache providers:
+PassWeaver API makes use of a cache in order to avoid too much pressure on the database, especially in relation to permissions and folders tree for each user. You can choose between these cache providers:
   - internal: when the "redis" configuration (see below) is false, `node-cache` npm module is used: be aware that this module is
     **intentionally** non advisable for production environments
   - Redis: you can use Redis by setting "redis" to true in the configuration and providing an URL to a running Redis instance
@@ -272,7 +272,9 @@ Copy `config-skel.json` to `config.json` and adjust the options:
 
 - `master_key_file`: The file (with complete path) containing the (base64 encoded) master key
 - `jwt_duration`: JWT duration. For example, "2h" or "1d". When JWT expires, a new login is required.
-- `listen_port`: IP port to bind
+- `listen`:
+  - `port`: port to bind
+  - `host`: IP address to bind (or blank for any address)
 - `log`:
   - `dir`: Logs directory. It will be created if necessary.
   - `rotation`: Rotation interval. For example, "12h" or "1d"
@@ -280,13 +282,18 @@ Copy `config-skel.json` to `config.json` and adjust the options:
 - `ldap`: LDAP configuration
   - `url`: LDAP server host
   - `port`: LDAP server port
-  - `baseDn`: baseDn for searches
-  - `userDn`: userDn for searches
-- `https`
+  - `baseDn`: baseDn for credential check
+  - `userDn`: userDn for credential check
+- `https`:
   - `enabled`: HTTPS enabled (true/false)
   - `certificate`: certificate file path
   - `private_key`: certificate private key
   - `hsts`: enable HSTS (true/false)
+- `redis`:
+  - `enabled`: true or false; if false, internal cache is uses
+  - `url`: Redis url
+- `onetimetokens`:
+  - `max_hours`: Max one-time secrets duration
 
 ### Environment
 
@@ -307,9 +314,9 @@ Create an empty database on your existent PostgreSQL instance, and set the envir
 
 Then, from PassWeaver-API directory, run the following commands:
 
-- `npx prisma db push`
-- `npx prisma db seed`
-- `npx prisma generate`
+- `npx prisma db push`: creates the schema
+- `npx prisma db seed`: add initial data
+- `npx prisma generate`: force creation of Prisma objects
 
 A default user `admin` will be created with password `0`: of course you should change it as soon as possible.
 
