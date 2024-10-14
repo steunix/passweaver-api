@@ -182,10 +182,10 @@ export async function list (req, res, next) {
   // Split search string and create array for ':*' addition in ts_query
   const contains = []
   if (search !== '') {
-    let sanitize = search.replace(':', ' ')
-    sanitize = sanitize.replace('&', ' ')
-    sanitize = sanitize.replace('*', ' ')
-    sanitize = sanitize.replace('|', ' ')
+    let sanitize = search.replaceAll(':', ' ')
+    sanitize = sanitize.replaceAll('&', ' ')
+    sanitize = sanitize.replaceAll('*', ' ')
+    sanitize = sanitize.replaceAll('|', ' ')
 
     const searchTokens = sanitize.trim().split(' ')
     for (const token of searchTokens) {
