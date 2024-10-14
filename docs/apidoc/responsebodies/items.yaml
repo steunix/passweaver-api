@@ -80,7 +80,7 @@ getactivity:
                   type: string
                   description: User description
                   example: "User"
-                item_title:
+                description:
                   type: string
-                  description: If entity is an item, the item title
+                  description: Entity description (e.g. the title of an item, or the login string of a user)
                   example: "Item 1"
