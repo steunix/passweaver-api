@@ -325,8 +325,7 @@ export async function remove (req, res, next) {
 
   // Search user
   const user = await DB.users.findUnique({
-    where: { id: userid },
-    select: { id: true }
+    where: { id: userid }
   })
 
   if (user === null) {
@@ -368,6 +367,11 @@ export async function remove (req, res, next) {
         where: { id: pers.id }
       })
     }
+
+    // Backup user
+    await DB.usersdeleted.create({
+      data: user
+    })
 
     // Delete user
     await DB.users.delete({

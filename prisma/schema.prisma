@@ -65,6 +65,23 @@ model users {
   @@unique([login])
 }
 
+model usersdeleted {
+  id              String   @id @db.VarChar(40)
+  login           String   @db.VarChar(50)
+  lastname        String   @db.VarChar(100)
+  firstname       String?  @db.VarChar(100)
+  authmethod      String   @db.VarChar(10)
+  locale          String   @db.VarChar(10)
+  email           String   @db.VarChar(50)
+  secret          String   @db.VarChar(100)
+  secretexpiresat DateTime
+  personalsecret  String?  @db.VarChar(100)
+  personalkey     String?  @db.VarChar(200)
+  active          Boolean  @default(true)
+  createdat       DateTime @default(now())
+  updatedat       DateTime @updatedAt
+}
+
 model usersettings {
   id              String   @id @db.Uuid @default(uuid(7))
   userid          String   @db.VarChar(40)
