@@ -203,7 +203,8 @@ export async function permissions (id, user) {
   if (pPerms.length === 0) {
     // The above query does not find personal folders, for which there is no explicit permission
     const folder = await DB.folders.findUnique({
-      where: { id }
+      where: { id },
+      select: { personal: true, userid: true }
     })
     if (folder.personal && folder.userid === user) {
       ret.read = true
