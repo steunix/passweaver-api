@@ -26,6 +26,12 @@ import DB from '../../../lib/db.mjs'
  * @returns
  */
 export async function get (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
   const groupid = req.params.id
 
   // Search folder
@@ -83,6 +89,12 @@ export async function list (req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function getUsers (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
   const id = req.params.id
 
   // Search group members
@@ -485,6 +497,12 @@ export async function removeUser (req, res, next) {
  * @returns
  */
 export async function tree (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
   const tree = await Group.tree(req.user)
   res.send(R.ok(tree))
 }

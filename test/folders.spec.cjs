@@ -77,6 +77,15 @@ describe('Folders', function () {
     assert.strictEqual(res1.status, 404)
   })
 
+  it('Get folder tree', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/folders/tree`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 200)
+  })
+
   it('Delete non empty folder', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/folders/sample1/folders`)
