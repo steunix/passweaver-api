@@ -181,16 +181,16 @@ export async function permissions (id, user) {
   const pPerms = await DB.$queryRaw`
     with recursive folder_parents as
     (
-      select 1 as level, *
+      select 1 as level, ffolder.id, ffolder.parent
       from   folders ffolder
       where  ffolder.id=${id}
       union all
-      select fchild.level+1 as level, fparent.*
+      select fchild.level+1 as level, fparent.id, fparent.parent
       from   folders fparent
       join   folder_parents fchild
       on     fparent.id = fchild.parent
    )
-    select f.personal, f.userid, p.read, p.write
+    select p.read, p.write
     from   folder_parents f
     join   folderspermissions p
     on     p.folderid = f.id
