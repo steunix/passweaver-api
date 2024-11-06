@@ -323,7 +323,7 @@ export async function tree (user) {
  */
 export async function updateFTS (id) {
   const cfolders = await children(id)
-  cfolders.push(id)
+  cfolders.push({ id })
 
   for (const f of cfolders) {
     const items = await DB.items.findMany({
