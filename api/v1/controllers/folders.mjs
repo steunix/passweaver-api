@@ -377,7 +377,7 @@ export async function addGroup (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder)
+  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }
@@ -498,7 +498,7 @@ export async function removeGroup (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, req.params.folder)
+  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }
