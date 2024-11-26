@@ -15,6 +15,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as FS from 'fs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -55,10 +56,26 @@ export async function login (req, res, next) {
 
     // LDAP authentication
     try {
+      const ldapOpts = {
+        url: `${ldap.url}:${ldap.port}`,
+        tlsOptions: {}
+      }
+
+      if (ldap?.tlsOptions?.cert) {
+        ldapOpts.tlsOptions.cert = FS.readFileSync(ldap.tlsOptions.cert)
+        ldapOpts.tlsOptions.ciphers = 'DEFAULT@SECLEVEL=0'
+      }
+
+      if (ldap?.tlsOptions?.ca) {
+        ldapOpts.tlsOptions.ca = FS.readFileSync(ldap.tlsOptions.ca)
+      }
+
+      if (ldap?.tlsOptions?.ciphers) {
+        ldapOpts.tlsOptions.ciphers = ldap.tlsOptions.ciphers
+      }
+
       await LDAP.authenticate({
-        ldapOpts: {
-          url: `ldap://${ldap.url}:${ldap.port}`
-        },
+        ldapOpts,
         userDn: `${ldap.userDn}=${req.body.username},${ldap.baseDn}`,
         userPassword: req.body.password
       })
