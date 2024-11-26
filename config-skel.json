@@ -9,7 +9,12 @@
     "url": "",
     "port": 0,
     "baseDn": "",
-    "userDn": ""
+    "userDn": "",
+    "tlsOptions": {
+      "cert": "",
+      "ca": "",
+      "ciphers": ""
+    }
   },
   "log": {
     "dir": "./log",

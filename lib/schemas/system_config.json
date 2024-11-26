@@ -26,7 +26,15 @@
         "url": { "type": "string" },
         "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
         "baseDn": { "type": "string" },
-        "userDn": { "type": "string" }
+        "userDn": { "type": "string" },
+        "tlsOptions": {
+          "type": "object",
+          "properties": {
+            "cert": { "type": "string" },
+            "ca": { "type": "string" },
+            "ciphers": { "type": "string" }
+          }
+        }
       },
       "dependencies": {
         "url": [ "port", "baseDn", "userDn"]

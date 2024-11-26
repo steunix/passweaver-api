@@ -280,10 +280,14 @@ Copy `config-skel.json` to `config.json` and adjust the options:
   - `rotation`: Rotation interval. For example, "12h" or "1d"
   - `retention`: Log files retention (number of rotated log files kept)
 - `ldap`: LDAP configuration
-  - `url`: LDAP server host
+  - `url`: LDAP server URL, in the form "ldap://ipaddress" or "ldaps://ipaddress"
   - `port`: LDAP server port
   - `baseDn`: baseDn for credential check
   - `userDn`: userDn for credential check
+  - `tlsOptions`: will be passed to Node tls library
+    - `cert`: path to certificate
+    - `ca`: path to CA certificate
+    - `ciphers`: ciphers
 - `https`:
   - `enabled`: HTTPS enabled (true/false)
   - `certificate`: certificate file path
