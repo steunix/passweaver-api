@@ -1,0 +1,9 @@
+# Util parameters
+
+symbols:
+  name: symbols
+  in: query
+  description: Enable (if true) or disable (if false) symbols in password
+  required: false
+  schema:
+    type: string
