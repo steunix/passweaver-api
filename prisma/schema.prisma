@@ -13,11 +13,11 @@ datasource db {
 
 // Folders
 model folders {
-  id          String   @id @db.VarChar(40)
-  parent      String?  @db.VarChar(40)
-  description String   @db.VarChar(100)
+  id          String   @id
+  parent      String?
+  description String
   personal    Boolean  @default(false)
-  userid      String?  @db.VarChar(40)
+  userid      String?
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -30,9 +30,9 @@ model folders {
 }
 
 model groups {
-  id          String   @id @db.VarChar(40)
-  description String   @db.VarChar(100)
-  parent      String?  @db.VarChar(40)
+  id          String   @id
+  description String
+  parent      String?
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
 
@@ -43,17 +43,17 @@ model groups {
 }
 
 model users {
-  id              String   @id @db.VarChar(40)
-  login           String   @db.VarChar(50)
-  lastname        String   @db.VarChar(100)
-  firstname       String?  @db.VarChar(100)
-  authmethod      String   @db.VarChar(10)
-  locale          String   @db.VarChar(10)
-  email           String   @db.VarChar(50)
-  secret          String   @db.VarChar(100)
+  id              String   @id
+  login           String
+  lastname        String
+  firstname       String?
+  authmethod      String
+  locale          String
+  email           String
+  secret          String
   secretexpiresat DateTime
-  personalsecret  String?  @db.VarChar(100)
-  personalkey     String?  @db.VarChar(200)
+  personalsecret  String?
+  personalkey     String?
   active          Boolean  @default(true)
   createdat       DateTime @default(now())
   updatedat       DateTime @updatedAt
@@ -66,17 +66,17 @@ model users {
 }
 
 model usersdeleted {
-  id              String   @id @db.VarChar(40)
-  login           String   @db.VarChar(50)
-  lastname        String   @db.VarChar(100)
-  firstname       String?  @db.VarChar(100)
-  authmethod      String   @db.VarChar(10)
-  locale          String   @db.VarChar(10)
-  email           String   @db.VarChar(50)
-  secret          String   @db.VarChar(100)
+  id              String   @id
+  login           String
+  lastname        String
+  firstname       String?
+  authmethod      String
+  locale          String
+  email           String
+  secret          String
   secretexpiresat DateTime
-  personalsecret  String?  @db.VarChar(100)
-  personalkey     String?  @db.VarChar(200)
+  personalsecret  String?
+  personalkey     String?
   active          Boolean  @default(true)
   createdat       DateTime @default(now())
   updatedat       DateTime @updatedAt
@@ -84,17 +84,17 @@ model usersdeleted {
 
 model usersettings {
   id              String   @id @db.Uuid @default(uuid(7))
-  userid          String   @db.VarChar(40)
-  setting         String   @db.VarChar(40)
-  value           String   @db.VarChar(100)
+  userid          String
+  setting         String
+  value           String
 
   user  users     @relation(fields: [userid], references: [id], onUpdate: Cascade, onDelete: Restrict )
 }
 
 model groupsmembers {
   id        String   @id @db.Uuid @default(uuid(7))
-  userid    String   @db.VarChar(40)
-  groupid   String   @db.VarChar(40)
+  userid    String
+  groupid   String
   createdat DateTime @default(now())
   updatedat DateTime @updatedAt
 
@@ -107,8 +107,8 @@ model groupsmembers {
 
 model folderspermissions {
   id        String   @id @db.Uuid @default(uuid(7))
-  folderid  String   @db.VarChar(40)
-  groupid   String   @db.VarChar(40)
+  folderid  String
+  groupid   String
   read      Boolean
   write     Boolean
   createdat DateTime @default(now())
@@ -122,11 +122,11 @@ model folderspermissions {
 }
 
 model items {
-  id          String    @id @db.VarChar(40)
-  folderid    String    @db.VarChar(40)
+  id          String    @id
+  folderid    String
   personal    Boolean   @default(false)
   type        String?   @db.Uuid
-  title       String    @db.VarChar(200)
+  title       String
   data        String
   dataiv      String
   dataauthtag String
@@ -144,7 +144,7 @@ model items {
 }
 
 model itemsfts {
-  id          String    @id @db.VarChar(40)
+  id          String    @id
   fts_vectorfull  Unsupported("tsvector")?
   fts_vectoritem  Unsupported("tsvector")?
 
@@ -152,11 +152,11 @@ model itemsfts {
 }
 
 model itemsdeleted {
-  id          String    @id @db.VarChar(40)
-  folderid    String    @db.VarChar(40)
+  id          String    @id
+  folderid    String
   personal    Boolean   @default(false)
-  type        String?   @db.VarChar(50)
-  title       String    @db.VarChar(200)
+  type        String?
+  title       String
   data        String
   dataiv      String
   dataauthtag String
@@ -170,8 +170,8 @@ model itemsdeleted {
 
 model itemtypes {
   id          String   @id @db.Uuid @default(uuid(7))
-  description String   @db.VarChar(20)
-  icon        String?  @db.VarChar(50)
+  description String
+  icon        String?
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt
   items       items[]
@@ -179,7 +179,7 @@ model itemtypes {
 
 model onetimetokens {
   id          String   @id @db.Uuid @default(uuid(7))
-  token       String   @db.VarChar(100)
+  token       String
   expiresat   DateTime
   data        String
   dataiv      String
@@ -195,9 +195,9 @@ model events {
   timestamp DateTime @default(now())
   action    Int
   entity    Int
-  entityid1 String   @db.VarChar(100)
-  entityid2 String?  @db.VarChar(100)
-  user      String?  @db.VarChar(40)
+  entityid1 String
+  entityid2 String?
+  user      String?
 
   @@index([timestamp])
   @@index([entityid1])
