@@ -578,6 +578,6 @@ export async function groups (req, res, next) {
  * @returns
  */
 export async function tree (req, res, next) {
-  const tree = await Folder.tree(req.user)
+  const tree = await Folder.userTree(req.user)
   res.send(R.ok(tree))
 }
