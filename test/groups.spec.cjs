@@ -203,6 +203,13 @@ describe('Groups', function () {
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .catch(v => v)
     assert.strictEqual(res3.status, 200)
+
+    // Cleanup
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/groups/${group}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 200)
   })
 
   it('Add member, unauthorized', async () => {

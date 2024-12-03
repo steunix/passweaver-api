@@ -53,6 +53,8 @@ paths:
     $ref: '.\paths\usersidsettings.yaml'
   /users/{userid}/activity:
     $ref: '.\paths\usersidactivity.yaml'
+  /users/{userid}/folders:
+    $ref: '.\paths\usersidfolders.yaml'
   /personal/unlock:
     $ref: '.\paths\personalunlock.yaml'
   /personal/password:

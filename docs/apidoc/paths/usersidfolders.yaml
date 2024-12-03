@@ -1,0 +1,18 @@
+get:
+  tags:
+    - Users
+  operationId: "getUserTree"
+  summary: Get users folder tree
+  description: Get folder tree for given user
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\users.yaml#/userid'
+  responses:
+    "200":
+      $ref: '..\responsebodies\folders.yaml#/treesuccess'
+      description: Folder found
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'

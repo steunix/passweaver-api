@@ -14,6 +14,7 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Folder from '../../../model/folder.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -402,4 +403,24 @@ export async function activity (req, res, next) {
 
   const act = await Events.activity(req.query?.lastid, req.params.id, null, req.query?.sort)
   res.send(R.ok(act))
+}
+
+/**
+ * Get the tree of visible folders for the user
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Function} next Express next callback
+ * @returns
+ */
+export async function folders (req, res, next) {
+  // Only admin can query other users
+  if (req.params.id !== req.user) {
+    if (!await Auth.isAdmin(req)) {
+      res.status(R.FORBIDDEN).send(R.forbidden())
+      return
+    }
+  }
+
+  const tree = await Folder.userTree(req.params.id)
+  res.send(R.ok(tree))
 }

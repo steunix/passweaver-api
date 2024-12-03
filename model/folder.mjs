@@ -231,7 +231,7 @@ export async function permissions (id, user) {
  *
  * @param {string} user User
  */
-export async function tree (user) {
+export async function userTree (user) {
   const cache = await Cache.get(user, Cache.foldersTreeKey)
   if (cache) {
     return cache

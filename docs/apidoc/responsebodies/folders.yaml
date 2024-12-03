@@ -174,3 +174,39 @@ treesuccess:
                     write:
                       type: boolean
                       description: Write permission
+                children:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: Folder id
+                      parent:
+                        type: string
+                        description: Parent folder id
+                      description:
+                        type: string
+                        description: Description
+                      personal:
+                        type: boolean
+                        description: Flag for personal folder
+                      user:
+                        type: string
+                        description: If personal folder, owner user
+                      createdat:
+                        type: string
+                        description: Creation date/time
+                      updatedat:
+                        type: string
+                        description: Update date/time
+                      permissions:
+                        type: object
+                        description: Permissions for current user
+                        properties:
+                          read:
+                            type: boolean
+                            description: Read permission
+                          write:
+                            type: boolean
+                            description: Write permission

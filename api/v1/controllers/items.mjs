@@ -174,7 +174,7 @@ export async function list (req, res, next) {
     // If no folder is specified, get authorized folders from cache
     folders = await Cache.get(req.user, Cache.foldersReadableKey)
     if (!folders) {
-      await Folder.tree(req.user)
+      await Folder.userTree(req.user)
       folders = await Cache.get(req.user, Cache.foldersReadableKey)
     }
   }
