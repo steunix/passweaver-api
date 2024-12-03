@@ -25,7 +25,7 @@ export async function generatePassword (req, res, next) {
   const pwd = generator.generate({
     length: 15,
     numbers: true,
-    symbols: true,
+    symbols: req?.query?.symbols !== 'false',
     lowercase: true,
     uppercase: true,
     strict: true
