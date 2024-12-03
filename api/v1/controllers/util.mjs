@@ -80,8 +80,9 @@ export async function clearCache (req, res, next) {
     return
   }
 
-  Cache.resetFoldersTree()
-  Cache.resetGroupsTree()
+  await Cache.resetFoldersTree()
+  await Cache.resetGroupsTree()
+  await Cache.resetItemTypes()
 
   res.send(R.ok())
 }

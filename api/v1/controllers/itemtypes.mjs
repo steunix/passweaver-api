@@ -11,6 +11,7 @@ import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
 import { isAdmin } from '../../../lib/auth.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Cache from '../../../lib/cache.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -30,12 +31,20 @@ export async function get (req, res, next) {
     return
   }
 
-  // Search item
-  const itemtype = await DB.itemtypes.findUnique({
-    where: { id: typeid }
-  })
+  const cache = await Cache.get('all', Cache.itemTypesKey)
+  let itemtype
+  if (!cache) {
+    // Search item
+    itemtype = await DB.itemtypes.findUnique({
+      where: { id: typeid }
+    })
+  } else {
+    itemtype = cache.find(itm => {
+      return itm.id === typeid
+    })
+  }
 
-  if (itemtype === null) {
+  if (!itemtype) {
     res.status(R.NOT_FOUND).send(R.ko('Item type not found'))
     return
   }
@@ -53,14 +62,22 @@ export async function get (req, res, next) {
 export async function list (req, res, next) {
   const search = req.query?.search ?? ''
 
-  const itemtypes = await DB.itemtypes.findMany({
-    where: {
-      description: { contains: search, mode: 'insensitive' }
-    },
-    orderBy: {
-      description: 'asc'
-    }
-  })
+  const cache = await Cache.get('all', Cache.itemTypesKey)
+  let itemtypes
+
+  if (!cache) {
+    itemtypes = await DB.itemtypes.findMany({
+      where: {
+        description: { contains: search, mode: 'insensitive' }
+      },
+      orderBy: {
+        description: 'asc'
+      }
+    })
+    await Cache.set('all', Cache.itemTypesKey, itemtypes)
+  } else {
+    itemtypes = cache
+  }
 
   if (itemtypes.length === 0) {
     res.status(R.NOT_FOUND).send(R.ko('No item found'))
@@ -97,6 +114,7 @@ export async function create (req, res, next) {
     }
   })
 
+  await Cache.resetItemTypes()
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
   res.status(R.CREATED).send(R.ok({ id: created.id }))
 }
@@ -147,6 +165,7 @@ export async function update (req, res, next) {
     }
   })
 
+  await Cache.resetItemTypes()
   Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEMTYPE, typeid)
   res.send(R.ok())
 }
@@ -193,6 +212,7 @@ export async function remove (req, res, next) {
     })
   })
 
+  await Cache.resetItemTypes()
   Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, typeid)
   res.send(R.ok())
 }
