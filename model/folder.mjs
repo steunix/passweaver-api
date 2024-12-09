@@ -227,6 +227,53 @@ export async function permissions (id, user) {
 }
 
 /**
+ * Get the permissions for a group on a folder
+ *
+ * Permissions are always inherited: the given folder's permission are OR'ed with parents,
+ * so that if a user has read or write on a folder it has it on all the children
+ * @param {string} folderid Folder id
+ * @param {string} groupid Group id
+*/
+export async function groupPermissions (folderid, groupid) {
+  const ret = {
+    read: false,
+    write: false
+  }
+
+  // Extracts the parents
+  const pPerms = await DB.$queryRaw`
+    with recursive folder_parents as
+    (
+      select 1 as level, ffolder.id, ffolder.parent
+      from   folders ffolder
+      where  ffolder.id=${folderid}
+      union all
+      select fchild.level+1 as level, fparent.id, fparent.parent
+      from   folders fparent
+      join   folder_parents fchild
+      on     fparent.id = fchild.parent
+   )
+    select p.read, p.write
+    from   folder_parents f
+    join   folderspermissions p
+    on     p.folderid = f.id
+    where  p.groupid = ${groupid}
+    order  by level`
+
+  for (const perm of pPerms) {
+    ret.read = ret.read || perm.read
+    ret.write = ret.write || perm.write
+
+    // If both perm are true, we can early exit
+    if (ret.read && ret.write) {
+      return ret
+    }
+  }
+
+  return ret
+}
+
+/**
  * Return the tree structure of folders visible to the user.
  *
  * @param {string} user User
@@ -268,7 +315,7 @@ export async function userTree (user) {
 
     readable.set(folder.id, folder.id)
 
-    // Each children is also added to read-permitted folders for caching
+    // Each child is also added to read-permitted folders for caching
     for (const el of achildren) {
       // Only 'admin' user can see all personal folders
       if (el.personal === true && el.user !== user && user !== '0') {
@@ -276,6 +323,7 @@ export async function userTree (user) {
       }
 
       if (!added.get(el.id)) {
+        el.permissions = await permissions(el.id, user)
         data.push(el)
         added.set(el.id, el.id)
 
@@ -284,6 +332,7 @@ export async function userTree (user) {
     }
     for (const el of aparents) {
       if (!added.get(el.id)) {
+        el.permissions = await permissions(el.id, user)
         data.push(el)
         added.set(el.id, el.id)
       }
@@ -339,26 +388,22 @@ export async function groupTree (group) {
     `
 
   // For each allowed folder, add all parents and children
-  const readable = new Map()
   const data = []
   const added = new Map()
   for (const folder of readFolders) {
     const achildren = await children(folder.id, allFolders)
     const aparents = await parents(folder.id, allFolders)
 
-    readable.set(folder.id, folder.id)
-
-    // Each children is also added to read-permitted folders for caching
     for (const el of achildren) {
       if (!added.get(el.id)) {
+        el.permissions = await groupPermissions(el.id, group)
         data.push(el)
         added.set(el.id, el.id)
-
-        readable.set(el.id, el.id)
       }
     }
     for (const el of aparents) {
       if (!added.get(el.id)) {
+        el.permissions = await groupPermissions(el.id, group)
         data.push(el)
         added.set(el.id, el.id)
       }
