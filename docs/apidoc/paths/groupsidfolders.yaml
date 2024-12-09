@@ -1,11 +1,13 @@
 get:
   tags:
-    - Folders
-  operationId: "getFolderTree"
-  summary: Get folder tree for current user
-  description: Get folder tree for current user
+    - Groups
+  operationId: "getGroupTree"
+  summary: Get group folder tree
+  description: Get folder tree for given group
   security:
     - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
     "200":
       $ref: '..\responsebodies\folders.yaml#/treesuccess'

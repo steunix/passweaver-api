@@ -97,7 +97,6 @@ describe('Groups', function () {
     const res1 = await agent
       .get(`${global.host}/api/v1/groups/tree`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
-      .send(global.groupCreateData)
       .catch(v => v)
 
     assert.strictEqual(res1.status, 200)
@@ -107,7 +106,24 @@ describe('Groups', function () {
     const res1 = await agent
       .get(`${global.host}/api/v1/groups/tree`)
       .set('Authorization', `Bearer ${global.userJWT}`)
-      .send(global.groupCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 403)
+  })
+
+  it('Get group folders, authorized', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/groups/0/folders`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 200)
+  })
+
+  it('Get group folders, unauthorized', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/groups/0/folders`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
     assert.strictEqual(res1.status, 403)

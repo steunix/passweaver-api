@@ -67,6 +67,8 @@ paths:
     $ref: '.\paths\groupsidusersid.yaml'
   /groups/{groupid}/users:
     $ref: '.\paths\groupsidusers.yaml'
+  /groups/{groupid}/folders:
+    $ref: '.\paths\groupsidfolders.yaml'
   /groups/tree:
     $ref: '.\paths\groupstree.yaml'
   /groups:
@@ -81,8 +83,6 @@ paths:
     $ref: '.\paths\foldersidgroups.yaml'
   /folders/{folderid}/items:
     $ref: '.\paths\foldersiditems.yaml'
-  /folders/tree:
-    $ref: '.\paths\folderstree.yaml'
   /items/{itemid}:
     $ref: '.\paths\itemsid.yaml'
   /items/{itemid}/activity:
