@@ -318,6 +318,79 @@ export async function userTree (user) {
 }
 
 /**
+ * Return the tree structure of folders visible to the user.
+ *
+ * @param {string} group Group
+ */
+export async function groupTree (group) {
+  // Get folders for cache
+  const allFolders = await DB.folders.findMany()
+
+  // Explicitly allowed folders
+  const readFolders = await DB.$queryRaw`
+    select f.*
+    from   folders f
+    join   folderspermissions p
+    on     f.id = p.folderid
+    join   groups g
+    on     g.id = p.groupid
+    where  p.groupid = ${group}
+    and    p.read = true
+    `
+
+  // For each allowed folder, add all parents and children
+  const readable = new Map()
+  const data = []
+  const added = new Map()
+  for (const folder of readFolders) {
+    const achildren = await children(folder.id, allFolders)
+    const aparents = await parents(folder.id, allFolders)
+
+    readable.set(folder.id, folder.id)
+
+    // Each children is also added to read-permitted folders for caching
+    for (const el of achildren) {
+      if (!added.get(el.id)) {
+        data.push(el)
+        added.set(el.id, el.id)
+
+        readable.set(el.id, el.id)
+      }
+    }
+    for (const el of aparents) {
+      if (!added.get(el.id)) {
+        data.push(el)
+        added.set(el.id, el.id)
+      }
+    }
+  }
+
+  // Sort by description
+  data.sort((a, b) => {
+    if (a.id === Const.PW_FOLDER_PERSONALROOTID && b.id !== Const.PW_FOLDER_ROOTID) { return -1 }
+    if (b.id === Const.PW_FOLDER_PERSONALROOTID && a.id !== Const.PW_FOLDER_ROOTID) { return 1 }
+    if (a.description < b.description) { return -1 }
+    if (a.description > b.description) { return 1 }
+    return 0
+  })
+
+  // Builds tree from array
+  const hashTable = Object.create(null)
+  data.forEach(d => { hashTable[d.id] = { ...d, children: [] } })
+
+  const tree = []
+  data.forEach(d => {
+    if (d.parent) {
+      hashTable[d.parent].children.push(hashTable[d.id])
+    } else {
+      tree.push(hashTable[d.id])
+    }
+  })
+
+  return tree
+}
+
+/**
  * Update ts_vector for folder and its children
  * @param {string} id Folder id
  */

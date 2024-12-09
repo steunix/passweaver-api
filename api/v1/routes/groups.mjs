@@ -23,6 +23,8 @@ router.get('/tree', groupsController.tree)
 
 router.get('/:id', groupsController.get)
 
+router.get('/:id/folders', groupsController.folders)
+
 router.post('/:parent/groups', groupsController.create)
 
 router.patch('/:id', groupsController.update)

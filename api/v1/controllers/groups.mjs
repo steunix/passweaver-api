@@ -15,6 +15,7 @@ import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Folder from '../../../model/folder.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -504,5 +505,23 @@ export async function tree (req, res, next) {
   }
 
   const tree = await Group.tree(req.user)
+  res.send(R.ok(tree))
+}
+
+/**
+ * Get the tree of visible folders for the user
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Function} next Express next callback
+ * @returns
+ */
+export async function folders (req, res, next) {
+  // Only admin can query groups
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  const tree = await Folder.groupTree(req.params.id)
   res.send(R.ok(tree))
 }
