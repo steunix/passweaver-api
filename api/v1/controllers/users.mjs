@@ -421,6 +421,6 @@ export async function folders (req, res, next) {
     }
   }
 
-  const tree = await Folder.userTree(req.params.id)
+  const tree = await Folder.userTree(req.params.id, req.query?.permissions)
   res.send(R.ok(tree))
 }

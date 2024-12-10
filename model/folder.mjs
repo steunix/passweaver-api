@@ -276,12 +276,15 @@ export async function groupPermissions (folderid, groupid) {
 /**
  * Return the tree structure of folders visible to the user.
  *
- * @param {string} user User
+ * @param {string} user User ID
+ * @param {string} getpermissions If true, also permissions are extracted
  */
-export async function userTree (user) {
-  const cache = await Cache.get(user, Cache.foldersTreeKey)
-  if (cache) {
-    return cache
+export async function userTree (user, getpermissions) {
+  if (getpermissions !== 'true') {
+    const cache = await Cache.get(user, Cache.foldersTreeKey)
+    if (cache) {
+      return cache
+    }
   }
 
   // Get folders for cache
@@ -323,7 +326,9 @@ export async function userTree (user) {
       }
 
       if (!added.get(el.id)) {
-        el.permissions = await permissions(el.id, user)
+        if (getpermissions === 'true') {
+          el.permissions = await permissions(el.id, user)
+        }
         data.push(el)
         added.set(el.id, el.id)
 
@@ -332,7 +337,9 @@ export async function userTree (user) {
     }
     for (const el of aparents) {
       if (!added.get(el.id)) {
-        el.permissions = await permissions(el.id, user)
+        if (getpermissions === 'true') {
+          el.permissions = await permissions(el.id, user)
+        }
         data.push(el)
         added.set(el.id, el.id)
       }

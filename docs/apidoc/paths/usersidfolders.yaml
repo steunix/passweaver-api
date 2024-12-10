@@ -8,6 +8,7 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: '..\parameters\users.yaml#/userid'
+    - $ref: '..\parameters\users.yaml#/permissions'
   responses:
     "200":
       $ref: '..\responsebodies\folders.yaml#/treesuccess'

@@ -31,3 +31,11 @@ sort:
   required: false
   schema:
     type: string
+
+permissions:
+  name: permissions
+  in: query
+  description: If true, also permissions for each folder are returned
+  required: false
+  schema:
+    type: boolean
