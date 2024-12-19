@@ -436,17 +436,30 @@ export async function update (req, res, next) {
   if (Object.hasOwn(req.body, 'type')) {
     updateStruct.type = req.body.type || null
   }
-  await DB.items.update({
-    data: updateStruct,
-    where: {
-      id: itemid
-    }
-  })
+
+  // Check if something has changed
+  let changed = false
+  if (updateStruct?.title && updateStruct.title !== item.title) { changed = true }
+  if (updateStruct?.type && updateStruct.type !== item.type) { changed = true }
+  if (updateStruct?.metadata && updateStruct.metadata !== item.metadata) { changed = true }
+  if (req.body?.data) {
+    const decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    if (decData !== req.body.data) { changed = true }
+  }
+
+  if (changed) {
+    await DB.items.update({
+      data: updateStruct,
+      where: {
+        id: itemid
+      }
+    })
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid)
+  }
 
   // Update tsvector
   await Item.updateFTS(itemid)
 
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid)
   res.send(R.ok())
 }
 
