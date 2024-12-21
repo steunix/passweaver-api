@@ -78,7 +78,7 @@ delete:
     - $ref: '..\parameters\folders.yaml#/folderid'
     - $ref: '..\parameters\groups.yaml#/groupid'
   responses:
-    "201":
+    "200":
       $ref: '..\responsebodies\default.yaml#/success'
       description: Group removed from folder
     "401":

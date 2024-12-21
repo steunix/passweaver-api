@@ -14,7 +14,7 @@ post:
         schema:
           $ref: '..\requestbodies\groups.yaml#/groupCreateBody'
   responses:
-    "201":
+    "200":
       $ref: '..\responsebodies\default.yaml#/created'
       description: Group created, the new id is returned
     "400":
