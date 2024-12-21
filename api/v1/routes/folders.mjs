@@ -21,8 +21,6 @@ router.use(auth.validateJWT)
 router.use('/:folder/items', itemsRouter)
 
 // Folders routes
-router.get('/tree', foldersController.tree)
-
 router.get('/:id', foldersController.get)
 
 router.get('/:id/groups', foldersController.groups)
