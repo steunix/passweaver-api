@@ -20,4 +20,22 @@ describe('Utils', function () {
 
     assert.strictEqual(res1.status, 403)
   })
+
+  it('Get info', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/util/info`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 200)
+  })
+
+  it('Get info, unauthorized', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/util/info`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 403)
+  })
 })

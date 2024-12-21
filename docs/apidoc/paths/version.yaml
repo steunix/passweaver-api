@@ -1,0 +1,16 @@
+get:
+  tags:
+    - Version
+  operationId: Version
+  summary: Get PassWaver API version
+  description: Get PassWaver API version
+
+  responses:
+    "200":
+      $ref: '..\responsebodies\version.yaml#/versionsuccess'
+      description: Info successfully returned
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+      description: User cannot be logged in, wrong credentials

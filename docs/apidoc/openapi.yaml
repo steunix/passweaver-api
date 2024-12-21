@@ -41,6 +41,8 @@ tags:
     description: Events
   - name: "Utilities"
     description: Utilities
+  - name: "Version"
+    description: Version
 
 paths:
   /login:
@@ -103,6 +105,8 @@ paths:
     $ref: '.\paths\events.yaml'
   /onetimetokens:
     $ref: '.\paths\onetimetokens.yaml'
+  /version:
+    $ref: '.\paths\version.yaml'
 
 components:
   securitySchemes:

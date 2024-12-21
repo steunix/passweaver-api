@@ -1,0 +1,21 @@
+# Success response
+status:
+  type: string
+  enum: [ "success", "failed" ]
+
+versionsuccess:
+  description: PassWeaver API version
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              version:
+                type: string
+                example: 1.0.0
+                description: Version of PassWeaver API
