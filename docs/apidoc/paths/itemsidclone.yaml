@@ -1,0 +1,21 @@
+post:
+  tags:
+    - Items
+  operationId: "cloneItem"
+  summary: Clone an item
+  description: Clone an item; the new item id is returned
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\items.yaml#/itemid'
+  responses:
+    "201":
+      description: Item cloned
+      $ref: '..\responsebodies\default.yaml#/created'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: User not found
+      $ref: '..\responsebodies\default.yaml#/notfound'

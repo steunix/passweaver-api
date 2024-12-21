@@ -1,0 +1,18 @@
+get:
+  tags:
+    - Groups
+  operationId: "getUserGroups"
+  summary: Get groups the user is member of
+  description: Get groups the user is member of
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\users.yaml#/userid'
+  responses:
+    "200":
+      $ref: '..\responsebodies\groups.yaml#/listsuccess'
+      description: Folder found
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'

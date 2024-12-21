@@ -50,6 +50,55 @@ getsuccess:
                 type: string
                 description: Update date/time
 
+searchsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              description: Group details
+              properties:
+                id:
+                  type: string
+                  description: User id
+                login:
+                  type: string
+                  description: Login
+                firstname:
+                  type: string
+                  description: First name
+                lastname:
+                  type: string
+                  description: Last name
+                authmethod:
+                  type: string
+                  description: Authentication method (local/ldap)
+                locale:
+                  type: string
+                  description: Locale
+                email:
+                  type: string
+                  description: Email address
+                active:
+                  type: boolean
+                  description: User is active
+                haspersonalsecret:
+                  type: boolean
+                  description: User has set a personal secret for personal items
+                createdat:
+                  type: string
+                  description: Creation date/time
+                updatedat:
+                  type: string
+                  description: Update date/time
+
 getsettingssuccess:
   description: Success
   content:
