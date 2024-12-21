@@ -438,23 +438,42 @@ export async function update (req, res, next) {
   }
 
   // Check if something has changed
-  let changed = false
-  if (updateStruct?.title && updateStruct.title !== item.title) { changed = true }
-  if (updateStruct?.type && updateStruct.type !== item.type) { changed = true }
-  if (updateStruct?.metadata && updateStruct.metadata !== item.metadata) { changed = true }
+  const changedFields = []
+  if (updateStruct?.title && updateStruct.title !== item.title) {
+    changedFields.push('title')
+  }
+  if (updateStruct?.type && updateStruct.type !== item.type) {
+    changedFields.push('type')
+  }
+  if (updateStruct?.metadata && updateStruct.metadata !== item.metadata) {
+    changedFields.push('metadata')
+  }
   if (req.body?.data) {
     const decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
-    if (decData !== req.body.data) { changed = true }
+    if (decData !== req.body.data) {
+      // If JSON, check all properties for changes
+      const olddata = JSON.parse(decData)
+      const newdata = JSON.parse(req.body.data)
+      if (olddata !== null && newdata !== null) {
+        for (const key in newdata) {
+          if (newdata[key] !== olddata[key]) {
+            changedFields.push(key)
+          }
+        }
+      } else {
+        changedFields.push('data')
+      }
+    }
   }
 
-  if (changed) {
+  if (changedFields.length) {
     await DB.items.update({
       data: updateStruct,
       where: {
         id: itemid
       }
     })
-    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid)
+    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid, null, `Updated: ${changedFields.join(',')}`)
   }
 
   // Update tsvector
