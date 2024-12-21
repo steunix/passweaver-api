@@ -198,6 +198,7 @@ model events {
   entityid1 String
   entityid2 String?
   user      String?
+  note      String?
 
   @@index([timestamp])
   @@index([entityid1])
