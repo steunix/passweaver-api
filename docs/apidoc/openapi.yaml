@@ -57,6 +57,8 @@ paths:
     $ref: '.\paths\usersidactivity.yaml'
   /users/{userid}/folders:
     $ref: '.\paths\usersidfolders.yaml'
+  /users/{userid}/groups:
+    $ref: '.\paths\usersidgroups.yaml'
   /personal/unlock:
     $ref: '.\paths\personalunlock.yaml'
   /personal/password:
@@ -89,6 +91,8 @@ paths:
     $ref: '.\paths\itemsid.yaml'
   /items/{itemid}/activity:
     $ref: '.\paths\itemsidactivity.yaml'
+  /items/{itemid}/clone:
+    $ref: '.\paths\itemsidclone.yaml'
   /items:
     $ref: '.\paths\items.yaml'
   /itemtypes:

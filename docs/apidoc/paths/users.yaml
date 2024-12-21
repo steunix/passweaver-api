@@ -21,3 +21,25 @@ post:
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
+
+get:
+  tags:
+    - Users
+  operationId: "listUsers"
+  summary: Search users
+  description: Search users
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\users.yaml#/search'
+  responses:
+    "200":
+      description: Item found
+      $ref: '..\responsebodies\users.yaml#/searchsuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Item not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
