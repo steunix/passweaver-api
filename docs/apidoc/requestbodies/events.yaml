@@ -3,19 +3,27 @@
 eventCreateBody:
   type: object
   properties:
-    event:
+    action:
       type: string
-      example: evt
-      description: Event code
-    itemtype:
+      example: "01"
+      description: Action type
+    entity:
       type: string
-      example: item
-      description: Item type
-    itemid:
+      example: "01"
+      description: Entity type code
+    entityid1:
       type: string
-      example: 30940898yfd98f
-      description: Item ID
+      example: 0980a9sd8f0
+      description: Primary item ID
+    entityid2:
+      type: string
+      example: 098ad0fu0sdf
+      description: Secondary item ID
+    note:
+      type: string
+      example: This is a note
+      description: Additional note
   required:
-    - event
-    - itemtype
-    - itemid
+    - action
+    - entity
+    - entityid1

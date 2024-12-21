@@ -28,7 +28,8 @@ export async function create (req, res, next) {
     req.body.event,
     req.body.entity,
     req.body.entityid,
-    req.body.entityid2
+    req.body.entityid2,
+    req.body.note
   )
 
   res.status(201).send(R.ok())
