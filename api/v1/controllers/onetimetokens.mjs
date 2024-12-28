@@ -13,6 +13,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Items from '../../../model/item.mjs'
 
 /**
  * Decrypt and return a one time secret
@@ -34,7 +35,32 @@ export async function get (req, res, next) {
     return
   }
 
-  const data = Crypt.decrypt(ottoken.data, ottoken.dataiv, ottoken.dataauthtag)
+  // Check scope
+  // TODO: check scope
+
+  const resp = {
+    secret: '',
+    item: {},
+    type: ottoken.type
+  }
+
+  // Generic secret
+  if (ottoken.type === 0) {
+    resp.secret = Crypt.decrypt(ottoken.data, ottoken.dataiv, ottoken.dataauthtag)
+  }
+  // Item share
+  if (ottoken.type === 1) {
+    // Get item relevant fields
+    resp.item = await DB.items.findUnique({
+      where: { id: ottoken.itemid },
+      select: { id: true, type: true, title: true }
+    })
+    if (resp.item === null) {
+      res.status(R.NOT_FOUND).send(R.ko('Item not found'))
+      return
+    }
+    resp.item.data = await Items.decrypt(ottoken.itemid, req)
+  }
 
   // Delete token
   await DB.onetimetokens.deleteMany({
@@ -42,7 +68,7 @@ export async function get (req, res, next) {
   })
 
   Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, ottoken.id)
-  res.send(R.ok(data))
+  res.send(R.ok(resp))
 }
 
 /**
@@ -59,8 +85,20 @@ export async function create (req, res, next) {
   }
 
   // Check data is not empty
-  if (req.body.data === '') {
-    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Data cannot be empty'))
+  if (req.body.type === 0 && (req.body?.data === '' || req.body?.data === undefined)) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Data cannot be empty for type 0'))
+    return
+  }
+
+  // Check for item id
+  if (req.body.type === 1 && (req.body?.itemid === '' || req.body?.itemid === undefined)) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Item id cannot be empty for type 1'))
+    return
+  }
+
+  // Check for user id
+  if (req.body.scope === 2 && req.body.userid === '') {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('User id cannot be empty for scope 2'))
     return
   }
 
@@ -81,17 +119,24 @@ export async function create (req, res, next) {
 
   // Creates the item type
   const newToken = Crypt.randomString(20)
-  const encData = Crypt.encrypt(req.body.data)
-  const exp = new Date(Date.now() + req.body.hours * (60 * 60 * 1000))
+  const newdata = {
+    token: newToken,
+    type: req.body.type,
+    scope: req.body.scope,
+    expiresat: new Date(Date.now() + req.body.hours * (60 * 60 * 1000)),
+    userid: req.body?.userid,
+    itemid: req.body?.itemid
+  }
+
+  if (req.body.type === 0) {
+    const encData = Crypt.encrypt(req.body.data)
+    newdata.data = encData.encrypted
+    newdata.dataiv = encData.iv
+    newdata.dataauthtag = encData.authTag
+  }
 
   const created = await DB.onetimetokens.create({
-    data: {
-      token: newToken,
-      expiresat: exp,
-      data: encData.encrypted,
-      dataiv: encData.iv,
-      dataauthtag: encData.authTag
-    }
+    data: newdata
   })
 
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)

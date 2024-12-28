@@ -165,6 +165,32 @@ describe('Items', () => {
     assert.strictEqual(res1.status, 404)
   })
 
+  it('Get item', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+
+    const itemid = res1.body.data.id
+
+    const res2 = await agent
+      .get(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+    assert.strictEqual(res2.body.data.data, global.itemCreateData.data)
+
+    // Cleanup
+    const res3 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 200)
+  })
+
   it('Get item, unauthorized as admin', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/folders/sample1/items`)
