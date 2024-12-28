@@ -8,14 +8,14 @@ get:
     - bearerAuth: []
   responses:
     "200":
-      description: Item type found
+      description: Token found
       $ref: '..\responsebodies\onetimetokens.yaml#/oneTimeTokenGetResult'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
     "404":
-      description: Item not found
+      description: Token not found
       $ref: '..\responsebodies\default.yaml#/notfound'
-    "422":
-      $ref: '..\responsebodies\default.yaml#/unprocessable'
-      description: Folder not found
+
 post:
   tags:
     - One time tokens

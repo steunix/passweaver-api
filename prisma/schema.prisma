@@ -180,10 +180,16 @@ model itemtypes {
 model onetimetokens {
   id          String   @id @db.Uuid @default(uuid(7))
   token       String
+  type        Int? @default(0)
   expiresat   DateTime
-  data        String
-  dataiv      String
-  dataauthtag String
+  scope       Int? @default(0)
+  userid      String?
+
+  data        String?
+  dataiv      String?
+  dataauthtag String?
+  itemid      String?
+
   createdat   DateTime  @default(now())
   updatedat   DateTime  @updatedAt
 

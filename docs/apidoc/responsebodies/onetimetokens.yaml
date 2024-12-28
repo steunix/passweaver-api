@@ -13,6 +13,25 @@ oneTimeTokenGetResult:
           status:
             $ref: '#/status'
           data:
-            type: string
-            description: Secret
-            example: The secret
+            type: object
+            properties:
+              type:
+                type: integer
+                description: Secret type, 0 for plain data (result in 'secret' field), 1 for item (result in 'item' field)
+              secret:
+                type: string
+                description: Secret, if token type is of type 0
+                example: The secret
+              item:
+                type: object
+                description: Item data, if token type is of type 1
+                properties:
+                  title:
+                    type: string
+                    description: Item title
+                  type:
+                    type: string
+                    description: Item type
+                  data:
+                    type: string
+                    description: Item data

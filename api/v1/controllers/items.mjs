@@ -90,12 +90,7 @@ export async function get (req, res, next) {
   }
 
   // Decrypt content
-  if (item.personal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    item.data = JSON.parse(Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken))
-  } else {
-    item.data = JSON.parse(Crypt.decrypt(item.data, item.dataiv, item.dataauthtag))
-  }
+  item.data = await Item.decrypt(itemid, req)
 
   // Removes unneeded info
   delete (item.dataauthtag)

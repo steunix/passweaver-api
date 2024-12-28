@@ -19,9 +19,9 @@ global.userCreateData = {
 }
 
 global.itemCreateData = {
-  title: 'title',
-  description: 'description',
-  data: '',
+  title: 'item title',
+  description: 'item description',
+  data: 'item data',
   metadata: ''
 }
 
