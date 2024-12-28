@@ -1,6 +1,6 @@
 {
   "name": "passweaver-api",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "description": "Collaborative password manager API",
   "main": "passweaver-api.mjs",
@@ -11,7 +11,7 @@
   "author": "Stefano Rivoir",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "10.8.2",
+    "mocha": "11.0.1",
     "superagent": "10.1.1",
     "standard": "17.1.2"
   },
@@ -22,7 +22,7 @@
     "compression": "1.7.5",
     "crockford-base32": "2.0.0",
     "generate-password": "1.7.1",
-    "express-rate-limit": "7.4.1",
+    "express-rate-limit": "7.5.0",
     "express": "5.0.1",
     "helmet": "8.0.0",
     "jsonwebtoken": "9.0.2",
