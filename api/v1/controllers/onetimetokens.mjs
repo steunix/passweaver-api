@@ -67,7 +67,13 @@ export async function get (req, res, next) {
     where: { token: tokenid }
   })
 
-  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, ottoken.id)
+  if (ottoken.type === 0) {
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, ottoken.id)
+  }
+  if (ottoken.type === 1) {
+    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESHARE, ottoken.id)
+    Events.add(req.user, Const.EV_ACTION_READVIATOKEN, Const.EV_ENTITY_ITEM, ottoken.itemid)
+  }
   res.send(R.ok(resp))
 }
 
@@ -139,6 +145,12 @@ export async function create (req, res, next) {
     data: newdata
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
+  if (req.body.type === 0) {
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
+  }
+  if (req.body.type === 1) {
+    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, created.id)
+    Events.add(req.user, Const.EV_ACTION_ITEMSHARE, Const.EV_ENTITY_ITEM, req.body.itemid)
+  }
   res.status(R.CREATED).send(R.ok({ token: newToken }))
 }
