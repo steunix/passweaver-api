@@ -71,7 +71,7 @@ export async function get (req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function list (req, res, next) {
-  let select = {}
+  let select = null
 
   // Must be admin
   if (!await Auth.isAdmin(req)) {
