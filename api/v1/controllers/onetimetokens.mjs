@@ -35,8 +35,16 @@ export async function get (req, res, next) {
     return
   }
 
-  // Check scope
-  // TODO: check scope
+  // Check token scope
+  if (ottoken.scope === Const.OTT_SCOPE_LOGGEDIN && req?.user === undefined) {
+    res.status(R.FORBIDDEN).send(R.ko('Cannot read this token'))
+    return
+  }
+
+  if (ottoken.scope === Const.OTT_SCOPE_USER && req?.user !== ottoken.userid) {
+    res.status(R.FORBIDDEN).send(R.ko('Cannot read this token'))
+    return
+  }
 
   const resp = {
     secret: '',
@@ -91,19 +99,19 @@ export async function create (req, res, next) {
   }
 
   // Check data is not empty
-  if (req.body.type === 0 && (req.body?.data === '' || req.body?.data === undefined)) {
+  if (req.body.type === Const.OTT_TYPE_SECRET && (req.body?.data === '' || req.body?.data === undefined)) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Data cannot be empty for type 0'))
     return
   }
 
   // Check for item id
-  if (req.body.type === 1 && (req.body?.itemid === '' || req.body?.itemid === undefined)) {
+  if (req.body.type === Const.OTT_TYPE_ITEM && (req.body?.itemid === '' || req.body?.itemid === undefined)) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Item id cannot be empty for type 1'))
     return
   }
 
   // Check for user id
-  if (req.body.scope === 2 && req.body.userid === '') {
+  if (req.body.scope === Const.OTT_SCOPE_USER && (req.body.userid === '' || req.body.userid === undefined)) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('User id cannot be empty for scope 2'))
     return
   }
@@ -123,7 +131,7 @@ export async function create (req, res, next) {
     }
   })
 
-  // Creates the item type
+  // Creates the token
   const newToken = Crypt.randomString(20)
   const newdata = {
     token: newToken,
@@ -134,7 +142,7 @@ export async function create (req, res, next) {
     itemid: req.body?.itemid
   }
 
-  if (req.body.type === 0) {
+  if (req.body.type === Const.OTT_TYPE_SECRET) {
     const encData = Crypt.encrypt(req.body.data)
     newdata.data = encData.encrypted
     newdata.dataiv = encData.iv
@@ -145,10 +153,10 @@ export async function create (req, res, next) {
     data: newdata
   })
 
-  if (req.body.type === 0) {
+  if (req.body.type === Const.OTT_TYPE_SECRET) {
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
   }
-  if (req.body.type === 1) {
+  if (req.body.type === Const.OTT_TYPE_ITEM) {
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, created.id)
     Events.add(req.user, Const.EV_ACTION_ITEMSHARE, Const.EV_ENTITY_ITEM, req.body.itemid)
   }
