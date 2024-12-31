@@ -226,6 +226,6 @@ describe('One time tokens', () => {
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .catch(v => v)
 
-    assert.strictEqual(res2.status, 403)
+    assert.strictEqual(res2.status, 200)
   })
 })

@@ -14,6 +14,7 @@ import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Items from '../../../model/item.mjs'
+import jsonwebtoken from 'jsonwebtoken'
 
 /**
  * Decrypt and return a one time secret
@@ -35,14 +36,23 @@ export async function get (req, res, next) {
     return
   }
 
+  // If session is required, read the JWT
+  if (ottoken.scope === Const.OTT_SCOPE_LOGGEDIN || ottoken.scope === Const.OTT_SCOPE_USER) {
+    try {
+      const token = req.headers.authorization.split(' ')[1]
+      const decoded = jsonwebtoken.verify(token, Config.get().jwt_key)
+      req.user = decoded.sub
+    } catch (err) {}
+  }
+
   // Check token scope
   if (ottoken.scope === Const.OTT_SCOPE_LOGGEDIN && req?.user === undefined) {
-    res.status(R.FORBIDDEN).send(R.ko('Cannot read this token'))
+    res.status(R.FORBIDDEN).send(R.ko('You are not authorized to read this secret'))
     return
   }
 
   if (ottoken.scope === Const.OTT_SCOPE_USER && req?.user !== ottoken.userid) {
-    res.status(R.FORBIDDEN).send(R.ko('Cannot read this token'))
+    res.status(R.FORBIDDEN).send(R.ko('You are not authorized to read this secret'))
     return
   }
 
