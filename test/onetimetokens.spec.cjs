@@ -158,4 +158,74 @@ describe('One time tokens', () => {
 
     assert.strictEqual(res3.status, 404)
   })
+
+  it('Get one time token, scope 1, not authorized', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/onetimetokens`)
+      .send({ type: 0, scope: 1, data: 'abc', hours: 1 })
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const tokenid = res1.body.data.token
+
+    const res2 = await agent
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 403)
+  })
+
+  it('Get one time token, scope 2, wrong user', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/onetimetokens`)
+      .send({ type: 0, scope: 2, userid: '0', data: 'abc', hours: 1 })
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const tokenid = res1.body.data.token
+
+    const res2 = await agent
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 403)
+  })
+
+  it('Get one time token, scope 2, not logged in', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/onetimetokens`)
+      .send({ type: 0, scope: 2, userid: '0', data: 'abc', hours: 1 })
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const tokenid = res1.body.data.token
+
+    const res2 = await agent
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 403)
+  })
+
+  it('Get one time token, scope 2, ok', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/onetimetokens`)
+      .send({ type: 0, scope: 2, userid: '0', data: 'abc', hours: 1 })
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const tokenid = res1.body.data.token
+
+    const res2 = await agent
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 403)
+  })
 })
