@@ -71,16 +71,18 @@ export async function get (req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function list (req, res, next) {
+  let select = {}
+
   // Must be admin
   if (!await Auth.isAdmin(req)) {
-    res.status(R.FORBIDDEN).send(R.forbidden())
-    return
+    select = { id: true, login: true, firstname: true, lastname: true }
   }
 
   // Search user
   let users
   if (req.query?.search) {
     users = await DB.users.findMany({
+      select,
       where: {
         OR: [
           { login: { contains: req.query.search, mode: 'insensitive' } },
@@ -94,6 +96,7 @@ export async function list (req, res, next) {
     })
   } else {
     users = await DB.users.findMany({
+      select,
       orderBy: {
         lastname: 'asc'
       }

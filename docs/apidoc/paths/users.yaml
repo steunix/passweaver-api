@@ -26,8 +26,8 @@ get:
   tags:
     - Users
   operationId: "listUsers"
-  summary: Search users
-  description: Search users
+  summary: List users
+  description: List users. If not admin, only id, login, lastname and firstname are returned
   security:
     - bearerAuth: []
   parameters:
