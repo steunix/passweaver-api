@@ -443,6 +443,9 @@ export async function update (req, res, next) {
   if (updateStruct?.metadata && updateStruct.metadata !== item.metadata) {
     changedFields.push('metadata')
   }
+  if (folderFromURL) {
+    changedFields.push('folder')
+  }
   if (req.body?.data) {
     const decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
     if (decData !== req.body.data) {
