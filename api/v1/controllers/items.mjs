@@ -444,7 +444,13 @@ export async function update (req, res, next) {
     changedFields.push('metadata')
   }
   if (req.body?.data) {
-    const decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    let decData
+    if (item.personal) {
+      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+      decData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
+    } else {
+      decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    }
     if (decData !== req.body.data) {
       // If JSON, check all properties for changes
       const olddata = JSON.parse(decData)
