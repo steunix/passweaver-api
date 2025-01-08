@@ -32,6 +32,14 @@ type:
   schema:
     type: string
 
+limit:
+  name: limit
+  in: query
+  description: Results limit; max value is 100, any greater value will be set to 100 anyway
+  required: false
+  schema:
+    type: integer
+
 lastid:
   name: lastid
   in: query

@@ -8,6 +8,8 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: '..\parameters\items.yaml#/search'
+    - $ref: '..\parameters\items.yaml#/type'
+    - $ref: '..\parameters\items.yaml#/limit'
   responses:
     "200":
       description: Item found

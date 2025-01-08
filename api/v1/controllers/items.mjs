@@ -128,6 +128,11 @@ export async function list (req, res, next) {
   const search = req.query?.search ?? ''
   const type = req.query?.type ?? ''
 
+  let limit = parseInt(req.query?.limit) || 100
+  if (limit > 100) {
+    limit = 100
+  }
+
   let folders
 
   if (folder) {
@@ -209,7 +214,7 @@ export async function list (req, res, next) {
     ${tsquery && folder ? Prisma.sql` ts_rank(fts.fts_vectoritem, to_tsquery('simple',${tsquery})) ` : Prisma.empty}
     ${tsquery && !folder ? Prisma.sql` ts_rank(fts.fts_vectorfull, to_tsquery('simple',${tsquery})) ` : Prisma.empty}
     ${!tsquery ? Prisma.sql` i.title ` : Prisma.empty}
-    ${folder ? Prisma.empty : Prisma.sql` limit 100`}
+    ${folder ? Prisma.empty : Prisma.sql` limit ${limit}`}
     `
 
   if (items.length === 0) {
