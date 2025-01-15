@@ -40,18 +40,20 @@ global.groupCreateData = {
   description: 'group description'
 }
 
+const AUTO_TEST = process.env?.PASSWEAVER_AUTO_TEST === '1'
+
 before((done) => {
   console.log('Passweaver API test before hook')
   // Read listen port from config
   console.log('Reading port from config')
   const port = JSON.parse(
     global.fs.readFileSync(
-      'config.json'
+      AUTO_TEST ? '/test/config-test.json' : 'config.json'
     )
   ).listen.port
   const ip = JSON.parse(
     global.fs.readFileSync(
-      'config.json'
+      AUTO_TEST ? '/test/config-test.json' : 'config.json'
     )
   ).listen.host
 
