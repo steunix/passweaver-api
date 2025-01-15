@@ -38,14 +38,16 @@ jobs:
 
       - name: Seed development data
         run: npx prisma db seed -- --environment development
-
+        env:
+          PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
+          
       - name: Run PassweaverAPI
         run: npm start
+        env:
+          PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
 
       - name: Run tests
         run: npm test
-
         env:
-          PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
           PASSWEAVER_AUTO_TEST: 1
           
