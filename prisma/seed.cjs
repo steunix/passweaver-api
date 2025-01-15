@@ -11,6 +11,8 @@ const Const = {
   PW_GROUP_EVERYONEID: 'E'
 }
 
+const AUTO_TEST = process.env?.PASSWEAVER_AUTO_TEST === '1'
+
 /**
  * Database default initialization
  */
@@ -137,14 +139,7 @@ async function main () {
   })
 
   /** DEVELOPMENT DATA */
-  const options = {
-    environment: { type: 'string' }
-  }
-  const {
-    values: { environment }
-  } = parseArgs({ options })
-
-  if (environment === 'development') {
+  if (AUTO_TEST) {
     console.log('Creating development data...')
 
     // Sample folders
@@ -162,7 +157,7 @@ async function main () {
     }
 
     // Sample users
-    for (let i = 1; i >= 2; i++) {
+    for (let i = 1; i <= 2; i++) {
       id = `user${i}`
       await prisma.users.upsert({
         where: { id },

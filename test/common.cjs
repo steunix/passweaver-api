@@ -48,12 +48,12 @@ before((done) => {
   console.log('Reading port from config')
   const port = JSON.parse(
     global.fs.readFileSync(
-      AUTO_TEST ? '/test/config-test.json' : 'config.json'
+      AUTO_TEST ? './test/config-test.json' : 'config.json'
     )
   ).listen.port
   const ip = JSON.parse(
     global.fs.readFileSync(
-      AUTO_TEST ? '/test/config-test.json' : 'config.json'
+      AUTO_TEST ? './test/config-test.json' : 'config.json'
     )
   ).listen.host
 
