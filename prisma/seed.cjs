@@ -50,7 +50,7 @@ async function main () {
     where: { id },
     update: {},
     create: {
-      id: '0',
+      id,
       description: 'Root group',
       parent: null
     }
@@ -64,7 +64,7 @@ async function main () {
     create: {
       id,
       description: 'Admins',
-      parent: '0'
+      parent: Const.PW_GROUP_ROOTID
     }
   })
 
@@ -76,14 +76,14 @@ async function main () {
     create: {
       id,
       description: 'Everyone',
-      parent: '0'
+      parent: Const.PW_GROUP_ROOTID
     }
   })
 
   /** USERS */
   // Admin
   id = Const.PW_USER_ADMINID
-  prisma.users.upsert({
+  await prisma.users.upsert({
     where: { id },
     update: {},
     create: {
