@@ -4,6 +4,11 @@ on: push
 jobs:
   # Label of the runner job
   runner-job:
+
+    env:
+      PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
+      PASSWEAVER_AUTO_TEST: 1
+      
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
 
@@ -36,18 +41,15 @@ jobs:
       - name: Generate Prisma code
         run: npx prisma generate
 
+      - name: Create databae
+        run: npx prisma db push
+
       - name: Seed development data
         run: npx prisma db seed -- --environment development
-        env:
-          PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
           
       - name: Run PassweaverAPI
         run: npm start
-        env:
-          PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
 
       - name: Run tests
         run: npm test
-        env:
-          PASSWEAVER_AUTO_TEST: 1
           
