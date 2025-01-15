@@ -1,0 +1,23 @@
+{
+  "jwt_duration": "24h",
+  "master_key_file": "none",
+  "automated_test": true,
+  "listen": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "log": {
+    "dir": "./log",
+    "rotation": "1d",
+    "retention": 14
+  },
+  "https": {
+    "enabled": false
+  },
+  "redis": {
+    "enabled": false
+  },
+  "onetimetokens": {
+    "max_hours": 168
+  }
+}
