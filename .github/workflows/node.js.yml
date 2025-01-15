@@ -48,7 +48,7 @@ jobs:
         run: npx prisma db seed -- --environment development
           
       - name: Run PassweaverAPI
-        run: npm start
+        run: npm start &
 
       - name: Run tests
         run: npm test
