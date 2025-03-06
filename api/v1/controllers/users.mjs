@@ -361,6 +361,10 @@ export async function remove (req, res, next) {
       select: { id: true }
     })
     for (const pers of personal) {
+      // Delete items in full text search
+      await DB.$executeRaw`
+        delete from itemsfts where id in (select id from items where folderid = ${pers.id})`
+
       // Delete items in personal folder
       await DB.items.deleteMany({
         where: { folderid: pers.id }
