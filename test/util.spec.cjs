@@ -114,7 +114,16 @@ describe('Utils', function () {
       .post(`${global.host}/api/v1/login`)
       .send({ username: 'USER1', password: '0' })
       .catch(v => v)
+    global.userJWT = res3.body.data.jwt
 
     assert.strictEqual(res3.status, 200)
+
+    const res4 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ username: 'ADMIN', password: '0' })
+      .catch(v => v)
+    global.adminJWT = res4.body.data.jwt
+
+    assert.strictEqual(res4.status, 200)
   })
 })
