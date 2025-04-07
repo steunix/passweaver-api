@@ -12,6 +12,8 @@ import * as R from '../../../lib/response.mjs'
 import * as Config from '../../../lib/config.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
+import * as Settings from '../../../lib/settings.mjs'
+import * as Const from '../../../lib/const.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -83,6 +85,43 @@ export async function clearCache (req, res, next) {
   await Cache.resetFoldersTree()
   await Cache.resetGroupsTree()
   await Cache.resetItemTypes()
+
+  res.send(R.ok())
+}
+
+/**
+ * Lock the system
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function systemLock (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  await Settings.set(Const.PW_USER_ADMINID, 'systemlock', '1')
+  Config.generateJWTKey()
+
+  res.send(R.ok())
+}
+
+/**
+ * Unlock the system
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function systemUnlock (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  await Settings.set(Const.PW_USER_ADMINID, 'systemlock', '0')
 
   res.send(R.ok())
 }

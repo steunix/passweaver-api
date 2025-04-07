@@ -66,12 +66,17 @@ before((done) => {
     .send({ username: 'ADMIN', password: '0' })
     .then(res => {
       global.adminJWT = res.body.data.jwt
+
       global.agent
-        .post(`${global.host}/api/v1/login`)
-        .send({ username: 'USER1', password: '0' })
-        .then(res => {
-          global.userJWT = res.body.data.jwt
-          done()
+        .post(`${global.host}/api/v1/util/systemunlock`)
+        .set('Authorization', `Bearer ${global.adminJWT}`).then(res => {
+          global.agent
+            .post(`${global.host}/api/v1/login`)
+            .send({ username: 'USER1', password: '0' })
+            .then(res => {
+              global.userJWT = res.body.data.jwt
+              done()
+            })
         })
     })
 })
