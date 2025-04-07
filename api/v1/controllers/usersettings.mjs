@@ -7,7 +7,7 @@
  */
 
 import * as R from '../../../lib/response.mjs'
-import DB from '../../../lib/db.mjs'
+import * as Settings from '../../../lib/settings.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 
 /**
@@ -27,13 +27,7 @@ export async function get (req, res, next) {
   }
 
   // Search item
-  const settings = await DB.usersettings.findMany({
-    where: { userid },
-    select: {
-      setting: true,
-      value: true
-    }
-  })
+  const settings = await Settings.get(userid)
 
   res.send(R.ok(settings))
 }
@@ -60,24 +54,9 @@ export async function set (req, res, next) {
     return
   }
 
-  // Set settings. Empty values will delete the setting
-  await DB.$transaction(async (tx) => {
-    for (const setting of req.body) {
-      await DB.usersettings.deleteMany({
-        where: { userid, setting: setting.setting }
-      })
-      if (setting.value !== '') {
-        // Delete setting
-        await DB.usersettings.create({
-          data: {
-            userid,
-            setting: setting.setting,
-            value: setting.value
-          }
-        })
-      }
-    }
-  })
+  for (const setting of req.body) {
+    await Settings.set(userid, setting.setting, setting.value)
+  }
 
   res.status(R.CREATED).send(R.ok())
 }
