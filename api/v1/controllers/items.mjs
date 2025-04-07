@@ -90,7 +90,12 @@ export async function get (req, res, next) {
   }
 
   // Decrypt content
-  item.data = await Item.decrypt(itemid, req)
+  try {
+    item.data = await Item.decrypt(itemid, req)
+  } catch (e) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('This item is corrupted and cannot be decrypted'))
+    return
+  }
 
   // Removes unneeded info
   delete (item.dataauthtag)
