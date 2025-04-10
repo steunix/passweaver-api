@@ -21,6 +21,18 @@ See below for a full API documentation.
 - PostgreSQL: PassWeaver API uses PostgreSQL for storing data
 - Redis: (optional) for caching
 
+## Features
+
+- Personal folders for each user
+- Share one-time secrets with anyone, even if they have not an account
+- One-time share items
+- Share items through permalinks
+- Folder level permissions
+- User groups
+- Extensive log actions on items
+- Both LDAP and local authentication
+- Immediate system lock (only admins can login)
+
 ## How it works
 
 PassWeaver API gives you access to the following objects:

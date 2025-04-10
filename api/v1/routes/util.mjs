@@ -22,4 +22,8 @@ router.get('/info', utilController.info)
 
 router.post('/clearcache', utilController.clearCache)
 
+router.post('/systemlock', utilController.systemLock)
+
+router.post('/systemunlock', utilController.systemUnlock)
+
 export default router

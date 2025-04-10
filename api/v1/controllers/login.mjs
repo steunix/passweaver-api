@@ -15,6 +15,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Settings from '../../../lib/settings.mjs'
 import * as FS from 'fs'
 
 import DB from '../../../lib/db.mjs'
@@ -41,6 +42,17 @@ export async function login (req, res, next) {
     Events.add(req.body.username, Const.EV_ACTION_LOGINNF, Const.EV_ENTITY_USER, req.body.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
+  }
+
+  // Check if system is locked, if not admin
+  if (!await Auth.isAdmin(user.id)) {
+    const settings = await Settings.get(Const.PW_USER_ADMINID)
+    for (const setting of settings) {
+      if (setting.setting === 'systemlock' && setting.value === '1') {
+        res.status(R.UNAUTHORIZED).send(R.ko('System is locked, retry later'))
+        return
+      }
+    }
   }
 
   // Check if user is valid

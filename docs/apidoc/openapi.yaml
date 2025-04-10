@@ -105,6 +105,10 @@ paths:
     $ref: '.\paths\utilgeneratepassword.yaml'
   /util/clearcache:
     $ref: '.\paths\utilclearcache.yaml'
+  /util/systemlock:
+    $ref: '.\paths\utilsystemlock.yaml'
+  /util/systemunlock:
+    $ref: '.\paths\utilsystemunlock.yaml'
   /events:
     $ref: '.\paths\events.yaml'
   /onetimetokens:
