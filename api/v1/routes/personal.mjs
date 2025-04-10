@@ -22,4 +22,6 @@ router.post('/password', personalController.setPassword)
 
 router.patch('/password', personalController.updatePassword)
 
+router.delete('/password', personalController.resetPassword)
+
 export default router

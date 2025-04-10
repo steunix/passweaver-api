@@ -141,3 +141,31 @@ export async function updatePassword (req, res, next) {
   Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
 }
+
+/**
+ * Reset personal password. All personal items become inaccessible.
+ * @param {*} req Express request
+ * @param {*} res Express response
+ * @param {Function} next Express next callback
+ * @returns
+ */
+export async function resetPassword (req, res, next) {
+  if (!req.jwt) {
+    res.status(R.UNAUTHORIZED).send(R.unauthorized())
+    return
+  }
+
+  await DB.users.update({
+    where: { id: req.user },
+    data: {
+      personalsecret: null,
+      personalkey: null
+    }
+  })
+
+  Events.add(req.user, Const.EV_ACTION_PERSRESET, Const.EV_ENTITY_USER, req.user)
+
+  // Create new JWT token
+  const token = await Auth.createToken(req.user)
+  res.send(R.ok({ jwt: token }))
+}
