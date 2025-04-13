@@ -68,6 +68,16 @@ export async function setPassword (req, res, next) {
     return
   }
 
+  // Check that personal password is not already set
+  const user = await DB.users.findUnique({
+    where: { id: req.user },
+    select: { personalsecret: true }
+  })
+  if (user.personalsecret !== null) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Personal password already set'))
+    return
+  }
+
   // Create personal storage key
   const pkey = Crypt.randomAESKey()
 

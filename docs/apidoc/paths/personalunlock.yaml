@@ -4,13 +4,14 @@ post:
   operationId: personalunlock
   summary: Unlock user personal folder
   description: Unlock user personal folder. The user must already be logged in.
+  security:
+    - bearerAuth: []
   requestBody:
     required: true
     content:
       application/json:
         schema:
           $ref: '..\requestbodies\personalunlock.yaml#/personalunlockBody'
-
   responses:
     "200":
       $ref: '..\responsebodies\personalunlock.yaml#/success'
