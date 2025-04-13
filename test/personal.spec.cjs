@@ -4,13 +4,20 @@ require('./common.cjs')
 
 describe('Personal folders', function () {
   it('Set personal password', async () => {
-    const res1 = await agent
+    // Delete personal password. Ignore the error.
+    await agent
+      .delete(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    const res2 = await agent
       .post(`${global.host}/api/v1/personal/password`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .send({ password: '123' })
       .catch(v => v)
 
-    assert.strictEqual(res1.status, 200)
+    assert.strictEqual(res2.status, 200)
   })
 
   it('Unlock personal folders', async () => {
@@ -32,6 +39,19 @@ describe('Personal folders', function () {
   })
 
   it('Create, update and remove personal item', async () => {
+    // Delete personal password. Ignore the error.
+    await agent
+      .delete(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    await agent
+      .post(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
     const res1 = await agent
       .post(`${global.host}/api/v1/personal/unlock`)
       .set('Authorization', `Bearer ${global.userJWT}`)
@@ -67,6 +87,13 @@ describe('Personal folders', function () {
   })
 
   it('Reset personal password', async () => {
+    // Delete personal password. Ignore the error.
+    await agent
+      .delete(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
     const res1 = await agent
       .post(`${global.host}/api/v1/personal/password`)
       .set('Authorization', `Bearer ${global.userJWT}`)
@@ -89,5 +116,30 @@ describe('Personal folders', function () {
       .catch(v => v)
 
     assert.strictEqual(res3.status, 200)
+  })
+
+  it('Set personal password when already set', async () => {
+    // Delete personal password. Ignore the error.
+    await agent
+      .delete(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 200)
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 422)
   })
 })
