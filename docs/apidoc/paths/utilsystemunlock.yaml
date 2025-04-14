@@ -6,9 +6,8 @@ post:
   description: Sytem lock is removed, anyone can login
   security:
     - bearerAuth: []
-
   responses:
     "200":
-      $ref: '..\responsebodies\util.yaml#/infosuccess'
+      $ref: '..\responsebodies\default.yaml#/success'
     "403":
       $ref: '..\responsebodies\default.yaml#/unauthorized'

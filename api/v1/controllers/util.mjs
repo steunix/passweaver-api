@@ -125,3 +125,50 @@ export async function systemUnlock (req, res, next) {
 
   res.send(R.ok())
 }
+
+/**
+ * Set the system in readonly mode
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function systemReadOnly (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  await Cache.set(Const.PW_USER_ADMINID, 'readonly', true)
+
+  res.send(R.ok())
+}
+
+/**
+ * Set the system in readwrite mode
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function systemReadWrite (req, res, next) {
+  // Must be admin
+  if (!await Auth.isAdmin(req)) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  await Cache.set(Const.PW_USER_ADMINID, 'readonly', false)
+
+  res.send(R.ok())
+}
+
+/**
+ * Return the system readonly status
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function systemGetReadOnly (req, res, next) {
+  const readonly = await Cache.get(Const.PW_USER_ADMINID, 'readonly')
+  res.send(R.ok({ readonly }))
+}

@@ -29,7 +29,6 @@ describe('Items', () => {
     assert.strictEqual(res3.status, 200)
   })
 
-
   it('Create item, bad data', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/folders/sample1/items`)

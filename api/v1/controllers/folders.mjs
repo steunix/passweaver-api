@@ -17,6 +17,7 @@ import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 
 import DB from '../../../lib/db.mjs'
+import { isReadOnly } from '../../../lib/auth.mjs'
 
 /**
  * Get a folder
@@ -58,6 +59,12 @@ export async function get (req, res, next) {
  * @returns
  */
 export async function create (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Validate payload
   if (!JV.validate(req.body, 'folder_create')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
@@ -111,6 +118,12 @@ export async function create (req, res, next) {
  * @returns
  */
 export async function update (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Validate payload
   if (!JV.validate(req.body, 'folder_update')) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
@@ -239,6 +252,12 @@ export async function update (req, res, next) {
  * @returns
  */
 export async function remove (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   const folderid = req.params.id
 
   // Root folder cannot be deleted
@@ -324,6 +343,12 @@ export async function remove (req, res, next) {
  * @returns
  */
 export async function addGroup (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Must be admin
   if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -390,6 +415,12 @@ export async function addGroup (req, res, next) {
  * @returns
  */
 export async function setGroup (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Must be admin
   if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -455,6 +486,12 @@ export async function setGroup (req, res, next) {
  * @returns
  */
 export async function removeGroup (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Must be admin
   if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())

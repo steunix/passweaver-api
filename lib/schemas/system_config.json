@@ -64,7 +64,8 @@
         "max_hours": { "type": "integer", "minimum": 1 }
       },
       "required": [ "max_hours" ]
-    }
+    },
+    "readonly": { "type": "boolean" }
   },
-  "required": ["master_key_file", "jwt_duration", "listen", "log", "https", "redis", "onetimetokens"]
+  "required": ["master_key_file", "jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly"]
 }

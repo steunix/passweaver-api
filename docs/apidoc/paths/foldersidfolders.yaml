@@ -24,3 +24,5 @@ post:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Parent folder not found
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

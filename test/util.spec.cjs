@@ -126,4 +126,98 @@ describe('Utils', function () {
 
     assert.strictEqual(res4.status, 200)
   })
+
+  it('Get system readonly mode', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/util/systemreadonly`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res1.status, 200)
+    assert.strictEqual(res1.body.data.readonly, false)
+  })
+
+  it('Set system readonly, user', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/util/systemreadonly`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 403)
+  })
+
+  it('Set system read write, user', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/util/systemreadwrite`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 403)
+  })
+
+  it('Set system readonly', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/util/systemreadonly`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 200)
+
+    // Item
+    const res2 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+    assert.strictEqual(res2.status, 409)
+
+    // User
+    const data = { ...global.userCreateData }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+    const res3 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 409)
+
+    // Folder
+    const res4 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/folders`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.folderCreateData)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 409)
+
+    // Group
+    const res5 = await agent
+      .post(`${global.host}/api/v1/groups/0/groups`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(global.groupCreateData)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 409)
+
+    const resx = await agent
+      .post(`${global.host}/api/v1/util/systemreadwrite`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(resx.status, 200)
+  })
+
+  it('Set system readwrite', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/util/systemreadwrite`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 200)
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+    assert.strictEqual(res2.status, 201)
+  })
 })

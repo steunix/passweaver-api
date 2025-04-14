@@ -27,6 +27,8 @@ post:
     "422":
       $ref: '..\responsebodies\default.yaml#/unprocessable'
       description: Item type not found
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 get:
   tags:

@@ -23,6 +23,22 @@ success:
           data:
             type: object
 
+conflict:
+  description: Operation cannot be peformed, system is in readonly mode
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          success:
+            $ref: '#/statusfailed'
+          message:
+            type: string
+            example: System is in readonly mode
+          data:
+            type: object
+            example: {}
+
 unprocessable:
   description: Operation cannot be peformed, see error message
   content:

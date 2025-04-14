@@ -1,0 +1,26 @@
+get:
+  tags:
+    - Utilities
+  operationId: systemgetreadonly
+  summary: Return system readonly mode
+  description: Return system readonly mode
+  security:
+    - bearerAuth: []
+  responses:
+    "200":
+      $ref: '..\responsebodies\util.yaml#/systemgetreadonly'
+
+post:
+  tags:
+    - Utilities
+  operationId: systemreadonly
+  summary: Set system in readonly mode
+  description: Set system in readonly mode
+  security:
+    - bearerAuth: []
+  responses:
+    "200":
+      $ref: '..\responsebodies\default.yaml#/success'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+      description: User cannot be logged in, wrong credentials

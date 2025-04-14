@@ -59,6 +59,8 @@ patch:
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 delete:
   tags:
@@ -85,4 +87,5 @@ delete:
       $ref: '..\responsebodies\default.yaml#/personalpwdnotset'
     "417":
       $ref: '..\responsebodies\default.yaml#/personalpwdnotused'
-
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

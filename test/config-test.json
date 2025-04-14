@@ -19,5 +19,6 @@
   },
   "onetimetokens": {
     "max_hours": 168
-  }
+  },
+  "readonly": false
 }

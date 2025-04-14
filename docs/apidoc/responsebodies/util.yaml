@@ -68,3 +68,20 @@ clearcachesuccess:
             $ref: '#/status'
           data:
             type: object
+
+systemgetreadonly:
+  description: Get system readonly mode
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              readonly:
+                type: boolean
+                example: true
+                description: System is in readonly mode, no changes are allowed

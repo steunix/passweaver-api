@@ -18,7 +18,9 @@ import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
-import { isAdmin } from '../../../lib/auth.mjs'
+
+import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
+
 import DB from '../../../lib/db.mjs'
 
 /**
@@ -248,6 +250,12 @@ export async function list (req, res, next) {
  * @returns
  */
 export async function create (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Admins have no access to items
   if (await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -346,6 +354,12 @@ export async function create (req, res, next) {
  * @returns
  */
 export async function update (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Admins have no access to items
   if (await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -504,6 +518,12 @@ export async function update (req, res, next) {
  * @returns
  */
 export async function remove (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Admins have no access to items
   if (await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -580,6 +600,12 @@ export async function remove (req, res, next) {
  * @returns
  */
 export async function clone (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Admins have no access to items
   if (await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())

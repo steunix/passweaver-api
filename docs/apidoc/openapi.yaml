@@ -109,6 +109,10 @@ paths:
     $ref: '.\paths\utilsystemlock.yaml'
   /util/systemunlock:
     $ref: '.\paths\utilsystemunlock.yaml'
+  /util/systemreadonly:
+    $ref: '.\paths\utilsystemreadonly.yaml'
+  /util/systemreadwrite:
+    $ref: '.\paths\utilsystemreadwrite.yaml'
   /events:
     $ref: '.\paths\events.yaml'
   /onetimetokens:
