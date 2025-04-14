@@ -142,7 +142,7 @@ describe('Utils', function () {
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
     assert.strictEqual(res1.status, 200)
-    assert.strictEqual(res1.body.data.systemlock, false)
+    assert.strictEqual(res1.body.data.locked, false)
   })
 
   it('Set system readonly, user', async () => {
