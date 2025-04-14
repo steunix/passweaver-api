@@ -234,6 +234,7 @@ PassWeaver API endpoints respond with JSON payloads using standard HTTP response
 - 401: Unauthorized: you haven't logged in yet, or your JWT is not valid/expired
 - 403: Forbidden: you do not have permissions to do what you're asking for
 - 404: Not found: what you are looking for does not exist
+- 409: Conflict: a write is attemped but system is in readonly mode
 - 412: Personal secret not set: user hasn't set a password for personal folder yet
 - 417: Personal secret not specified: user hasn't specified a personal password when accessing a personal item
 - 422: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
@@ -310,6 +311,7 @@ Copy `config-skel.json` to `config.json` and adjust the options:
   - `url`: Redis url
 - `onetimetokens`:
   - `max_hours`: Max one-time secrets duration
+- `readonly`: true or false; if true, no write operation is allowed both for admins and regolar users
 
 ### Environment
 

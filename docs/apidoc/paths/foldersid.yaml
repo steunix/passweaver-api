@@ -50,6 +50,8 @@ patch:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Folder not found
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 delete:
   tags:
@@ -75,4 +77,5 @@ delete:
     "422":
       $ref: '..\responsebodies\default.yaml#/unprocessable'
       description: Folder is not empty
-
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

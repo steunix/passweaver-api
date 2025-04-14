@@ -68,3 +68,37 @@ clearcachesuccess:
             $ref: '#/status'
           data:
             type: object
+
+systemgetreadonly:
+  description: Get system readonly mode
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              readonly:
+                type: boolean
+                example: false
+                description: Readonly mode status
+
+systemgetlock:
+  description: Get system lock status
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              locked:
+                type: boolean
+                example: false
+                description: System is locked

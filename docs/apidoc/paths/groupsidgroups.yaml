@@ -26,4 +26,5 @@ post:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Parent group not found
-
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

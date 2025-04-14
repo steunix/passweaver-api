@@ -48,6 +48,8 @@ patch:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Item type not found
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 delete:
   tags:
@@ -72,4 +74,5 @@ delete:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Item type not found
-
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

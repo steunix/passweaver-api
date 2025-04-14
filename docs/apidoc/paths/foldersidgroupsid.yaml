@@ -31,6 +31,8 @@ post:
     "422":
       $ref: '..\responsebodies\default.yaml#/unprocessable'
       description: Folder not found
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 patch:
   tags:
@@ -64,6 +66,8 @@ patch:
       "422":
         $ref: '..\responsebodies\default.yaml#/unprocessable'
         description: Folder not found
+      "409":
+        $ref: '..\responsebodies\default.yaml#/conflict'
 
 delete:
   tags:
@@ -88,3 +92,5 @@ delete:
     "404":
       description: Folder not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

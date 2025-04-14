@@ -48,6 +48,8 @@ patch:
     "404":
       $ref: '..\responsebodies\default.yaml#/notfound'
       description: Group not found
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 delete:
   tags:
@@ -73,4 +75,5 @@ delete:
     "422":
       $ref: '..\responsebodies\default.yaml#/unprocessable'
       description: Group is not empty
-
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'

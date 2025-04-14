@@ -16,6 +16,8 @@ import * as Cache from '../../../lib/cache.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Folder from '../../../model/folder.mjs'
 
+import { isReadOnly } from '../../../lib/auth.mjs'
+
 import DB from '../../../lib/db.mjs'
 
 /**
@@ -149,6 +151,12 @@ export async function getGroups (req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function create (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Must be admin
   if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -223,6 +231,12 @@ export async function create (req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function update (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   const userid = req.params.id
 
   // Must be admin if updating another user
@@ -319,6 +333,12 @@ export async function update (req, res, next) {
  * @param {Function} next Express next callback
  */
 export async function remove (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   // Must be admin
   if (!await Auth.isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())

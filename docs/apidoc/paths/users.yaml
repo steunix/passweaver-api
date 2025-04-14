@@ -21,6 +21,8 @@ post:
       $ref: '..\responsebodies\default.yaml#/unauthorized'
     "403":
       $ref: '..\responsebodies\default.yaml#/forbidden'
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
 
 get:
   tags:

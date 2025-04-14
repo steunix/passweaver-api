@@ -19,6 +19,7 @@ import rateLimitMiddleware from './lib/ratelimiter.mjs'
 import * as Config from './lib/config.mjs'
 import * as Cache from './lib/cache.mjs'
 import * as R from './lib/response.mjs'
+import * as Const from './lib/const.mjs'
 
 // Routes
 import folders from './api/v1/routes/folders.mjs'
@@ -42,6 +43,9 @@ const cfg = Config.get()
 
 // Init cache
 await Cache.init()
+
+// Set readonly flag in cache
+Cache.set(Const.PW_USER_ADMINID, 'readonly', Config.get().readonly)
 
 // Rate limiter
 app.use(rateLimitMiddleware)

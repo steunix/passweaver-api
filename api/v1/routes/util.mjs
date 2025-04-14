@@ -22,8 +22,16 @@ router.get('/info', utilController.info)
 
 router.post('/clearcache', utilController.clearCache)
 
+router.get('/systemlock', utilController.systemGetLock)
+
 router.post('/systemlock', utilController.systemLock)
 
 router.post('/systemunlock', utilController.systemUnlock)
+
+router.post('/systemreadonly', utilController.systemReadOnly)
+
+router.post('/systemreadwrite', utilController.systemReadWrite)
+
+router.get('/systemreadonly', utilController.systemGetReadOnly)
 
 export default router

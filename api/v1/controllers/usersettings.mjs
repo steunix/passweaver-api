@@ -9,6 +9,7 @@
 import * as R from '../../../lib/response.mjs'
 import * as Settings from '../../../lib/settings.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import { isReadOnly } from '../../../lib/auth.mjs'
 
 /**
  * Get user settings
@@ -40,6 +41,12 @@ export async function get (req, res, next) {
  * @returns
  */
 export async function set (req, res, next) {
+  // Check if system is readonly
+  if (await isReadOnly(req)) {
+    res.status(R.CONFLICT).send(R.conflict())
+    return
+  }
+
   const userid = req.params.id
 
   // Settings can be written only by the owner

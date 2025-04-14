@@ -48,3 +48,5 @@ post:
     "404":
       description: User not found
       $ref: '..\responsebodies\default.yaml#/notfound'
+    "409":
+      $ref: '..\responsebodies\default.yaml#/conflict'
