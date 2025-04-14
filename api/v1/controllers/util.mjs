@@ -172,3 +172,20 @@ export async function systemGetReadOnly (req, res, next) {
   const readonly = await Cache.get(Const.PW_USER_ADMINID, 'readonly')
   res.send(R.ok({ readonly }))
 }
+
+/**
+ * Return the system lock status
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Object} next Express next
+ */
+export async function systemGetLock (req, res, next) {
+  const settings = await Settings.get(Const.PW_USER_ADMINID, 'systemlock')
+  for (const setting of settings) {
+    if (setting.setting === 'systemlock') {
+      res.send(R.ok({ locked: setting.value === '1' }))
+      return
+    }
+  }
+  res.send(R.ok({ locked: false }))
+}

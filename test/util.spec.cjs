@@ -136,6 +136,15 @@ describe('Utils', function () {
     assert.strictEqual(res1.body.data.readonly, false)
   })
 
+  it('Get system lock status', async () => {
+    const res1 = await agent
+      .get(`${global.host}/api/v1/util/systemlock`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res1.status, 200)
+    assert.strictEqual(res1.body.data.systemlock, false)
+  })
+
   it('Set system readonly, user', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/util/systemreadonly`)
