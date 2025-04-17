@@ -26,7 +26,7 @@
     "express": "5.1.0",
     "helmet": "8.1.0",
     "jsonwebtoken": "9.0.2",
-    "ldap-authentication": "3.3.4",
+    "ldapts": "7.4.0",
     "morgan": "1.10.0",
     "node-cache": "5.1.2",
     "prisma": "6.5.0",

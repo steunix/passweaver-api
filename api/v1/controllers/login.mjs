@@ -6,7 +6,7 @@
  * @copyright (c) 2023-2024 - Stefano Rivoir <rs4000@gmail.com>
  */
 
-import * as LDAP from 'ldap-authentication'
+import * as LDAP from 'ldapts'
 
 import * as R from '../../../lib/response.mjs'
 import * as Events from '../../../lib/event.mjs'
@@ -16,7 +16,6 @@ import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Settings from '../../../lib/settings.mjs'
-import * as FS from 'fs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -70,27 +69,45 @@ export async function login (req, res, next) {
     try {
       const ldapOpts = {
         url: `${ldap.url}:${ldap.port}`,
-        tlsOptions: {}
+        tlsOptions: ldap?.tlsOptions
       }
 
-      if (ldap?.tlsOptions?.cert) {
-        ldapOpts.tlsOptions.cert = FS.readFileSync(ldap.tlsOptions.cert)
-        ldapOpts.tlsOptions.ciphers = 'DEFAULT@SECLEVEL=0'
+      // Bind to LDAP server for searching user
+      let ldapClient
+      try {
+        ldapClient = new LDAP.Client(ldapOpts)
+        await ldapClient.bind(ldap.bindDn, ldap.bindPassword)
+      } catch (err) {
+        res.status(R.UNAUTHORIZED).send(R.ko(err.message))
+        return
       }
 
-      if (ldap?.tlsOptions?.ca) {
-        ldapOpts.tlsOptions.ca = FS.readFileSync(ldap.tlsOptions.ca)
-      }
+      // Loop in baseDNs to find user
+      let authenticated = false
+      for (const baseDn of ldap.baseDn) {
+        const search = await ldapClient.search(baseDn, {
+          filter: `(${ldap.userDn}=${req.body.username})`,
+          scope: 'sub',
+          attributes: [ldap.userDn]
+        })
 
-      if (ldap?.tlsOptions?.ciphers) {
-        ldapOpts.tlsOptions.ciphers = ldap.tlsOptions.ciphers
+        // Authenticate user if found
+        if (search.searchEntries.length > 0) {
+          try {
+            await ldapClient.bind(
+              `${search.searchEntries[0].dn}`,
+              req.body.password
+            )
+            authenticated = true
+            break
+          } catch (err) { }
+        }
       }
+      ldapClient.unbind()
 
-      await LDAP.authenticate({
-        ldapOpts,
-        userDn: `${ldap.userDn}=${req.body.username},${ldap.baseDn}`,
-        userPassword: req.body.password
-      })
+      if (!authenticated) {
+        throw new Error('User not found')
+      }
     } catch (err) {
       Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))

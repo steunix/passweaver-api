@@ -297,10 +297,11 @@ Copy `config-skel.json` to `config.json` and adjust the options:
   - `port`: LDAP server port
   - `baseDn`: baseDn for credential check
   - `userDn`: userDn for credential check
-  - `tlsOptions`: will be passed to Node tls library
+  - `bindDn`: user for searching directory
+  - `bindPassword`: password for searching directory
+  - `tlsOptions`: will be passed to ldapts Node package. Note that `cert` and `ca` will accept a file path instead of file content.
     - `cert`: path to certificate
     - `ca`: path to CA certificate
-    - `ciphers`: ciphers
 - `https`:
   - `enabled`: HTTPS enabled (true/false)
   - `certificate`: certificate file path
