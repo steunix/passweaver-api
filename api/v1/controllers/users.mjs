@@ -274,7 +274,7 @@ export async function update (req, res, next) {
 
   // Check for login uniqueness, if changed
   if (req.body.login && req.body.login !== user.login) {
-    const login = DB.users.findFirst({
+    const login = await DB.users.findFirst({
       where: { login: req.body.login },
       select: { id: true }
     })

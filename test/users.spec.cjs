@@ -146,6 +146,42 @@ describe('Users', function () {
     assert.strictEqual(res3.status, 200)
   })
 
+  it('Update user login', async () => {
+    const data = global.userCreateData
+    data.login = global.rnd('login')
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const userId = res1.body.data.id
+
+    data.login = global.rnd('login')
+    const res2 = await agent
+      .patch(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ login: data.login })
+      .catch(v => v)
+    assert.strictEqual(res2.status, 200)
+
+    const res3 = await agent
+      .get(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 200)
+    assert.strictEqual(res3.body.data.login, data.login)
+
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+  })
+
   it('Update user as user, bad data', async () => {
     const res1 = await agent
       .patch(`${global.host}/api/v1/users/user1`)

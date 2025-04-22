@@ -83,5 +83,5 @@ before((done) => {
 
 global.rnd = (prefix) => {
   const rnd = (new Date() % 9e6).toString(36)
-  return `${prefix}_${rnd}`
+  return `${prefix || 'random'}_${rnd}`
 }
