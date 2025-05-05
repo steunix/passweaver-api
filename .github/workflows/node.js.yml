@@ -1,5 +1,7 @@
 name: Run tests
 on: push
+permissions:
+  contents: read
 
 jobs:
   # Label of the runner job
