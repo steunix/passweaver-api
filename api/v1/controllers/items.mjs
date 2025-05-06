@@ -103,6 +103,8 @@ export async function get (req, res, next) {
   delete (item.dataauthtag)
   delete (item.dataiv)
 
+  item.favorite = await Item.isFavorite(itemid, req.user)
+
   // Update last accessed on item
   await DB.items.update({
     data: {
@@ -134,6 +136,7 @@ export async function list (req, res, next) {
   const folder = req.params?.folder
   const search = req.query?.search ?? ''
   const type = req.query?.type ?? ''
+  const favorite = req.query?.favorite ?? ''
 
   let limit = parseInt(req.query?.limit) || 100
   if (limit > 100) {
@@ -205,7 +208,8 @@ export async function list (req, res, next) {
   const folderList = folders.map(folders => folders)
 
   const items = await DB.$queryRaw`
-    select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, f.description folderdescription, t.description typedescription, t.icon, t.id typeid
+    select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
+      case when fav.id is not null then true else false end as favorite
     from   items i
     join   itemsfts fts
     on     fts.id = i.id
@@ -213,10 +217,15 @@ export async function list (req, res, next) {
     on     f.id = i.folderid
     left   join itemtypes t
     on     t.id = i.type
+    left   join itemsfav fav
+    on     fav.itemid = i.id
+    and    fav.userid = ${req.user}
     where  i.folderid in (${Prisma.join(folderList)})
     ${tsquery && folder ? Prisma.sql` and fts.fts_vectoritem @@ to_tsquery('simple',${tsquery})` : Prisma.empty}
     ${tsquery && !folder ? Prisma.sql` and fts.fts_vectorfull @@ to_tsquery('simple',${tsquery})` : Prisma.empty}
     ${type ? Prisma.sql` and i.type=${type}::uuid` : Prisma.empty}
+    ${favorite === 'true' ? Prisma.sql` and fav.id is not null ` : Prisma.empty}
+    ${favorite === 'false' ? Prisma.sql` and fav.id is null ` : Prisma.empty}
     order  by
     ${tsquery && folder ? Prisma.sql` ts_rank(fts.fts_vectoritem, to_tsquery('simple',${tsquery})) ` : Prisma.empty}
     ${tsquery && !folder ? Prisma.sql` ts_rank(fts.fts_vectorfull, to_tsquery('simple',${tsquery})) ` : Prisma.empty}
@@ -507,6 +516,11 @@ export async function update (req, res, next) {
   // Update tsvector
   await Item.updateFTS(itemid)
 
+  // Update favorite flag
+  if ('favorite' in req.body) {
+    await Item.setFavorite(itemid, req.user, req.body.favorite)
+  }
+
   res.send(R.ok())
 }
 
@@ -578,6 +592,12 @@ export async function remove (req, res, next) {
     await DB.itemsfts.delete({
       where: {
         id: itemid
+      }
+    })
+
+    await DB.itemsfav.deleteMany({
+      where: {
+        itemid
       }
     })
 

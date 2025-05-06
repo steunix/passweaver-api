@@ -84,3 +84,7 @@ getactivity:
                   type: string
                   description: Entity description (e.g. the title of an item, or the login string of a user)
                   example: "Item 1"
+                favorite:
+                  type: boolean
+                  description: Favorite item flag
+                  example: true

@@ -79,6 +79,9 @@ itemslistsuccess:
                 folderid:
                   type: string
                   description: Item folder
+                favorite:
+                  type: boolean
+                  description: True if item is favorite, false otherwise
                 folder:
                   type: object
                   properties:

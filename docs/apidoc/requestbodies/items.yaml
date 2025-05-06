@@ -42,6 +42,9 @@ itemUpdateBody:
     folder:
       type: string
       description: Item folder
+    favorite:
+      type: boolean
+      description: Set/unset favorite item
   required:
     - title
     - data

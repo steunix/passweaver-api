@@ -24,6 +24,7 @@ See below for a full API documentation.
 ## Features
 
 - Personal folders for each user
+- Favorite items
 - Share one-time secrets with anyone, even if they have not an account
 - One-time share items
 - Share items through permalinks

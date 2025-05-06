@@ -6,6 +6,7 @@
     "title" : { "type": "string", "minLength": 1, "maxLength": 200 },
     "data" : { "type": "string" },
     "metadata": { "type": "string" },
-    "folder" : { "type": "string", "maxLength": 40 }
+    "folder" : { "type": "string", "maxLength": 40 },
+    "favorite" : { "type": "boolean" }
   }
 }
