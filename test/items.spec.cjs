@@ -314,7 +314,7 @@ describe('Items', () => {
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
     assert.strictEqual(res5.status, 200)
-    assert(res5.body.data.favorite, false)
+    assert.strictEqual(res5.body.data.favorite, false)
 
     // Cleanup
     const res6 = await agent
