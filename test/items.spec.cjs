@@ -266,4 +266,61 @@ describe('Items', () => {
 
     assert.strictEqual(res3.status, 200)
   })
+
+  it('Set item favorite', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    // Set favorite
+    const res2 = await agent
+      .patch(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ favorite: true })
+      .catch(v => v)
+    assert.strictEqual(res2.status, 200)
+
+    const res3 = await agent
+      .get(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 200)
+    assert(res3.body.data.favorite, true)
+
+    // Get favorite items
+    const res7 = await agent
+      .get(`${global.host}/api/v1/folders/sample1/items?favorite=true`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res7.status, 200)
+    assert(res7.body.data.length, true)
+    assert(res7.body.data[0].favorite, true)
+
+    // Unset favorite
+    const res4 = await agent
+      .patch(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ favorite: false })
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+
+    const res5 = await agent
+      .get(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 200)
+    assert(res5.body.data.favorite, false)
+
+    // Cleanup
+    const res6 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res6.status, 200)
+  })
 })

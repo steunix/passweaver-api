@@ -61,3 +61,37 @@ export async function decrypt (itemid, req) {
 
   return data
 }
+
+/**
+ * Set favorite item for user
+ * @param {string} itemid Item ID
+ * @param {string} userid User ID
+ * @param {boolean} favorite Boolean value for favorite
+ */
+export async function setFavorite (itemid, userid, favorite) {
+  await DB.itemsfav.deleteMany({
+    where: { itemid, userid }
+  })
+
+  if (favorite) {
+    await DB.itemsfav.create({
+      data: { itemid, userid }
+    })
+  }
+
+  return true
+}
+
+/**
+ * Return favorite flag for item and user
+ * @param {string} itemid Item ID
+ * @param {string} userid User ID
+ * @return {boolean} Favorite flag
+ */
+export async function isFavorite (itemid, userid) {
+  const item = await DB.itemsfav.findFirst({
+    where: { itemid, userid }
+  })
+
+  return !!item
+}

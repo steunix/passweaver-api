@@ -375,6 +375,11 @@ export async function remove (req, res, next) {
       where: { userid }
     })
 
+    // Delete favorites
+    await DB.itemsfav.deleteMany({
+      where: { userid }
+    })
+
     // Personal folders
     const personal = await DB.folders.findMany({
       where: { personal: true, userid },
