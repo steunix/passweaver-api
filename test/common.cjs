@@ -20,9 +20,8 @@ global.userCreateData = {
 
 global.itemCreateData = {
   title: 'item title',
-  description: 'item description',
   data: 'item data',
-  metadata: ''
+  metadata: 'metadata'
 }
 
 global.itemCreateDataBad = {
