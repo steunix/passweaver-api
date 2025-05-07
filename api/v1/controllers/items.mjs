@@ -208,7 +208,7 @@ export async function list (req, res, next) {
   const folderList = folders.map(folders => folders)
 
   const items = await DB.$queryRaw`
-    select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
+    select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, i.personal, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
       case when fav.id is not null then true else false end as favorite
     from   items i
     join   itemsfts fts

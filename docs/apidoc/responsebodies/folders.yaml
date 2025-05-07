@@ -88,6 +88,9 @@ itemslistsuccess:
                     description:
                       type: string
                       description: Folder description
+                personal:
+                  type: boolean
+                  description: True if item is personal, false otherwise
                 itemtype:
                   type: object
                   properties:
