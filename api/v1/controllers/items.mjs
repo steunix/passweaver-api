@@ -403,6 +403,7 @@ export async function update (req, res, next) {
   }
 
   // If a folder is given through path or payload, check for existance and permissions
+  let folderChanged = false
   if (folderFromURL) {
     if (!await Folder.exists(folderFromURL)) {
       res.status(R.NOT_FOUND).send(R.ko('Folder not found'))
@@ -414,6 +415,11 @@ export async function update (req, res, next) {
       res.status(R.FORBIDDEN).send(R.forbidden())
       return
     }
+
+    // Check if the folder is changing
+    if (item.folderid !== folderFromURL) {
+      folderChanged = true
+    }
   }
 
   // If personal item, ensure personal password has been set and activated
@@ -422,6 +428,23 @@ export async function update (req, res, next) {
     if (check !== 0) {
       res.status(check).send(R.ko('Personal folder not accessible'))
       return
+    }
+  }
+
+  // If the folder is changing, check if the new folder is personal
+  if (folderChanged) {
+    const newFolder = await DB.folders.findUnique({
+      where: { id: folderFromURL },
+      select: { personal: true }
+    })
+
+    // If the new folder is personal, check if the user has access to it
+    if (newFolder.personal) {
+      const check = await checkPersonalAccess(req)
+      if (check !== 0) {
+        res.status(check).send(R.ko('Personal folder not accessible'))
+        return
+      }
     }
   }
 
@@ -437,24 +460,45 @@ export async function update (req, res, next) {
     }
   }
 
-  // Updates
+  // Recalculate the data
+  let encData
   const updateStruct = {}
-  if (req.body.data) {
-    let encData
+  let newIsPersonal = item.personal
+  if (folderFromURL) {
+    // If the folder is changing, check if the new folder is personal
+    newIsPersonal = await Folder.isPersonal(folderFromURL)
+  }
+  let newData
+  if (req.body?.data) {
+    newData = req.body.data
+  } else {
+    // If no data is given, decrypt the current data
     if (item.personal) {
       const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-      encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
+      newData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
     } else {
-      encData = Crypt.encrypt(req.body.data)
+      newData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
     }
-    updateStruct.algo = encData.algo
-    updateStruct.data = encData.encrypted
-    updateStruct.dataiv = encData.iv
-    updateStruct.dataauthtag = encData.authTag
   }
+
+  // Encrypt according to the new folder
+  if (newIsPersonal) {
+    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+    encData = Crypt.encryptPersonal(newData, user.personalkey, req.personaltoken)
+    updateStruct.personal = true
+  } else {
+    encData = Crypt.encrypt(newData)
+    updateStruct.personal = false
+  }
+  updateStruct.algo = encData.algo
+  updateStruct.data = encData.encrypted
+  updateStruct.dataiv = encData.iv
+  updateStruct.dataauthtag = encData.authTag
+
   if (folderFromURL) {
     updateStruct.folderid = folderFromURL
   }
+
   if (req.body.title) {
     updateStruct.title = req.body.title
   }
@@ -479,9 +523,11 @@ export async function update (req, res, next) {
   if (folderFromURL) {
     changedFields.push('folder')
   }
+
+  // Check what has changed in data
   if (req.body?.data) {
     let decData
-    if (item.personal) {
+    if (newIsPersonal) {
       const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
       decData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
     } else {
