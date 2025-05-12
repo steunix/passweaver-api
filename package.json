@@ -12,7 +12,7 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "11.2.2",
-    "superagent": "10.2.0",
+    "superagent": "10.2.1",
     "standard": "17.1.2"
   },
   "dependencies": {
