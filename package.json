@@ -30,7 +30,7 @@
     "morgan": "1.10.0",
     "node-cache": "5.1.2",
     "prisma": "6.8.2",
-    "redis": "5.0.1",
+    "redis": "5.1.0",
     "rotating-file-stream": "3.2.6",
     "uuidv7": "1.0.2"
   },
