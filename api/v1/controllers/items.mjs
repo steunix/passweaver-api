@@ -6,7 +6,7 @@
  * @copyright (c) 2023-2025 - Stefano Rivoir <rs4000@gmail.com>
  */
 
-import { Prisma } from '@prisma/client'
+import { Prisma } from '../../../generated/prisma/index.js'
 
 import { newId } from '../../../lib/id.mjs'
 import * as R from '../../../lib/response.mjs'

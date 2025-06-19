@@ -1,5 +1,7 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
+const { PrismaPg } = require('@prisma/adapter-pg')
+const { PrismaClient } = require('../generated/prisma/index.js')
+const adapter = new PrismaPg({ connectionString: process.env.PASSWEAVERAPI_PRISMA_URL })
+const prisma = new PrismaClient({ adapter })
 
 const Const = {
   PW_USER_ADMINID: '0',

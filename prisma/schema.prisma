@@ -1,9 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// Client and features
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["relationJoins"]
+  output          = "../generated/prisma"
+  previewFeatures = ["relationJoins", "queryCompiler", "driverAdapters"]
 }
 
 datasource db {

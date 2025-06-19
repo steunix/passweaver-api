@@ -5,3 +5,4 @@ node_modules
 passweaver-api.code-workspace
 config.json
 log
+generated
