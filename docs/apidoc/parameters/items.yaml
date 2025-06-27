@@ -55,3 +55,11 @@ sort:
   required: false
   schema:
     type: string
+
+key:
+  name: key
+  in: query
+  description: The key to use for encryption. Avoid using the same key for multiple requests, use a different key for each request.
+  required: true
+  schema:
+    type: string
