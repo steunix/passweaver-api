@@ -158,7 +158,7 @@ describe('Items', () => {
 
   it('Get item, unexistent', async () => {
     const res1 = await agent
-      .get(`${global.host}/api/v1/items/000`)
+      .get(`${global.host}/api/v1/items/000?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
@@ -177,10 +177,12 @@ describe('Items', () => {
     const itemid = res1.body.data.id
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/items/${itemid}`)
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .send(global.itemCreateData)
       .catch(v => v)
+    res2.body.data.data = await global.decryptBlock(res2.body.data.data, global.key)
+
     assert.strictEqual(res2.body.data.data, global.itemCreateData.data)
 
     // Cleanup
@@ -202,7 +204,7 @@ describe('Items', () => {
     const itemid = res1.body.data.id
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/items/${itemid}`)
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .catch(v => v)
     assert.strictEqual(res2.status, 403)
@@ -286,9 +288,11 @@ describe('Items', () => {
     assert.strictEqual(res2.status, 200)
 
     const res3 = await agent
-      .get(`${global.host}/api/v1/items/${itemid}`)
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
+    res3.body.data.data = await global.decryptBlock(res3.body.data.data, global.key)
+
     assert.strictEqual(res3.status, 200)
     assert(res3.body.data.favorite, true)
 
@@ -310,10 +314,13 @@ describe('Items', () => {
     assert.strictEqual(res4.status, 200)
 
     const res5 = await agent
-      .get(`${global.host}/api/v1/items/${itemid}`)
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
     assert.strictEqual(res5.status, 200)
+
+    res5.body.data.data = await global.decryptBlock(res5.body.data.data, global.key)
+
     assert.strictEqual(res5.body.data.favorite, false)
 
     // Cleanup

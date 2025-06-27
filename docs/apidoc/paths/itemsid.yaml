@@ -3,11 +3,12 @@ get:
     - Items
   operationId: "getItem"
   summary: Get item
-  description: Get item
+  description: Get item details. Will return the item data encrypted with the key provided in the request.
   security:
     - bearerAuth: []
   parameters:
     - $ref: '..\parameters\items.yaml#/itemid'
+    - $ref: '..\parameters\items.yaml#/key'
   responses:
     "200":
       $ref: '..\responsebodies\items.yaml#/getsuccess'

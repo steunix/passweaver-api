@@ -59,6 +59,18 @@ async function checkPersonalAccess (req) {
 export async function get (req, res, next) {
   const itemid = req.params.id
 
+  // Check supplied key
+  let key
+  try {
+    key = Buffer.from(req.query?.key, 'base64')
+    if (key.length !== 32) {
+      throw new Error('Invalid key length')
+    }
+  } catch (e) {
+    res.status(R.BAD_REQUEST).send(R.badRequest('Invalid key'))
+    return
+  }
+
   // Admins have no access to items
   if (await isAdmin(req)) {
     res.status(R.FORBIDDEN).send(R.forbidden())
@@ -99,9 +111,13 @@ export async function get (req, res, next) {
     return
   }
 
+  // Reencrypt data with input token
+  item.data = Crypt.encryptedPayload(key, item.data)
+
   // Removes unneeded info
   delete (item.dataauthtag)
   delete (item.dataiv)
+  delete (item.algo)
 
   item.favorite = await Item.isFavorite(itemid, req.user)
 

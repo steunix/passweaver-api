@@ -7,6 +7,7 @@ global.fs = require('fs')
 global.adminJWT = ''
 global.userJWT = ''
 global.host = ''
+global.key = btoa('12345678901234567890123456789012')
 
 global.userCreateData = {
   login: 'test',
@@ -83,4 +84,20 @@ before((done) => {
 global.rnd = (prefix) => {
   const rnd = (new Date() % 9e6).toString(36)
   return `${prefix || 'random'}_${rnd}`
+}
+
+global.decryptBlock = async (data, key) => {
+  const crypto = require('crypto')
+
+  const parts = data.split(':')
+
+  const iv = Buffer.from(parts[0], 'base64')
+  const string = Buffer.from(parts[1], 'base64')
+
+  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key, 'base64'), iv)
+
+  let decrypted = decipher.update(string, 'base64', 'utf8')
+  decrypted += decipher.final('utf8')
+
+  return decrypted
 }

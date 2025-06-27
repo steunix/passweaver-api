@@ -178,9 +178,12 @@ describe('Personal folders', function () {
 
     // Verify item
     const res4 = await agent
-      .get(`${global.host}/api/v1/items/${itemid}`)
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
       .set('Authorization', `Bearer ${newJWT}`)
       .catch(v => v)
+
+    res4.body.data.data = await global.decryptBlock(res4.body.data.data, global.key)
+
     assert.strictEqual(res4.status, 200)
     assert.strictEqual(res4.body.data.folderid, 'user1')
     assert.strictEqual(res4.body.data.title, global.itemCreateData.title)
@@ -231,9 +234,12 @@ describe('Personal folders', function () {
 
     // Verify item
     const res4 = await agent
-      .get(`${global.host}/api/v1/items/${itemid}`)
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
       .set('Authorization', `Bearer ${newJWT}`)
       .catch(v => v)
+
+    res4.body.data.data = await global.decryptBlock(res4.body.data.data, global.key)
+
     assert.strictEqual(res4.status, 200)
     assert.strictEqual(res4.body.data.folderid, 'sample1')
     assert.strictEqual(res4.body.data.title, global.itemCreateData.title)

@@ -3,9 +3,12 @@ get:
     - One time tokens
   operationId: "getOneTimeToken"
   summary: Get and burn one time token content
-  description: Get one time token content. The token is then deleted and will not be accessible anymore.
+  description: Get one time token content, encrypted with the key provided in the request. The token is then deleted and will not be accessible anymore.
   security:
     - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\onetimetokens.yaml#/token'
+    - $ref: '..\parameters\onetimetokens.yaml#/key'
   responses:
     "200":
       description: Token found

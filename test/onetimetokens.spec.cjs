@@ -90,11 +90,13 @@ describe('One time tokens', () => {
     const tokenid = res1.body.data.token
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
     assert.strictEqual(res2.status, 200)
+
+    res2.body.data.secret = await global.decryptBlock(res2.body.data.secret, global.key)
     assert.strictEqual(res2.body.data.secret, 'abc')
   })
 
@@ -118,11 +120,13 @@ describe('One time tokens', () => {
     const tokenid = res2.body.data.token
 
     const res3 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
     assert.strictEqual(res3.status, 200)
+
+    res3.body.data.item = JSON.parse(await global.decryptBlock(res3.body.data.item, global.key))
     assert.strictEqual(res3.body.data.item.data, global.itemCreateData.data)
 
     // Cleanup
@@ -144,15 +148,17 @@ describe('One time tokens', () => {
     const tokenid = res1.body.data.token
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
     assert.strictEqual(res2.status, 200)
+
+    res2.body.data.secret = await global.decryptBlock(res2.body.data.secret, global.key)
     assert.strictEqual(res2.body.data.secret, 'abc')
 
     const res3 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
@@ -170,7 +176,7 @@ describe('One time tokens', () => {
     const tokenid = res1.body.data.token
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .catch(v => v)
 
     assert.strictEqual(res2.status, 403)
@@ -187,7 +193,7 @@ describe('One time tokens', () => {
     const tokenid = res1.body.data.token
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
 
@@ -205,7 +211,7 @@ describe('One time tokens', () => {
     const tokenid = res1.body.data.token
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .catch(v => v)
 
     assert.strictEqual(res2.status, 403)
@@ -222,7 +228,7 @@ describe('One time tokens', () => {
     const tokenid = res1.body.data.token
 
     const res2 = await agent
-      .get(`${global.host}/api/v1/onetimetokens/${tokenid}`)
+      .get(`${global.host}/api/v1/onetimetokens/${tokenid}?key=${global.key}`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .catch(v => v)
 
