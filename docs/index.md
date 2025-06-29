@@ -223,7 +223,7 @@ PassWeaver API makes use of a cache in order to avoid too much pressure on the d
 
 ### Authentication
 
-PassWeaver API is **stateless** and **sessionless** and uses SHA-512 signed JWTs for authentication.
+PassWeaver API is **stateless** and **sessionless** and uses SHA-512 signed JWTs for authentication; JWT signing key is randomly generated every time the application is started.
 
 A JWT is returned on successful login, and it must be provided in all subsequent calls - until it expires - in requests header as an "Authorization bearer".
 

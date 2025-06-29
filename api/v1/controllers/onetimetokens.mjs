@@ -26,6 +26,18 @@ import jsonwebtoken from 'jsonwebtoken'
 export async function get (req, res, next) {
   const tokenid = req.params.id
 
+  // Check supplied key
+  let key
+  try {
+    key = Buffer.from(req.query?.key, 'base64')
+    if (key.length !== 32) {
+      throw new Error('Invalid key length')
+    }
+  } catch (e) {
+    res.status(R.BAD_REQUEST).send(R.badRequest('Invalid key'))
+    return
+  }
+
   // Search token
   const ottoken = await DB.onetimetokens.findUnique({
     where: { token: tokenid }
@@ -58,26 +70,31 @@ export async function get (req, res, next) {
 
   const resp = {
     secret: '',
-    item: {},
+    item: '',
     type: ottoken.type
   }
 
   // Generic secret
   if (ottoken.type === 0) {
     resp.secret = Crypt.decrypt(ottoken.data, ottoken.dataiv, ottoken.dataauthtag)
+
+    // Reencrypt secret with key
+    resp.secret = Crypt.encryptedPayload(key, resp.secret)
   }
   // Item share
   if (ottoken.type === 1) {
     // Get item relevant fields
-    resp.item = await DB.items.findUnique({
+    const item = await DB.items.findUnique({
       where: { id: ottoken.itemid },
       select: { id: true, type: true, title: true }
     })
-    if (resp.item === null) {
+    if (item === null) {
       res.status(R.NOT_FOUND).send(R.ko('Item not found'))
       return
     }
-    resp.item.data = await Items.decrypt(ottoken.itemid, req)
+    item.data = await Items.decrypt(ottoken.itemid, req)
+
+    resp.item = Crypt.encryptedPayload(key, JSON.stringify(item))
   }
 
   // Delete token

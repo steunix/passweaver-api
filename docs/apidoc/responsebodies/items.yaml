@@ -25,7 +25,7 @@ getsuccess:
                 example: Database accout
               data:
                 type: string
-                description: Item content data
+                description: AES-256-CBC encrypted and base64 encoded item data in the form "iv:data", encrypted using the key provided in the request
               metadata:
                 type: string
                 description: Item metadata

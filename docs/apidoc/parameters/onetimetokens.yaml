@@ -1,0 +1,17 @@
+# One time tokens parameters
+
+token:
+  name: token
+  in: path
+  description: The token id to retrieve
+  required: true
+  schema:
+    type: string
+
+key:
+  name: key
+  in: query
+  description: The key to use for encryption. Avoid using the same key for multiple requests, use a different key for each request.
+  required: true
+  schema:
+    type: string
