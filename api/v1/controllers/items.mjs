@@ -344,7 +344,7 @@ export async function create (req, res, next) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
   } else {
-    encData = Crypt.encrypt(req.body.data)
+    encData = await Item.encrypt(Const.KMS_TYPE_NODEK, req.body.data)
   }
 
   // Creates the item
@@ -728,7 +728,7 @@ export async function clone (req, res, next) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
   } else {
-    oldData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    oldData = Item.decrypt(item.data, item.dataiv, item.dataauthtag)
   }
   const newData = Crypt.encrypt(oldData)
 

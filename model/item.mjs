@@ -10,6 +10,7 @@ import * as Folder from './folder.mjs'
 import * as Const from '../lib/const.mjs'
 import DB from '../lib/db.mjs'
 import * as Crypt from '../lib/crypt.mjs'
+import * as KMS from '../lib/kms/kms.mjs'
 
 /**
  * Update ts_vector fields for full text search
@@ -48,7 +49,16 @@ export async function updateFTS (id) {
 export async function decrypt (itemid, req) {
   // Search item
   const item = await DB.items.findUniqueOrThrow({
-    where: { id: itemid }
+    where: { id: itemid },
+    select: {
+      data: true,
+      dataiv: true,
+      dataauthtag: true,
+      algo: true,
+      personal: true,
+      kmsmode: true,
+      dek: true
+    }
   })
 
   let data
@@ -56,10 +66,20 @@ export async function decrypt (itemid, req) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     data = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
   } else {
-    data = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    data = await KMS.decrypt(item.kmsmode, item.dek, item.data, item.dataiv, item.dataauthtag, item.algo)
   }
 
   return data
+}
+
+/**
+ * Encrypt data using given KMS
+ * @param {Number} kmsmode KMS mode
+ * @param {String} data Data to encrypt
+ * @returns A structure containing the IV, the encrypted data and the auth tag, along other informations.
+ */
+export async function encrypt (kmsmode, data) {
+  return await KMS.encrypt(kmsmode, data, 'aes-256-gcm')
 }
 
 /**

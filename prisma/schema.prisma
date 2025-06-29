@@ -127,6 +127,9 @@ model items {
   personal    Boolean   @default(false)
   type        String?   @db.Uuid
   title       String
+  dek         Bytes?
+  kmsmode     Int?      @default(0)
+  kekversion  String?
   data        String
   dataiv      String
   dataauthtag String
@@ -172,6 +175,9 @@ model itemsdeleted {
   personal    Boolean   @default(false)
   type        String?
   title       String
+  dek         Bytes?
+  kmsmode     Int?      @default(0)
+  kekversion  String?
   data        String
   dataiv      String
   dataauthtag String
