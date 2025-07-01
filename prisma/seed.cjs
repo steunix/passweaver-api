@@ -27,7 +27,7 @@ async function main () {
     data: {
       type: 1,
       description: 'Local file key',
-      config: '{"master_key_path":"/etc/passweaver/passweaver-master-key.txt"}',
+      config: AUTO_TEST ? '{"master_key_path":"/home/runner/work/_temp/key.txt"}' : '{"master_key_path":"/etc/passweaver/passweaver-master-key.txt"}',
       active: true
     }
   })
@@ -230,8 +230,6 @@ async function main () {
       }
     })
   }
-
-
 }
 
 main()

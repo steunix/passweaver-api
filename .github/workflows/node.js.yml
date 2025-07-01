@@ -49,12 +49,11 @@ jobs:
       - name: Seed development data into database
         run: npx prisma db seed -- --environment development
 
+      - name: Create temporary key
+        run: echo "MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA=" > ${RUNNER_TEMP}/key.txt
+
       - name: Run PassweaverAPI
         run: npm start &
 
       - name: Run tests
         run: npm test
-
-      - name: Errors output
-        run: cat log/passweaver-api-errors.log > $GITHUB_STEP_SUMMARY
-
