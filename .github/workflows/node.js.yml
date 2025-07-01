@@ -55,3 +55,6 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Errors output
+        run: cat log/passweaver-api-errors.log > $GITHUB_STEP_SUMMARY
+
