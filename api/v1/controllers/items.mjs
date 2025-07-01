@@ -495,7 +495,7 @@ export async function update (req, res, next) {
       const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
       newData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
     } else {
-      newData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+      newData = await Item.decrypt(itemid)
     }
   }
 
@@ -505,8 +505,10 @@ export async function update (req, res, next) {
     encData = Crypt.encryptPersonal(newData, user.personalkey, req.personaltoken)
     updateStruct.personal = true
   } else {
-    encData = Crypt.encrypt(newData)
+    encData = await Item.encrypt(newData)
     updateStruct.personal = false
+    updateStruct.kmsid = encData.kmsId
+    updateStruct.dek = encData.dek
   }
   updateStruct.algo = encData.algo
   updateStruct.data = encData.encrypted
@@ -549,7 +551,7 @@ export async function update (req, res, next) {
       const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
       decData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
     } else {
-      decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+      decData = await Item.decrypt(itemid)
     }
     if (decData !== req.body.data) {
       // If JSON, check all properties for changes
@@ -730,9 +732,9 @@ export async function clone (req, res, next) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
   } else {
-    oldData = Item.decrypt(item.data, item.dataiv, item.dataauthtag)
+    oldData = await Item.decrypt(itemid)
   }
-  const newData = Crypt.encrypt(oldData)
+  const newData = await Item.encrypt(oldData)
 
   // Creates the item
   const newid = newId()
@@ -740,6 +742,8 @@ export async function clone (req, res, next) {
     id: newid,
     folderid: item.folderid,
     title: `${item.title} - Copy`,
+    kmsid: newData.kmsId,
+    dek: newData.dek,
     type: item.type,
     algo: newData.algo,
     data: newData.encrypted,
