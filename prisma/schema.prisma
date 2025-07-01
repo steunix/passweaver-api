@@ -127,9 +127,11 @@ model items {
   personal    Boolean   @default(false)
   type        String?   @db.Uuid
   title       String
-  dek         Bytes?
-  kmsmode     Int?      @default(0)
+
+  kmsid       String?   @db.Uuid
+  dek         String?
   kekversion  String?
+
   data        String
   dataiv      String
   dataauthtag String
@@ -141,6 +143,7 @@ model items {
 
   folder   folders    @relation(fields: [folderid], references: [id], onUpdate: Cascade, onDelete: Restrict )
   itemtype itemtypes? @relation(fields: [type], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  kms      kms?       @relation(fields: [kmsid], references: [id], onUpdate: Cascade, onDelete: Restrict )
 
   fav      itemsfav[]
   fts      itemsfts[]
@@ -175,9 +178,11 @@ model itemsdeleted {
   personal    Boolean   @default(false)
   type        String?
   title       String
-  dek         Bytes?
-  kmsmode     Int?      @default(0)
+
+  kmsid       String?   @db.Uuid
+  dek         String?
   kekversion  String?
+
   data        String
   dataiv      String
   dataauthtag String
@@ -230,4 +235,17 @@ model events {
   @@index([timestamp])
   @@index([entityid1])
   @@index([user])
+}
+
+model kms {
+  id          String   @id @db.Uuid @default(uuid(7))
+  type        Int
+  description String
+  config      String?
+  active      Boolean  @default(false)
+
+  createdat   DateTime @default(now())
+  updatedat   DateTime @updatedAt
+
+  items       items[]
 }

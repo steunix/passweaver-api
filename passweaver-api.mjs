@@ -32,6 +32,7 @@ import events from './api/v1/routes/events.mjs'
 import personal from './api/v1/routes/personal.mjs'
 import itemtypes from './api/v1/routes/itemtypes.mjs'
 import onetimetokens from './api/v1/routes/onetimetokens.mjs'
+import kms from './api/v1/routes/kms.mjs'
 import version from './api/v1/routes/version.mjs'
 
 export const app = Express()
@@ -93,6 +94,7 @@ app.use('/api/v1/events', events)
 app.use('/api/v1/personal', personal)
 app.use('/api/v1/itemtypes', itemtypes)
 app.use('/api/v1/onetimetokens', onetimetokens)
+app.use('/api/v1/kms', kms)
 app.use('/api/v1/version', version)
 
 // Error handler

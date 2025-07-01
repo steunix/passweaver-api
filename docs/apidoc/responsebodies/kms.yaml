@@ -1,0 +1,58 @@
+# Success response
+status:
+  type: string
+  enum: [ "success" ]
+
+getsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              id:
+                type: string
+                description: KMS ID
+                example: db
+              description:
+                type: string
+                description: KMS description
+              type:
+                type: number
+                description: KMS type
+              active:
+                type: boolean
+                description: KMS active status
+
+listsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: KMS ID
+                  example: db
+                description:
+                  type: string
+                  description: KMS description
+                type:
+                  type: number
+                  description: KMS type
+                active:
+                  type: boolean
+                  description: KMS active status
