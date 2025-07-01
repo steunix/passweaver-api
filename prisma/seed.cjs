@@ -21,6 +21,16 @@ async function main () {
   console.log('Creating base data...')
   let id
 
+  /** KMS */
+  await prisma.kms.create({
+    data: {
+      type: 1,
+      description: 'Local file key',
+      config: '{"master_key_path":"/etc/passweaver/passweaver-master-key.txt"}',
+      active: true
+    }
+  })
+
   /** FOLDERS  */
   // Root
   id = Const.PW_FOLDER_ROOTID

@@ -344,7 +344,7 @@ export async function create (req, res, next) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
   } else {
-    encData = await Item.encrypt(Const.KMS_TYPE_NODEK, req.body.data)
+    encData = await Item.encrypt(req.body.data)
   }
 
   // Creates the item
@@ -354,6 +354,8 @@ export async function create (req, res, next) {
       id: newid,
       folderid: folder,
       personal,
+      kmsid: encData.kmsId,
+      dek: encData.dek,
       title: req.body.title,
       type: req?.body?.type || null,
       algo: encData.algo,

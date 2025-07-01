@@ -56,7 +56,7 @@ export async function decrypt (itemid, req) {
       dataauthtag: true,
       algo: true,
       personal: true,
-      kmsmode: true,
+      kmsid: true,
       dek: true
     }
   })
@@ -66,7 +66,7 @@ export async function decrypt (itemid, req) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     data = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
   } else {
-    data = await KMS.decrypt(item.kmsmode, item.dek, item.data, item.dataiv, item.dataauthtag, item.algo)
+    data = await KMS.decrypt(item.kmsid, item.dek, item.data, item.dataiv, item.dataauthtag, item.algo)
   }
 
   return data
@@ -78,8 +78,8 @@ export async function decrypt (itemid, req) {
  * @param {String} data Data to encrypt
  * @returns A structure containing the IV, the encrypted data and the auth tag, along other informations.
  */
-export async function encrypt (kmsmode, data) {
-  return await KMS.encrypt(kmsmode, data, 'aes-256-gcm')
+export async function encrypt (data) {
+  return await KMS.encrypt(data, 'aes-256-gcm')
 }
 
 /**
