@@ -22,6 +22,7 @@ async function main () {
   let id
 
   /** KMS */
+  console.log('- KMS')
   await prisma.kms.create({
     data: {
       type: 1,
@@ -32,6 +33,7 @@ async function main () {
   })
 
   /** FOLDERS  */
+  console.log('- Folders')
   // Root
   id = Const.PW_FOLDER_ROOTID
   await prisma.folders.upsert({
@@ -57,6 +59,7 @@ async function main () {
   })
 
   /** GROUPS */
+  console.log('- Groups')
   // Root
   id = Const.PW_GROUP_ROOTID
   await prisma.groups.upsert({
@@ -94,6 +97,7 @@ async function main () {
   })
 
   /** USERS */
+  console.log('- Users')
   // Admin
   id = Const.PW_USER_ADMINID
   await prisma.users.upsert({
@@ -115,6 +119,7 @@ async function main () {
   })
 
   /** USERS GROUP ASSOCIATION */
+  console.log('- Users/groups')
   // Admin in Admins
   await prisma.groupsmembers.create({
     data: {
@@ -132,6 +137,7 @@ async function main () {
   })
 
   /** FOLDER GROUP PERMISSIONS */
+  console.log('- Folders/group')
   await prisma.folderspermissions.create({
     data: {
       folderid: Const.PW_FOLDER_ROOTID,
@@ -142,6 +148,7 @@ async function main () {
   })
 
   /** ITEMS TYPE */
+  console.log('- Item type')
   await prisma.itemtypes.create({
     data: {
       description: 'default',
@@ -154,6 +161,7 @@ async function main () {
     console.log('Creating development data...')
 
     // Sample folders
+    console.log('- Sample folders')
     for (let i = 1; i <= 3; i++) {
       id = `sample${i}`
       await prisma.folders.upsert({
@@ -168,6 +176,7 @@ async function main () {
     }
 
     // Sample users
+    console.log('- Sample users')
     for (let i = 1; i <= 2; i++) {
       id = `user${i}`
       await prisma.users.upsert({
@@ -211,6 +220,7 @@ async function main () {
     }
 
     // Folder permissions
+    console.log('- Folders permissions')
     await prisma.folderspermissions.create({
       data: {
         folderid: 'sample1',
@@ -220,11 +230,13 @@ async function main () {
       }
     })
   }
+
+
 }
 
 main()
   .then(async () => {
-    console.log('Data successfully created or updated')
+    console.log('All data successfully seeded')
     await prisma.$disconnect()
   })
   .catch(async (e) => {
