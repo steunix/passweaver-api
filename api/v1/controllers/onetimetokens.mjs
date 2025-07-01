@@ -14,6 +14,8 @@ import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Items from '../../../model/item.mjs'
+import * as KMS from '../../../lib/kms/kms.mjs'
+
 import jsonwebtoken from 'jsonwebtoken'
 
 /**
@@ -76,7 +78,7 @@ export async function get (req, res, next) {
 
   // Generic secret
   if (ottoken.type === 0) {
-    resp.secret = Crypt.decrypt(ottoken.data, ottoken.dataiv, ottoken.dataauthtag)
+    resp.secret = await KMS.decrypt(ottoken.kmsid, ottoken.dek, ottoken.data, ottoken.dataiv, ottoken.dataauthtag, 'aes-256-gcm')
 
     // Reencrypt secret with key
     resp.secret = Crypt.encryptedPayload(key, resp.secret)
@@ -170,7 +172,9 @@ export async function create (req, res, next) {
   }
 
   if (req.body.type === Const.OTT_TYPE_SECRET) {
-    const encData = Crypt.encrypt(req.body.data)
+    const encData = await KMS.encrypt(req.body.data, 'aes-256-gcm')
+    newdata.kmsid = encData.kmsId
+    newdata.dek = encData.dek
     newdata.data = encData.encrypted
     newdata.dataiv = encData.iv
     newdata.dataauthtag = encData.authTag

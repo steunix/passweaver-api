@@ -211,6 +211,10 @@ model onetimetokens {
   scope       Int? @default(0)
   userid      String?
 
+  kmsid       String?   @db.Uuid
+  dek         String?
+  kekversion  String?
+
   data        String?
   dataiv      String?
   dataauthtag String?
