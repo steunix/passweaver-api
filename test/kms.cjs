@@ -7,7 +7,7 @@ describe('KMS', () => {
     const res1 = await global.agent
       .post(`${global.host}/api/v1/kms`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
-      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: true })
+      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: false })
       .catch(v => v)
 
     assert.strictEqual(res1.status, 201)
@@ -42,7 +42,7 @@ describe('KMS', () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/kms`)
       .set('Authorization', `Bearer ${global.userJWT}`)
-      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: true })
+      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: false })
       .catch(v => v)
 
     assert.strictEqual(res1.status, 403)
@@ -70,7 +70,7 @@ describe('KMS', () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/kms`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
-      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: true })
+      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: false })
       .catch(v => v)
 
     assert.strictEqual(res1.status, 201)
@@ -96,7 +96,7 @@ describe('KMS', () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/kms`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
-      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: true })
+      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: false })
       .catch(v => v)
 
     assert.strictEqual(res1.status, 201)
@@ -121,7 +121,7 @@ describe('KMS', () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/kms`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
-      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: true })
+      .send({ type: 0, description: 'test', config: '{ "key": "value" }', active: false })
       .catch(v => v)
 
     assert.strictEqual(res1.status, 201)
