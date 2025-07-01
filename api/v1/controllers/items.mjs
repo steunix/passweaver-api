@@ -341,8 +341,7 @@ export async function create (req, res, next) {
   // Encrypt data
   let encData
   if (personal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
+    encData = await Item.encrypt(req.body.data, req.user, req.personaltoken)
   } else {
     encData = await Item.encrypt(req.body.data)
   }
@@ -491,25 +490,19 @@ export async function update (req, res, next) {
     newData = req.body.data
   } else {
     // If no data is given, decrypt the current data
-    if (item.personal) {
-      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-      newData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
-    } else {
-      newData = await Item.decrypt(itemid)
-    }
+    newData = await Item.decrypt(itemid, req)
   }
 
   // Encrypt according to the new folder
   if (newIsPersonal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    encData = Crypt.encryptPersonal(newData, user.personalkey, req.personaltoken)
+    encData = await Item.encrypt(newData, req.user, req.personaltoken)
     updateStruct.personal = true
   } else {
     encData = await Item.encrypt(newData)
     updateStruct.personal = false
-    updateStruct.kmsid = encData.kmsId
-    updateStruct.dek = encData.dek
   }
+  updateStruct.kmsid = encData.kmsId
+  updateStruct.dek = encData.dek
   updateStruct.algo = encData.algo
   updateStruct.data = encData.encrypted
   updateStruct.dataiv = encData.iv
@@ -546,13 +539,7 @@ export async function update (req, res, next) {
 
   // Check what has changed in data
   if (req.body?.data) {
-    let decData
-    if (newIsPersonal) {
-      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-      decData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
-    } else {
-      decData = await Item.decrypt(itemid)
-    }
+    const decData = await Item.decrypt(itemid, req)
     if (decData !== req.body.data) {
       // If JSON, check all properties for changes
       const olddata = JSON.parse(decData)
@@ -727,14 +714,13 @@ export async function clone (req, res, next) {
   }
 
   // Reencrypt data
-  let oldData
+  const oldData = Item.decrypt(itemid, req)
+  let newData
   if (item.personal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
+    newData = await Item.encrypt(oldData, req.user, req.personaltoken)
   } else {
-    oldData = await Item.decrypt(itemid)
+    newData = await Item.encrypt(oldData)
   }
-  const newData = await Item.encrypt(oldData)
 
   // Creates the item
   const newid = newId()
