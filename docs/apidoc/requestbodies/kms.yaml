@@ -5,7 +5,7 @@ kmsCreateBody:
   properties:
     type:
       type: number
-      description: KMS type
+      description: KMS type; 1 is "Local key"
     description:
       type: string
       description: KMS description
@@ -25,7 +25,7 @@ kmsUpdateBody:
   properties:
     type:
       type: number
-      description: KMS type
+      description: KMS type; 1 is "Local key"
     description:
       type: string
       description: KMS description

@@ -23,6 +23,7 @@ See below for a full API documentation.
 
 ## Features
 
+- Cloud KMS integration
 - Personal folders for each user
 - Favorite items
 - Share one-time secrets with anyone, even if they have not an account
@@ -161,17 +162,46 @@ OTS are an easy way to share a secret with someone: you provide the data to encr
 
 This is similar to various public services you can find online.
 
+## Authentication
+
+Users can authenticate by local user password or LDAP/Active directory, depending of its config; PassWeaver uses signed JWTs to keep track of user id between calls, there is no persistent session handling.
+
 ## Encryption
 
-User passwords are hashed using bcrypt algorythm.
+PassWeaver API applies classic envelope encryption on items:
+  - a DEK (data encryption key) is randomly generated for every created item
+  - the DEK is used to encrypt item data
+  - the DEK itself is encrypted using a KEK (Key encryption key) obtained by a (configurable) KMS; at the moment only "Local file" KMS is supported, Google Cloud KMS will be added shortly
+  - the same KEK (thus the same KMS) will be needed for decrypting the item
 
-Items are encrypted in the database using AES-GCM, using a master key that is read from the file defined in `master_key_file` config entry.
+So the KMS is responsible to handle a KEK: any number of KMS can be created, but only one can be "active" at a given time: it will be used for encrypting new items; non active KMS will be used for decrypting old items. Future plan is to handle per-folder KMS.
 
-**WARNING**: as with any other software using symmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure to keep your master key safe and *properly backed up*.
+Whatever KMS you choose, both data and DEK are encrypted using AES-256-GCM.
+
+**Whatever KMS you decide to use, PassWeaver-API uses symmetric encryption, so please keep in mind that losing your KEK will irremediably make all your database unreadable.** So be sure to have all the tools to recover it, or preserve it very safely.
+
+Also, consider that you should never change the configuration of a KMS, because that may render unreadable all the items that were encrypted with it.
+
+Here is a list of supported KMS.
+
+### Local file KMS
+
+The "Local file" KMS works by reading the KEK (master key) from a local file. The configuration you have to provide when creating the KMS with the API is the following JSON:
+```
+{
+  "master_key_path": "/path/to/master/key/file"
+}
+```
+
+The local file must contain only one line, a base64-encoded 32 bytes key.
+
+A default Local file KMS is shipped by default with Passweaver-API, with a `master_key_path` set to `/etc/passweaver/passweaver-master-key.txt`
+
+Local file KMS is a quick-n-dirty way to start, but the KEK is stored on the local file system, thus available to a potential attacket who gets access to the machine.
 
 ### Personal items
 
-Personal items are encrypted with "envelope encryption" first and then reencrypted with master key:
+Personal items are encrypted with a double envelope encryption:
 
 - When a user set its personal password for the first time, a random key (PKEY) is automatically generated
 - PKEY is encrypted with a key derived from the user password using PBKDF2, and stored in the database
@@ -187,15 +217,15 @@ Then, when creating an item in a personal folder:
 - PPWD is extracted from JWT and decrypted
 - PKEY is decrypted using the key derived from user password (PBKDF2)
 - Data is encrypted with AES-256-ECB using PKEY
-- Data is then re-encrypted with AES-256-GCM with master key
+- Resulting data is then encrypted with AES-256-GCM like any other non-personal items (second envelope encrypion)
 
 When reading a personal item:
 - PPWD is extracted from JWT and decrypted
 - PKEY is decrypted using the key derived from user password (PBKDF2)
-- Data is decrypted with AES-256-GCM with master key
+- Data is decrypted with AES-256-GCM with master key (second envelope decryption)
 - Obtained data is then decrypted with AES-256-ECB using PKEY
 
-No keys are retained in memory or cache, everything is recalculated when needed.
+**No keys are retained in memory or cache, everything is recalculated when needed.**
 
 ## Operations log
 
@@ -284,7 +314,7 @@ file as secret and secure as possible: if you loose it you won't be able to decr
 
 Copy `config-skel.json` to `config.json` and adjust the options:
 
-- `master_key_file`: The file (with complete path) containing the (base64 encoded) master key
+- **obsolete** `master_key_file`: The file (with complete path) containing the (base64 encoded) master key; it is only necessary if you have a database with items created with version 1.x API
 - `jwt_duration`: JWT duration. For example, "2h" or "1d". When JWT expires, a new login is required.
 - `listen`:
   - `port`: port to bind
