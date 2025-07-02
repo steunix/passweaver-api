@@ -714,7 +714,7 @@ export async function clone (req, res, next) {
   }
 
   // Reencrypt data
-  const oldData = Item.decrypt(itemid, req)
+  const oldData = await Item.decrypt(itemid, req)
   let newData
   if (item.personal) {
     newData = await Item.encrypt(oldData, req.user, req.personaltoken)
