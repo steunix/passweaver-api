@@ -23,6 +23,7 @@ See below for a full API documentation.
 
 ## Features
 
+- Cloud KMS integration
 - Personal folders for each user
 - Favorite items
 - Share one-time secrets with anyone, even if they have not an account
@@ -161,41 +162,97 @@ OTS are an easy way to share a secret with someone: you provide the data to encr
 
 This is similar to various public services you can find online.
 
+## Authentication
+
+Users can authenticate by local user password or LDAP/Active directory, depending of its config; PassWeaver uses signed JWTs to keep track of user id between calls, there is no persistent session handling.
+
 ## Encryption
 
-User passwords are hashed using bcrypt algorythm.
+PassWeaver API applies classic envelope encryption on items:
+  - a DEK (data encryption key) is randomly generated for every new item
+  - the DEK is used to encrypt item data
+  - the DEK itself is encrypted using a KEK (Key encryption key) obtained by a (configurable) KMS
+  - the same KEK (thus the same KMS) will be needed for decrypting the item
 
-Items are encrypted in the database using AES-GCM, using a master key that is read from the file defined in `master_key_file` config entry.
+So the KMS is responsible to handle a KEK: any number of KMS can be created, but only one can be "active" at a given time: it will be used for encrypting new items; non active KMS will be used for decrypting old items. Future plan is to handle per-folder KMS.
 
-**WARNING**: as with any other software using symmetric encryption, if you loose your master key you're **completely screwed** and there is no way to recover encrypted data. So be sure to keep your master key safe and *properly backed up*.
+Whatever KMS you choose, both data and DEK are encrypted using AES-256-GCM.
+
+**Whatever KMS you decide to use, PassWeaver-API uses symmetric encryption, so please keep in mind that losing your KEK will irremediably make all your database unreadable.** So be sure to have all the tools to recover it, or preserve it very safely.
+
+Also, consider that you should never change the configuration of a KMS, because that may render unreadable all the items that were encrypted with it.
+
+Each KMS as its own configuration in JSON format; below a list of supported KMS.
+
+### Local file KMS
+
+The "Local file" KMS works by reading the KEK (master key) from a local file. The configuration you have to provide when creating the KMS with the API is the following JSON:
+```
+{
+  "master_key_path": "/path/to/master/key/file"
+}
+```
+
+The local file must contain only one line, a base64-encoded 32 bytes key.
+
+A default Local file KMS is shipped by default with Passweaver-API, with a `master_key_path` set to `/etc/passweaver/passweaver-master-key.txt`
+
+Local file KMS is a quick-n-dirty way to start, but the KEK is stored on the local file system, thus available to a potential attacker who gets access to the machine.
+
+### Google Cloud KMS
+
+In order to use Google Clould KMS, you need to create a keyring and an active simmetric key with your Google Cloud account, and then you must to provide this configuration to PassweaverAPI:
+
+```
+{
+  "projectId": "<google project id>",
+  "locationId": "<region of the keyring>",
+  "keyRingId": "<keyring id>",
+  "keyId": "<key id>"
+}
+```
+
+You must then set the GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of your service account key JSON: [follow this link](https://cloud.google.com/iam/docs/keys-create-delete?hl=it).
+
+The key version used to crypt the DEK will be stored along the item, but **keep in mind that at the moment PassWeaverAPI does not handle the key rotation**: if a version of the key gets invalidated,
+the items using that version will not be readable anymore: at the moment **you have to disable key rotation**. A feature to convert items from one version of the key to another will be added in the
+near future.
 
 ### Personal items
 
-Personal items are encrypted with "envelope encryption" first and then reencrypted with master key:
+Personal items are encrypted with a double envelope encryption:
 
 - When a user set its personal password for the first time, a random key (PKEY) is automatically generated
 - PKEY is encrypted with a key derived from the user password using PBKDF2, and stored in the database
 - The personal password (PPWD) is stored in the db using bcrypt algo
 - When user unlocks the personal folder providing his PPWD, the authentication JWT will be updated adding a claim with his seeded and encrypted password:
   - the PPWD is seeded with random bytes initialized on Password-API startup, and then encrypted with AES-256-ECB using random key and i.v. also initialized at startup
-  - this updated JWT needs to be used for subsequent calls
-  - adding the encrypted password in the JWT is needed because Passweaver API is stateless and sessionless, so the only way to recognize the user calling the API is
-    the JWT itself
+  - this updated JWT needs to be used for subsequent calls in order to identify a user that actually unlocked the personal folder
+  - **NOTE**: adding the encrypted password in the JWT is needed because Passweaver API is stateless and sessionless, so the only way to recognize the user and - in this case -
+    the fact that it has unlocked its personal folder - is the JWT itself
 - When a user wants to access a personal folder, the seeded and encrypted PPWD in the JWT is validated against the one stored into the DB in order to grant access
 
 Then, when creating an item in a personal folder:
 - PPWD is extracted from JWT and decrypted
 - PKEY is decrypted using the key derived from user password (PBKDF2)
 - Data is encrypted with AES-256-ECB using PKEY
-- Data is then re-encrypted with AES-256-GCM with master key
+- Resulting data is then encrypted with your active KMS (thus, double envelope encryption)
 
 When reading a personal item:
 - PPWD is extracted from JWT and decrypted
 - PKEY is decrypted using the key derived from user password (PBKDF2)
-- Data is decrypted with AES-256-GCM with master key
+- Data is decrypted with the KMS used to crypt it
 - Obtained data is then decrypted with AES-256-ECB using PKEY
 
-No keys are retained in memory or cache, everything is recalculated when needed.
+**No keys or passwords are retained in memory or cache, everything is recalculated when needed.**
+
+### Further security
+
+As further security measure, item data and onetime secrets are not sent in plain text as a response to the API, instead they are encrypted with the mandatory key given in the request: this ensures
+that the item data cannot be (easily) sniffed from the raw network traffic (provided that you generate a random key at every call): this is useful in case you keep the API (or the frontend) in
+plain HTTP instead of using HTTPS (maybe because you are already behind a reverse proxy).
+
+Of course one could decrypt the data if it intercepts both the request and the response... so **please enable HTTPS** even if behind a secured network.
 
 ## Operations log
 
@@ -205,12 +262,13 @@ Passweaver API keeps a log about:
 - operations on folders (creation, deletion, update)
 - operations on users (creation, deletion, update)
 - operations on groups (creation, deletion, update)
+- operations on one time secrets
 - login and passwords changes
-- personal folders unlock
+- personal folders unlocks
 
 ## Application logs
 
-PassWeaver API logs every call in a 'combined log format'. Errors are tracked in a separate log. There are configuration options to customize log files rotation and retention.
+PassWeaver API logs every HTTP call in a 'combined log format' (the file is named passweaver-api-access.log) while errors are tracked in a separate log (passweaver-api-errors.log). There are configuration options to customize log files directories, rotation and retention.
 
 ## Cache
 
@@ -227,6 +285,8 @@ PassWeaver API is **stateless** and **sessionless** and uses SHA-512 signed JWTs
 
 A JWT is returned on successful login, and it must be provided in all subsequent calls - until it expires - in requests header as an "Authorization bearer".
 
+Currently there is no support for token renewal.
+
 ### Responses
 
 PassWeaver API endpoints respond with JSON payloads using standard HTTP response codes, so be sure to handle them correctly:
@@ -235,7 +295,7 @@ PassWeaver API endpoints respond with JSON payloads using standard HTTP response
 - 401: Unauthorized: you haven't logged in yet, or your JWT is not valid/expired
 - 403: Forbidden: you do not have permissions to do what you're asking for
 - 404: Not found: what you are looking for does not exist
-- 409: Conflict: a write is attemped but system is in readonly mode
+- 409: Conflict: a write operation is attemped, but system is in readonly mode
 - 412: Personal secret not set: user hasn't set a password for personal folder yet
 - 417: Personal secret not specified: user hasn't specified a personal password when accessing a personal item
 - 422: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
@@ -243,8 +303,8 @@ PassWeaver API endpoints respond with JSON payloads using standard HTTP response
 Along with HTTP response code, you'll always get this minimum payload:
 ```
 {
-  status: success/failed,
-  message: text,
+  status: "success/failed",
+  message: "text",
   data: {}
 }
 ```
@@ -254,8 +314,8 @@ In case of errors (status="failed"), you can find the explanation in the "messag
 If any data is returned by the endpoint, it will be always encapsulated in the "data" field:
 ```
 {
-  status: success/failed,
-  message: text,
+  status: "success/failed",
+  message: "text",
   data: { whatever }
 }
 ```
@@ -278,13 +338,9 @@ Download the source, and install all dependencies with npm:
 
 ## Configure
 
-Prepare a master key file and save it on your disk: this file will contain the base64 encoded AES-256 key
-for encrypting your data. Ensure it is **outside** the directory where PassWeaver sources are. Keep this
-file as secret and secure as possible: if you loose it you won't be able to decrypt your data anymore.
-
 Copy `config-skel.json` to `config.json` and adjust the options:
 
-- `master_key_file`: The file (with complete path) containing the (base64 encoded) master key
+- **obsolete** `master_key_file`: The file (with complete path) containing the (base64 encoded) master key; it is only necessary if you have a database with items created with version 1.x API
 - `jwt_duration`: JWT duration. For example, "2h" or "1d". When JWT expires, a new login is required.
 - `listen`:
   - `port`: port to bind

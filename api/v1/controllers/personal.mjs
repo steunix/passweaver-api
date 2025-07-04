@@ -125,7 +125,7 @@ export async function updatePassword (req, res, next) {
 
   // Get personal key and decrypt using the current JWT
   const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-  const pkey = Crypt.decryptPersonalKey(Buffer.from(user.personalkey, 'base64'), req.personaltoken)
+  const pkey = await Crypt.decryptPersonalKey(Buffer.from(user.personalkey, 'base64'), req.personaltoken)
 
   // Encrypt personal key with personal password
   const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')

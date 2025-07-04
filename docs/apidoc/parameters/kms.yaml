@@ -1,0 +1,17 @@
+# KMS parameters
+
+kmsid:
+  name: kmsid
+  in: path
+  description: KMS ID
+  required: true
+  schema:
+    type: string
+
+search:
+  name: search
+  in: query
+  description: Search string
+  required: false
+  schema:
+    type: string

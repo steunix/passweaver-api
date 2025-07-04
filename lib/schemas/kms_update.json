@@ -1,0 +1,10 @@
+{
+  "$id": "kms_update",
+  "type": "object",
+  "properties": {
+    "description" : { "type": "string", "maxLength": 100 },
+    "type" : { "type": "number" },
+    "config": { "type": "string", "maxLength": 4096 },
+    "active": { "type": "boolean" }
+  }
+}

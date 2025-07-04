@@ -341,10 +341,9 @@ export async function create (req, res, next) {
   // Encrypt data
   let encData
   if (personal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    encData = Crypt.encryptPersonal(req.body.data, user.personalkey, req.personaltoken)
+    encData = await Item.encrypt(req.body.data, req.user, req.personaltoken)
   } else {
-    encData = Crypt.encrypt(req.body.data)
+    encData = await Item.encrypt(req.body.data)
   }
 
   // Creates the item
@@ -354,6 +353,9 @@ export async function create (req, res, next) {
       id: newid,
       folderid: folder,
       personal,
+      kmsid: encData.kmsId,
+      dek: encData.dek,
+      kekversion: encData.kekversion,
       title: req.body.title,
       type: req?.body?.type || null,
       algo: encData.algo,
@@ -489,23 +491,19 @@ export async function update (req, res, next) {
     newData = req.body.data
   } else {
     // If no data is given, decrypt the current data
-    if (item.personal) {
-      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-      newData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
-    } else {
-      newData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
-    }
+    newData = await Item.decrypt(itemid, req)
   }
 
   // Encrypt according to the new folder
   if (newIsPersonal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    encData = Crypt.encryptPersonal(newData, user.personalkey, req.personaltoken)
+    encData = await Item.encrypt(newData, req.user, req.personaltoken)
     updateStruct.personal = true
   } else {
-    encData = Crypt.encrypt(newData)
+    encData = await Item.encrypt(newData)
     updateStruct.personal = false
   }
+  updateStruct.kmsid = encData.kmsId
+  updateStruct.dek = encData.dek
   updateStruct.algo = encData.algo
   updateStruct.data = encData.encrypted
   updateStruct.dataiv = encData.iv
@@ -542,13 +540,7 @@ export async function update (req, res, next) {
 
   // Check what has changed in data
   if (req.body?.data) {
-    let decData
-    if (newIsPersonal) {
-      const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-      decData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
-    } else {
-      decData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
-    }
+    const decData = await Item.decrypt(itemid, req)
     if (decData !== req.body.data) {
       // If JSON, check all properties for changes
       const olddata = JSON.parse(decData)
@@ -723,14 +715,13 @@ export async function clone (req, res, next) {
   }
 
   // Reencrypt data
-  let oldData
+  const oldData = await Item.decrypt(itemid, req)
+  let newData
   if (item.personal) {
-    const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
-    oldData = Crypt.decryptPersonal(item.data, item.dataiv, item.dataauthtag, user.personalkey, req.personaltoken)
+    newData = await Item.encrypt(oldData, req.user, req.personaltoken)
   } else {
-    oldData = Crypt.decrypt(item.data, item.dataiv, item.dataauthtag)
+    newData = await Item.encrypt(oldData)
   }
-  const newData = Crypt.encrypt(oldData)
 
   // Creates the item
   const newid = newId()
@@ -738,6 +729,8 @@ export async function clone (req, res, next) {
     id: newid,
     folderid: item.folderid,
     title: `${item.title} - Copy`,
+    kmsid: newData.kmsId,
+    dek: newData.dek,
     type: item.type,
     algo: newData.algo,
     data: newData.encrypted,
