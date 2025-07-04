@@ -38,6 +38,16 @@ describe('KMS', () => {
     assert.strictEqual(res1.status, 400)
   })
 
+  it('Create KMS bad config', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/kms`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ type: 1, description: 'test', config: 'abc' })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 400)
+  })
+
   it('Create KMS unauthorized', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/kms`)

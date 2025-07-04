@@ -101,6 +101,12 @@ export async function create (req, res, next) {
     return
   }
 
+  // Check that config is a valid JSON
+  if (JSON.parse(req.body.config) === null) {
+    res.status(R.BAD_REQUEST).send(R.badRequest())
+    return
+  }
+
   // Creates the KMS
   const created = await DB.kms.create({
     data: {
