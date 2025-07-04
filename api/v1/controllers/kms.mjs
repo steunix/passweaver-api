@@ -239,6 +239,17 @@ export async function remove (req, res, next) {
     return
   }
 
+  // Explicitly check that KMS is not used
+  const itms = await DB.items.findFirst({
+    where: {
+      kmsid
+    }
+  })
+  if (itms !== null) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('KMS is used, it cannot be deleted'))
+    return
+  }
+
   // Deletes KMS
   await DB.kms.delete({
     where: {

@@ -23,8 +23,10 @@ async function main () {
 
   /** KMS */
   console.log('- KMS')
-  await prisma.kms.create({
-    data: {
+  await prisma.kms.upsert({
+    where: { id: '0197d44b-96b2-7602-9dda-dfed2a59e862' },
+    create: {
+      id: '0197d44b-96b2-7602-9dda-dfed2a59e862',
       type: 1,
       description: 'Local file key',
       config: AUTO_TEST ? '{"master_key_path":"/home/runner/work/_temp/key.txt"}' : '{"master_key_path":"/etc/passweaver/passweaver-master-key.txt"}',
