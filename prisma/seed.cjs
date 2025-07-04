@@ -25,6 +25,7 @@ async function main () {
   console.log('- KMS')
   await prisma.kms.upsert({
     where: { id: '0197d44b-96b2-7602-9dda-dfed2a59e862' },
+    update: {},
     create: {
       id: '0197d44b-96b2-7602-9dda-dfed2a59e862',
       type: 1,
