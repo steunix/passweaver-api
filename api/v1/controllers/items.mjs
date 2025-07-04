@@ -355,6 +355,7 @@ export async function create (req, res, next) {
       personal,
       kmsid: encData.kmsId,
       dek: encData.dek,
+      kekversion: encData.kekversion,
       title: req.body.title,
       type: req?.body?.type || null,
       algo: encData.algo,

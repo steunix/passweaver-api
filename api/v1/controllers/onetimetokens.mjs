@@ -175,6 +175,7 @@ export async function create (req, res, next) {
     const encData = await KMS.encrypt(req.body.data, 'aes-256-gcm')
     newdata.kmsid = encData.kmsId
     newdata.dek = encData.dek
+    newdata.kekversion = encData.kekversion
     newdata.data = encData.encrypted
     newdata.dataiv = encData.iv
     newdata.dataauthtag = encData.authTag
