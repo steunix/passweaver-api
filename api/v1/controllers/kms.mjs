@@ -102,7 +102,9 @@ export async function create (req, res, next) {
   }
 
   // Check that config is a valid JSON
-  if (JSON.parse(req.body.config) === null) {
+  try {
+    JSON.parse(req.body.config)
+  } catch (err) {
     res.status(R.BAD_REQUEST).send(R.badRequest())
     return
   }
