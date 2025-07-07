@@ -60,7 +60,7 @@ export async function get (req, res, next) {
   }
 
   // Check token scope
-  if (ottoken.scope === Const.OTT_SCOPE_LOGGEDIN && req?.user === undefined) {
+  if ((ottoken.scope === Const.OTT_SCOPE_LOGGEDIN || ottoken.scope === Const.OTT_SCOPE_USER) && req?.user === undefined) {
     res.status(R.FORBIDDEN).send(R.ko('In order to show this secret, you need to login'))
     return
   }
