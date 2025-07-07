@@ -69,5 +69,5 @@
     },
     "readonly": { "type": "boolean" }
   },
-  "required": ["master_key_file", "jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly"]
+  "required": ["jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly"]
 }
