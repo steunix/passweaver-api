@@ -170,17 +170,15 @@ Users can authenticate by local user password or LDAP/Active directory, dependin
 
 PassWeaver API applies classic envelope encryption on items:
   - a DEK (data encryption key) is randomly generated for every new item
-  - the DEK is used to encrypt item data
+  - the DEK is used to encrypt item data (AES-256-GCM algorithm)
   - the DEK itself is encrypted using a KEK (Key encryption key) obtained by a (configurable) KMS
   - the same KEK (thus the same KMS) will be needed for decrypting the item
 
-So the KMS is responsible to handle a KEK: any number of KMS can be created, but only one can be "active" at a given time: it will be used for encrypting new items; non active KMS will be used for decrypting old items. Future plan is to handle per-folder KMS.
-
-Whatever KMS you choose, both data and DEK are encrypted using AES-256-GCM.
+So the KMS is responsible to handle a KEK: any number of KMS can be created, but only one can be "active" at a given time: it will be used for any new encryption (both new items, updates on existing items, new onetime secrets); non active KMS will be used only for decrypting old items.
 
 **Whatever KMS you decide to use, PassWeaver-API uses symmetric encryption, so please keep in mind that losing your KEK will irremediably make all your database unreadable.** So be sure to have all the tools to recover it, or preserve it very safely.
 
-Also, consider that you should never change the configuration of a KMS, because that may render unreadable all the items that were encrypted with it.
+Also, consider that you should never change the configuration of a KMS, because that may render unreadable all the items that were encrypted with it. It's always better to create a new one with fresh config.
 
 Each KMS as its own configuration in JSON format; below a list of supported KMS.
 
@@ -212,7 +210,7 @@ In order to use Google Clould KMS, you need to create a keyring and an active si
 }
 ```
 
-You must then set the GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of your service account key JSON: [follow this link](https://cloud.google.com/iam/docs/keys-create-delete?hl=it).
+You must then set the GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of your service account key JSON: [follow this link for info](https://cloud.google.com/iam/docs/keys-create-delete?hl=it).
 
 The key version used to crypt the DEK will be stored along the item, but **keep in mind that at the moment PassWeaverAPI does not handle the key rotation**: if a version of the key gets invalidated,
 the items using that version will not be readable anymore: at the moment **you have to disable key rotation**. A feature to convert items from one version of the key to another will be added in the
@@ -299,6 +297,7 @@ PassWeaver API endpoints respond with JSON payloads using standard HTTP response
 - 412: Personal secret not set: user hasn't set a password for personal folder yet
 - 417: Personal secret not specified: user hasn't specified a personal password when accessing a personal item
 - 422: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
+- 500: Internal error
 
 Along with HTTP response code, you'll always get this minimum payload:
 ```
