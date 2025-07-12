@@ -3,7 +3,8 @@
   "type": "object",
   "properties": {
     "username" : { "type": "string", "maxLength": 50 },
-    "password" : { "type": "string", "maxLength": 100 }
-  },
-  "required": ["username", "password"]
+    "password" : { "type": "string", "maxLength": 100 },
+    "apikey": { "type": "string", "maxLength": 50 },
+    "secret": { "type": "string", "maxLength": 100 }
+  }
 }

@@ -1,0 +1,38 @@
+# Request bodies for API keys
+
+apikeyCreateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Description
+    userid:
+      type: string
+      description: Connected user
+    expiresat:
+      type: string
+      description: Expiring date, YYYY-MM-DD
+    active:
+      type: boolean
+      description: Active status
+  required:
+    - description
+    - userid
+    - expiresat
+    - active
+
+apikeyUpdateBody:
+  type: object
+  properties:
+    description:
+      type: string
+      description: Description
+    userid:
+      type: string
+      description: Connected user
+    expiresat:
+      type: string
+      description: Expiring date, YYYY-MM-DD
+    active:
+      type: boolean
+      description: Active status

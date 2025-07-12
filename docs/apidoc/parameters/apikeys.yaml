@@ -1,0 +1,17 @@
+# API keys parameters
+
+apikeyid:
+  name: apikeyid
+  in: path
+  description: API key id
+  required: true
+  schema:
+    type: string
+
+search:
+  name: search
+  in: query
+  description: Search string
+  required: false
+  schema:
+    type: string

@@ -1,0 +1,10 @@
+{
+  "$id": "apikey_update",
+  "type": "object",
+  "properties": {
+    "description" : { "type": "string", "maxLength": 100 },
+    "userid": { "type": "string", "maxLength": 50},
+    "expiresat" : { "type": "string" },
+    "active": { "type": "boolean" }
+  }
+}

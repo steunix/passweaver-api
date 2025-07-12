@@ -19,6 +19,16 @@ global.userCreateData = {
   secret: '123'
 }
 
+global.userCreateDataApiKey = {
+  login: 'test',
+  firstname: 'test',
+  lastname: 'test',
+  authmethod: 'apikey',
+  locale: 'en_US',
+  email: 'me',
+  secret: '123'
+}
+
 global.itemCreateData = {
   title: 'item title',
   data: 'item data',

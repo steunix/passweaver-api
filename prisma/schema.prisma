@@ -57,10 +57,11 @@ model users {
   createdat       DateTime @default(now())
   updatedat       DateTime @updatedAt
 
-  groups  groupsmembers[]
-  folders folders[]
-  settings usersettings[]
+  groups     groupsmembers[]
+  folders    folders[]
+  settings   usersettings[]
   fav        itemsfav[]
+  apikeys    apikeys[]
 
   @@unique([login])
 }
@@ -252,4 +253,27 @@ model kms {
   updatedat   DateTime @updatedAt
 
   items       items[]
+}
+
+model apikeys {
+  id          String   @id @db.Uuid @default(uuid(7))
+
+  secret      String
+  secretiv    String?
+  secretauthtag String?
+  algorithm   String
+  kmsid       String
+  dek         String?
+  kekversion  String?
+
+  description String?
+  userid      String
+  expiresat   DateTime
+  active      Boolean
+
+  createdat   DateTime @default(now())
+  updatedat   DateTime @updatedAt
+  lastusedat  DateTime?
+
+  user users @relation(fields: [userid], references: [id], onUpdate: Cascade, onDelete: Restrict )
 }

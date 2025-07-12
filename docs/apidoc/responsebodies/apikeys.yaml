@@ -1,0 +1,81 @@
+# Success response
+status:
+  type: string
+  enum: [ "success" ]
+
+getsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Api key id
+                example: "123456"
+              description:
+                type: string
+                description: Description
+              userid:
+                type: string
+                description: Connected user
+              expiresat:
+                type: string
+                description: Expiring date
+              active:
+                type: boolean
+                description: Active status
+              createdat:
+                type: string
+                description: Creation time
+              updatedat:
+                type: string
+                description: Update time
+              lastusedat:
+                type: string
+                description: Last usage time
+listsuccess:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Api key id
+                  example: "123456"
+                description:
+                  type: string
+                  description: Description
+                userid:
+                  type: string
+                  description: Connected user
+                expiresat:
+                  type: string
+                  description: Expiring date
+                active:
+                  type: boolean
+                  description: Active status
+                createdat:
+                  type: string
+                  description: Creation time
+                updatedat:
+                  type: string
+                  description: Update time
+                lastusedat:
+                  type: string
+                  description: Last usage time

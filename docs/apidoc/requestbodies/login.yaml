@@ -9,6 +9,12 @@ loginBody:
     password:
       type: string
       example: mypassword
+    apikey:
+      type: string
+      example: abcd
+    secret:
+      type: string
+      example: abcd
   required:
     - username
     - password

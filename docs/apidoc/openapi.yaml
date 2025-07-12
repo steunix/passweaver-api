@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 
 info:
   contact:
@@ -39,6 +39,8 @@ tags:
     description: "One time tokens"
   - name: "KMS"
     description: "Key Management Service"
+  - name: "API keys"
+    description: "API keys"
   - name: "Events"
     description: Events
   - name: "Utilities"
@@ -105,6 +107,10 @@ paths:
     $ref: '.\paths\kms.yaml'
   /kms/{kmsid}:
     $ref: '.\paths\kmsid.yaml'
+  /apikeys:
+    $ref: '.\paths\apikeys.yaml'
+  /apikeys/{apikeyid}:
+    $ref: '.\paths\apikeysid.yaml'
   /util/info:
     $ref: '.\paths\utilinfo.yaml'
   /util/generatepassword:

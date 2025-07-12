@@ -18,7 +18,7 @@ getsuccess:
               id:
                 type: string
                 description: KMS ID
-                example: db
+                example: "123456"
               description:
                 type: string
                 description: KMS description
@@ -46,7 +46,7 @@ listsuccess:
                 id:
                   type: string
                   description: KMS ID
-                  example: db
+                  example: "123456"
                 description:
                   type: string
                   description: KMS description
