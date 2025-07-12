@@ -43,6 +43,7 @@ export async function get (req, res, next) {
     return
   }
 
+  apik.expiresat = apik.expiresat.toISOString().substring(0, 10)
   Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_APIKEY, apiid)
   res.send(R.ok(apik))
 }
