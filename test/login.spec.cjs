@@ -31,4 +31,212 @@ describe('Login', function () {
     assert.strictEqual(res1.status, 200)
     assert.notStrictEqual(res1?.body?.data?.jwt, undefined)
   })
+
+  it('Valid login via API', async function () {
+    const data = { ...global.userCreateDataApiKey }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res0 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+    assert.strictEqual(res0.status, 201)
+    const userId = res0.body.data.id
+
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: userId, expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const apikId = res1.body.data.id
+    const secret = res1.body.data.secret
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 200)
+    const jwt = res2.body.data.jwt
+
+    const res3 = await agent
+      .get(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${jwt}`)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 200)
+
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 200)
+  })
+
+  it('Login via API, bad API key', async function () {
+    const apikId = '0197d44b-96b2-7602-9dda-dfed2a59e862'
+    const secret = '0197d44b-96b2-7602-9dda-dfed2a59e862'
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 401)
+  })
+
+  it('Login via API, bad secret', async function () {
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const apikId = res1.body.data.id
+    const secret = res1.body.data.id
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 401)
+
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+  })
+
+  it('Login via API, expired', async function () {
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2020-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const apikId = res1.body.data.id
+    const secret = res1.body.data.id
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 401)
+
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+  })
+
+  it('Login via API, not active', async function () {
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: false })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const apikId = res1.body.data.id
+    const secret = res1.body.data.id
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 401)
+
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+  })
+
+  it('Login user, apikey auth method mismatch', async function () {
+    const data = { ...global.userCreateDataApiKey }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+    assert.strictEqual(res1.status, 201)
+    const userId = res1.body.data.id
+
+    const res3 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ username: data.login, password: global.userCreateDataApiKey.password })
+      .catch(v => v)
+    assert.strictEqual(res3.status, 401)
+
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 200)
+  })
+
+  it('Login user, local auth method mismatch', async function () {
+    const data = { ...global.userCreateData }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+    assert.strictEqual(res1.status, 201)
+    const userId = res1.body.data.id
+
+    const res2 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+    const apikId = res2.body.data.id
+    const secret = res2.body.data.secret
+
+    const res3 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+    assert.strictEqual(res3.status, 401)
+
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 200)
+  })
 })

@@ -16,6 +16,7 @@ import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Settings from '../../../lib/settings.mjs'
+import * as ApiKey from '../../../model/apikey.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -33,12 +34,61 @@ export async function login (req, res, next) {
     return
   }
 
+  const data = {
+    username: req.body.username?.toLowerCase() || '',
+    password: req.body?.password || '',
+    apikey: req.body?.apikey || '',
+    secret: req.body?.secret || ''
+  }
+
+  // If an API key is provided, validate it and get the user
+  let isapikey = false
+  if (data.apikey && data.secret) {
+    if (!await ApiKey.exists(data.apikey)) {
+      Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTFOUND, Const.EV_ENTITY_APIKEY, data.apikey)
+      res.status(R.UNAUTHORIZED).send(R.ko('Bad API key'))
+      return
+    }
+    if (!await ApiKey.checkSecret(data.apikey, data.secret)) {
+      Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_FAILED, Const.EV_ENTITY_APIKEY, data.apikey)
+      res.status(R.UNAUTHORIZED).send(R.ko('Bad API key secret'))
+      return
+    }
+
+    const apik = await DB.apikeys.findUnique({
+      where: { id: data.apikey },
+      select: { userid: true, active: true }
+    })
+    if (!apik.active) {
+      Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTVALID, Const.EV_ENTITY_APIKEY, data.apikey)
+      res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
+      return
+    }
+
+    const user = await DB.users.findUnique({
+      where: { id: apik.userid },
+      select: { login: true, authmethod: true }
+    })
+
+    // Mark lastused on API key
+    await DB.apikeys.update({
+      where: { id: data.apikey },
+      data: { lastusedat: new Date() }
+    })
+
+    // Add event
+    Events.add(user.id, Const.EV_ACTION_LOGIN_APIKEY, Const.EV_ENTITY_APIKEY, data.apikey)
+
+    data.username = user.login
+    isapikey = true
+  }
+
   // Check user
   const user = await DB.users.findUnique({
-    where: { login: req.body.username.toLowerCase() }
+    where: { login: data.username }
   })
   if (user === null) {
-    Events.add(req.body.username, Const.EV_ACTION_LOGINNF, Const.EV_ENTITY_USER, req.body.username)
+    Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTFOUND, Const.EV_ENTITY_USER, data.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
@@ -56,13 +106,13 @@ export async function login (req, res, next) {
 
   // Check if user is valid
   if (!user.active) {
-    Events.add(req.body.username, Const.EV_ACTION_LOGINNV, Const.EV_ENTITY_USER, req.body.username)
+    Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTVALID, Const.EV_ENTITY_USER, data.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
 
   // Validate user password
-  if (user.authmethod === 'ldap') {
+  if (!isapikey && user.authmethod === 'ldap') {
     const ldap = Config.get().ldap
 
     // LDAP authentication
@@ -86,7 +136,7 @@ export async function login (req, res, next) {
       let authenticated = false
       for (const baseDn of ldap.baseDn) {
         const search = await ldapClient.search(baseDn, {
-          filter: `(${ldap.userDn}=${req.body.username})`,
+          filter: `(${ldap.userDn}=${data.username})`,
           scope: 'sub',
           attributes: [ldap.userDn]
         })
@@ -96,7 +146,7 @@ export async function login (req, res, next) {
           try {
             await ldapClient.bind(
               `${search.searchEntries[0].dn}`,
-              req.body.password
+              data.password
             )
             authenticated = true
             break
@@ -109,17 +159,26 @@ export async function login (req, res, next) {
         throw new Error('User not found')
       }
     } catch (err) {
-      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
+      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
     }
-  } else {
-    // Local authentication
-    if (!await Crypt.checkPassword(req.body.password, user.secret)) {
-      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, req.body.username)
+  }
+
+  // Local authentication
+  if (!isapikey && user.authmethod === 'local') {
+    if (!await Crypt.checkPassword(data.password, user.secret)) {
+      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
     }
+  }
+
+  // API key method check
+  if ((!isapikey && user.authmethod === 'apikey') || (isapikey && user.authmethod !== 'apikey')) {
+    Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
+    res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
+    return
   }
 
   // Creates JWT token

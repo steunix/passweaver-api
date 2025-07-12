@@ -5,7 +5,7 @@
     "login" : { "type": "string", "maxLength": 50 },
     "firstname" : { "type": "string", "maxLength": 100 },
     "lastname": { "type": "string", "maxLength": 100 },
-    "authmethod": { "type": "string", "enum": ["local","ldap"] },
+    "authmethod": { "type": "string", "enum": ["local","ldap","apikey"] },
     "locale": { "type": "string", "maxLength": 10 },
     "email" : { "type": "string", "maxLength": 50 },
     "secret" : { "type": "string", "maxLength": 100 }

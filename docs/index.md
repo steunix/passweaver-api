@@ -24,6 +24,7 @@ See below for a full API documentation.
 ## Features
 
 - Cloud KMS integration
+- API keys
 - Personal folders for each user
 - Favorite items
 - Share one-time secrets with anyone, even if they have not an account
@@ -108,6 +109,7 @@ While groups can be nested to form a tree, there is no membership inheritance: i
 PassWeaver supports two authentication methods:
  - Local: the user password is stored locally
  - LDAP: a self authentication to an LDAP server: no LDAP admin credential are needed, a direct login is tried
+ - API key: the user can authenticate only via an existing API key
 
 #### Admins
 
@@ -164,7 +166,16 @@ This is similar to various public services you can find online.
 
 ## Authentication
 
-Users can authenticate by local user password or LDAP/Active directory, depending of its config; PassWeaver uses signed JWTs to keep track of user id between calls, there is no persistent session handling.
+Users can authenticate by local user password or LDAP/Active directory, depending of the user config; PassWeaver uses signed JWTs to keep track of user id between calls, there is no persistent session handling.
+
+### API keys
+
+API keys can be created for easier credential handling in case of automated clients. An API key is bound to a user, whose authentication method must be 'apikey': this way you can easily manage permissions as you would do for a regular
+user (assigning it to a group), without the need of exposing proper user password or to disrupt functionalities in case the user changes his password.
+
+You can create as many API keys you need for a given user and activate/disactivate them at any time. They also have an expiration date.
+
+Signing in with an API key will result in a regular JWT.
 
 ## Encryption
 

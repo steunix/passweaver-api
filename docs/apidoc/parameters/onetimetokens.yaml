@@ -2,7 +2,7 @@
 
 token:
   name: token
-  in: path
+  in: query
   description: The token id to retrieve
   required: true
   schema:

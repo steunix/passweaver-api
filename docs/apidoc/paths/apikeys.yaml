@@ -1,0 +1,44 @@
+get:
+  tags:
+    - API keys
+  operationId: "searchAPIKey"
+  summary: Search API key
+  description: Search API key
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\apikeys.yaml#/search'
+  responses:
+    "200":
+      description: API key found
+      $ref: '..\responsebodies\apikeys.yaml#/listsuccess'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Item not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
+
+post:
+  tags:
+    - API keys
+  operationId: "createAPIKey"
+  summary: Create API key
+  description: Create API key
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\apikeys.yaml#/apikeyCreateBody'
+  security:
+    - bearerAuth: []
+  responses:
+    "201":
+      $ref: '..\responsebodies\default.yaml#/created'
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'

@@ -18,6 +18,10 @@ userCreateBody:
     authmethod:
       type: string
       description: Authentication method
+      enum:
+        - local
+        - ldap
+        - apikey
       example: local
     locale:
       type: string
@@ -56,6 +60,10 @@ userUpdateBody:
       type: string
       description: Authentication method
       example: local
+      enum:
+        - local
+        - ldap
+        - apikey
     locale:
       type: string
       description: Locale
