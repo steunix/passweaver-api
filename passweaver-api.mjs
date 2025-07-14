@@ -20,6 +20,7 @@ import * as Config from './lib/config.mjs'
 import * as Cache from './lib/cache.mjs'
 import * as R from './lib/response.mjs'
 import * as Const from './lib/const.mjs'
+import * as Metrics from './lib/metrics.mjs'
 
 // Routes
 import folders from './api/v1/routes/folders.mjs'
@@ -35,6 +36,7 @@ import onetimetokens from './api/v1/routes/onetimetokens.mjs'
 import kms from './api/v1/routes/kms.mjs'
 import apikeys from './api/v1/routes/apikeys.mjs'
 import version from './api/v1/routes/version.mjs'
+import metrics from './api/v1/routes/metrics.mjs'
 
 export const app = Express()
 
@@ -98,6 +100,7 @@ app.use('/api/v1/onetimetokens', onetimetokens)
 app.use('/api/v1/kms', kms)
 app.use('/api/v1/apikeys', apikeys)
 app.use('/api/v1/version', version)
+app.use('/api/v1/metrics', metrics)
 
 // Error handler
 app.use((err, req, res, next) => {
@@ -116,6 +119,19 @@ app.all(/.*/, (_req, res, _next) => {
     data: {}
   })
 })
+
+// Setup metrics
+if (cfg?.enable_metrics) {
+  Metrics.init()
+  Metrics.createCounter(Const.METRICS_LOGIN_USERS, 'User logins')
+  Metrics.createCounter(Const.METRICS_LOGIN_APIKEYS, 'API keys logins')
+  Metrics.createCounter(Const.METRICS_ITEMS_CREATED, 'New items')
+  Metrics.createCounter(Const.METRICS_ITEMS_DELETED, 'Deleted items')
+  Metrics.createCounter(Const.METRICS_ITEMS_UPDATED, 'Updated items')
+  Metrics.createCounter(Const.METRICS_ITEMS_READ, 'Read items')
+  Metrics.createCounter(Const.METRICS_KMS_ENCRYPTIONS, 'Encryptions')
+  Metrics.createCounter(Const.METRICS_KMS_DECRYPTIONS, 'Decryptions')
+}
 
 // HTTP(S) server start
 if (cfg.https.enabled) {

@@ -219,7 +219,6 @@ describe('Utils', function () {
       .post(`${global.host}/api/v1/util/systemreadwrite`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .catch(v => v)
-
     assert.strictEqual(res1.status, 200)
 
     const res2 = await agent

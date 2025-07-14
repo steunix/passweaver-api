@@ -1,0 +1,11 @@
+get:
+  tags:
+    - Metrics
+  operationId: Metrics
+  summary: Get PassWaver API metrics in Prometheus format
+  description: Get PassWaver API metrics
+
+  responses:
+    "200":
+      $ref: '..\responsebodies\metrics.yaml#/metricssuccess'
+      description: Metrics returned

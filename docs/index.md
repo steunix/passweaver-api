@@ -35,6 +35,7 @@ See below for a full API documentation.
 - Extensive log actions on items
 - Both LDAP and local authentication
 - Immediate system lock (only admins can login)
+- Export various metrics (including default NodeJS metrics) in Prometheus format
 
 ## How it works
 
@@ -285,6 +286,14 @@ PassWeaver API makes use of a cache in order to avoid too much pressure on the d
   - internal: when the "redis" configuration (see below) is false, `node-cache` npm module is used: be aware that this module is
     **intentionally** non advisable for production environments
   - Redis: you can use Redis by setting "redis" to true in the configuration and providing an URL to a running Redis instance
+
+## Metrics
+
+If enabled in configuration, PassWeaver API export various metrics (along default NodeJS ones) at the `/api/v1/metrics' endpoint:
+  - Users logins count
+  - API keys logins count
+  - Item create, update, delete and read count
+  - KMS encryptions and decryptions count
 
 ## The API
 
