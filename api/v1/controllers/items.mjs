@@ -18,6 +18,7 @@ import * as Crypt from '../../../lib/crypt.mjs'
 import * as Cache from '../../../lib/cache.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Metrics from '../../../lib/metrics.mjs'
 
 import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
 
@@ -132,6 +133,8 @@ export async function get (req, res, next) {
   })
 
   Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
+  Metrics.counterInc(Const.METRICS_ITEMS_READ)
+
   res.send(R.ok(item))
 }
 
@@ -370,6 +373,7 @@ export async function create (req, res, next) {
   await Item.updateFTS(newid)
 
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
+  Metrics.counterInc(Const.METRICS_ITEMS_CREATED)
   res.status(R.CREATED).send(R.ok({ id: newid }))
 }
 
@@ -564,6 +568,7 @@ export async function update (req, res, next) {
         id: itemid
       }
     })
+    Metrics.counterInc(Const.METRICS_ITEMS_UPDATED)
     Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid, null, `Updated: ${changedFields.join(',')}`)
   }
 
@@ -663,6 +668,7 @@ export async function remove (req, res, next) {
   })
 
   Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, itemid)
+  Metrics.counterInc(Const.METRICS_ITEMS_DELETED)
   res.send(R.ok())
 }
 
@@ -748,6 +754,7 @@ export async function clone (req, res, next) {
 
   Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, itemid)
   Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
+  Metrics.counterInc(Const.METRICS_ITEMS_CREATED)
   res.status(R.CREATED).send(R.ok({ id: newid }))
 }
 

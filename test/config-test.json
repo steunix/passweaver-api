@@ -1,6 +1,6 @@
 {
-  "jwt_duration": "24h",
   "master_key_file": "none",
+  "jwt_duration": "24h",
   "automated_test": true,
   "listen": {
     "port": 3000,
@@ -20,5 +20,6 @@
   "onetimetokens": {
     "max_hours": 168
   },
-  "readonly": false
+  "readonly": false,
+  "enable_metrics": true
 }

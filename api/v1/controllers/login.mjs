@@ -17,6 +17,7 @@ import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Settings from '../../../lib/settings.mjs'
 import * as ApiKey from '../../../model/apikey.mjs'
+import * as Metrics from '../../../lib/metrics.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -183,6 +184,8 @@ export async function login (req, res, next) {
 
   // Creates JWT token
   const token = await Auth.createToken(user.id, false)
+
+  Metrics.counterInc(isapikey ? Const.METRICS_LOGIN_APIKEYS : Const.METRICS_LOGIN_APIKEYS)
 
   Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
   res.send(R.ok({ jwt: token }))

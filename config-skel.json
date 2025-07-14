@@ -34,5 +34,6 @@
   "onetimetokens": {
     "max_hours": 168
   },
-  "readonly": false
+  "readonly": false,
+  "enable_metrics": true
 }

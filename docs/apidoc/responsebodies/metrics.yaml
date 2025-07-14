@@ -1,0 +1,7 @@
+# Success response
+metricssuccess:
+  description: PassWeaver API version
+  content:
+    text/plain:
+      schema:
+        type: string

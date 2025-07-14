@@ -47,6 +47,8 @@ tags:
     description: Utilities
   - name: "Version"
     description: Version
+  - name: "Metrics"
+    description: Metrics
 
 paths:
   /login:
@@ -131,6 +133,8 @@ paths:
     $ref: '.\paths\onetimetokens.yaml'
   /version:
     $ref: '.\paths\version.yaml'
+  /metrics:
+    $ref: '.\paths\metrics.yaml'
 
 components:
   securitySchemes:

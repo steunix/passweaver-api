@@ -67,7 +67,8 @@
       },
       "required": [ "max_hours" ]
     },
-    "readonly": { "type": "boolean" }
+    "readonly": { "type": "boolean" },
+    "enable_metrics": { "type": "boolean" }
   },
   "required": ["jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly"]
 }
