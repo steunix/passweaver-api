@@ -10,7 +10,6 @@ jobs:
     env:
       PASSWEAVERAPI_PRISMA_URL: postgresql://postgres:postgres@localhost:5432/passweaver
       PASSWEAVER_AUTO_TEST: 1
-      NODE_ENV: production
 
     # You must use a Linux environment when using service containers or container jobs
     runs-on: ubuntu-latest
