@@ -15,7 +15,8 @@
     "enabled": false
   },
   "redis": {
-    "enabled": false
+    "enabled": true,
+    "url": "redis://localhost:6379"
   },
   "onetimetokens": {
     "max_hours": 168
