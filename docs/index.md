@@ -290,10 +290,10 @@ PassWeaver API makes use of a cache in order to avoid too much pressure on the d
 ## Metrics
 
 If enabled in configuration, PassWeaver API export various metrics (along default NodeJS ones) at the `/api/v1/metrics' endpoint:
-  - Users logins count
-  - API keys logins count
-  - Item create, update, delete and read count
-  - KMS encryptions and decryptions count
+  - Users logins count (`login_users_total`)
+  - API keys logins count (`login_apikeys_total`)
+  - Item create, update, delete and read count (`items_created_total`, `items_updated_total`, `items_deleted_total`, `items_read_total`)
+  - KMS encryptions and decryptions count (`kms_encryptions_total`, `kms_decryptions_total`)
 
 ## The API
 
