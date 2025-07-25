@@ -56,6 +56,7 @@ export async function login (req, res, next) {
       return
     }
 
+    // Search the API key anc check if it is active
     const apik = await DB.apikeys.findUnique({
       where: { id: data.apikey },
       select: { userid: true, active: true }
@@ -66,6 +67,7 @@ export async function login (req, res, next) {
       return
     }
 
+    // Get corresponding user
     const user = await DB.users.findUnique({
       where: { id: apik.userid },
       select: { login: true, authmethod: true }
@@ -78,7 +80,7 @@ export async function login (req, res, next) {
     })
 
     // Add event
-    Events.add(user.id, Const.EV_ACTION_LOGIN_APIKEY, Const.EV_ENTITY_APIKEY, data.apikey)
+    Events.add(apik.userid, Const.EV_ACTION_LOGIN_APIKEY, Const.EV_ENTITY_APIKEY, data.apikey)
 
     data.username = user.login
     isapikey = true
@@ -185,7 +187,7 @@ export async function login (req, res, next) {
   // Creates JWT token
   const token = await Auth.createToken(user.id, false)
 
-  Metrics.counterInc(isapikey ? Const.METRICS_LOGIN_APIKEYS : Const.METRICS_LOGIN_APIKEYS)
+  Metrics.counterInc(isapikey ? Const.METRICS_LOGIN_APIKEYS : Const.METRICS_LOGIN_USERS)
 
   Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
   res.send(R.ok({ jwt: token }))
