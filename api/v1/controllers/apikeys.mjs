@@ -11,6 +11,7 @@ import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
+import * as KMS from '../../../lib/kms/kms.mjs'
 import * as User from '../../../model/user.mjs'
 
 import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
@@ -114,7 +115,7 @@ export async function create (req, res, next) {
 
   // Creates the API key
   const secret = Crypt.randomString(20)
-  const encsecret = await Crypt.encrypt(secret)
+  const encsecret = await KMS.encrypt(secret, 'aes-256-gcm')
 
   const created = await DB.apikeys.create({
     data: {
