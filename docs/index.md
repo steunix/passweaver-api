@@ -318,11 +318,11 @@ PassWeaver API makes use of a cache in order to avoid too much pressure on the d
     **intentionally** non advisable for production environments
   - Redis: you can use Redis by setting "redis" to true in the configuration and providing an URL to a running Redis instance
 
-## The REST API
+# The REST API
 
 For a full API endpoints documentation you can refer to [this page](apidoc/index.html)
 
-### Authentication
+## Authentication
 
 PassWeaver API is **stateless** and **sessionless** and uses SHA-512 signed JWTs for authentication; JWT signing key is randomly generated every time the application is started.
 
@@ -330,7 +330,7 @@ A JWT is returned on successful login, and it must be provided in all subsequent
 
 Currently there is no support for token renewal.
 
-### Responses
+## Responses
 
 PassWeaver API endpoints respond with JSON payloads using standard HTTP response codes, so be sure to handle them correctly:
 
