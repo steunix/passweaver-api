@@ -53,6 +53,7 @@ model users {
   secretexpiresat DateTime
   personalsecret  String?
   personalkey     String?
+  personalseed    String?
   active          Boolean  @default(true)
   createdat       DateTime @default(now())
   updatedat       DateTime @updatedAt
@@ -78,6 +79,7 @@ model usersdeleted {
   secretexpiresat DateTime
   personalsecret  String?
   personalkey     String?
+  personalseed    String?
   active          Boolean  @default(true)
   createdat       DateTime @default(now())
   updatedat       DateTime @updatedAt

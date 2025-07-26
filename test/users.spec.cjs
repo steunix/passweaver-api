@@ -49,6 +49,28 @@ describe('Users', function () {
     assert.strictEqual(res1.status, 404)
   })
 
+  it('Delete user', async () => {
+    const data = { ...global.userCreateData }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const userId = res1.body.data.id
+
+    const res2 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 200)
+  })
+
   it('Create duplicate login', async () => {
     const data = { ...global.userCreateData }
     const rnd = global.rnd()

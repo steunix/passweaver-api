@@ -12,7 +12,6 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
-import * as Config from '../../../lib/config.mjs'
 import * as crypto from 'crypto'
 
 import DB from '../../../lib/db.mjs'
@@ -33,7 +32,8 @@ export async function unlock (req, res, next) {
 
   // Check user
   const user = await DB.users.findUnique({
-    where: { id: req.user }
+    where: { id: req.user },
+    select: { personalsecret: true, personalseed: true }
   })
   if (user === null) {
     Events.add(req.user, Const.EV_ACTION_UNLOCKNF, Const.EV_ENTITY_USER, req.user)
@@ -43,15 +43,15 @@ export async function unlock (req, res, next) {
 
   // Check password
   if (!await Crypt.checkPassword(req.body.password, user.personalsecret)) {
-    Events.add(user.id, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, user.id)
+    Events.add(req.user, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, req.user)
     res.status(R.UNAUTHORIZED).send(R.ko('Wrong password'))
     return
   }
 
   // Create JWT token
-  const token = await Auth.createToken(user.id, req.body.password)
+  const token = await Auth.createToken(req.user, `${user.personalseed || ''}:${req.body.password}`)
 
-  Events.add(user.id, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, user.id)
+  Events.add(req.user, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
 }
 
@@ -71,7 +71,7 @@ export async function setPassword (req, res, next) {
   // Check that personal password is not already set
   const user = await DB.users.findUnique({
     where: { id: req.user },
-    select: { personalsecret: true }
+    select: { personalseed: true, personalsecret: true }
   })
   if (user.personalsecret !== null) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Personal password already set'))
@@ -81,26 +81,31 @@ export async function setPassword (req, res, next) {
   // Create personal storage key
   const pkey = Crypt.randomAESKey()
 
-  // Encrypt personal storage key with personal password
-  const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')
-  const cipher = crypto.createCipheriv('aes-256-ecb', hash, '')
+  // Create a random seed
+  const seed = Crypt.randomBytes(16).toString('base64')
 
-  let ekey = cipher.update(pkey, '', 'base64')
-  ekey += cipher.final('base64')
+  // Derive a key from the personal password
+  const dkey = crypto.pbkdf2Sync(req.body.password, seed, 12, 32, 'sha256')
 
-  // Personal password
-  const pwd = await Crypt.hashPassword(req.body.password)
+  // Encrypt personal key with derived key
+  const ckey = crypto.createCipheriv('aes-256-ecb', dkey, '')
+  let ekey = ckey.update(pkey, '', 'base64')
+  ekey += ckey.final('base64')
+
+  // Hash personal password for checking future personal items unlock
+  const hpwd = await Crypt.hashPassword(req.body.password)
 
   await DB.users.update({
     where: { id: req.user },
     data: {
-      personalsecret: pwd,
-      personalkey: ekey
+      personalsecret: hpwd,
+      personalkey: ekey,
+      personalseed: seed
     }
   })
 
   // Create new JWT token
-  const token = await Auth.createToken(req.user, req.body.password)
+  const token = await Auth.createToken(req.user, `${user.personalseed || ''}:${req.body.password}`)
 
   Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
@@ -124,11 +129,17 @@ export async function updatePassword (req, res, next) {
   }
 
   // Get personal key and decrypt using the current JWT
-  const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
+  const user = await DB.users.findUnique({
+    where: { id: req.user },
+    select: { personalseed: true, personalkey: true }
+  })
   const pkey = await Crypt.decryptPersonalKey(Buffer.from(user.personalkey, 'base64'), req.personaltoken)
 
+  // Create a random seed
+  const seed = Crypt.randomBytes(16).toString('base64')
+
   // Encrypt personal key with personal password
-  const hash = crypto.pbkdf2Sync(req.body.password, Config.get().master_key, 12, 32, 'sha256')
+  const hash = crypto.pbkdf2Sync(req.body.password, seed, 12, 32, 'sha256')
   const cipher = crypto.createCipheriv('aes-256-ecb', hash, '')
 
   let ekey = cipher.update(pkey, '', 'base64')
@@ -141,12 +152,13 @@ export async function updatePassword (req, res, next) {
     where: { id: req.user },
     data: {
       personalsecret: pwd,
-      personalkey: ekey
+      personalkey: ekey,
+      personalseed: seed
     }
   })
 
   // Create new JWT token
-  const token = await Auth.createToken(req.user, req.body.password)
+  const token = await Auth.createToken(req.user, `${user.personalseed || ''}:${req.body.password}`)
 
   Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
@@ -169,7 +181,8 @@ export async function resetPassword (req, res, next) {
     where: { id: req.user },
     data: {
       personalsecret: null,
-      personalkey: null
+      personalkey: null,
+      personalseed: null
     }
   })
 

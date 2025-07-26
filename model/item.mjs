@@ -65,6 +65,7 @@ export async function decrypt (itemid, req) {
   let data
   data = await KMS.decrypt(item.kmsid, item.dek, item.data, item.dataiv, item.dataauthtag, item.algo)
 
+  // If item is personal, decrypt with personal key
   if (item.personal) {
     const user = await DB.users.findUnique({ where: { id: req.user }, select: { personalkey: true } })
     const pkey = Crypt.decryptPersonalKey(user.personalkey, req.personaltoken)

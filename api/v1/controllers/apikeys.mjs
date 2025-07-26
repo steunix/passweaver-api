@@ -36,7 +36,7 @@ export async function get (req, res, next) {
   // Search API key
   const apik = await DB.apikeys.findUnique({
     where: { id: apiid },
-    select: { id: true, description: true, userid: true, expiresat: true, active: true, createdat: true, updatedat: true, lastusedat: true}
+    select: { id: true, description: true, userid: true, expiresat: true, active: true, createdat: true, updatedat: true, lastusedat: true }
   })
 
   if (!apik) {
