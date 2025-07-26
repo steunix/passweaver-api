@@ -60,7 +60,7 @@ PassWeaver API exposes the following objects:
 An 'item' is an entity with a (unecrypted) `title`, a `type` field, `metadata` field, and some encrypted `data`. PassWeaver API just encrypts "strings", so your data can be anything that can be converted into a string: there is not built-in logic on the content.
 
 For example, in one item you may store a JSON object that identifies a login:
-```
+```json
 {
   url: "abc",
   user: "aaa",
@@ -69,7 +69,7 @@ For example, in one item you may store a JSON object that identifies a login:
 ```
 
 and in another item you may have something that represents an API credentials set:
-```
+```json
 {
   clientid: "",
   clientsecret: "",
@@ -330,15 +330,15 @@ Currently there is no support for token renewal.
 
 PassWeaver API endpoints respond with JSON payloads using standard HTTP response codes, so be sure to handle them correctly:
 
-- 400: Bad request: your payload is not valid, malformed, or missing some field
-- 401: Unauthorized: you haven't logged in yet, or your JWT is not valid/expired
-- 403: Forbidden: you do not have permissions to do what you're asking for
-- 404: Not found: what you are looking for does not exist
-- 409: Conflict: a write operation is attemped, but system is in readonly mode
-- 412: Personal secret not set: user hasn't set a password for personal folder yet
-- 417: Personal secret not specified: user hasn't specified a personal password when accessing a personal item
-- 422: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
-- 500: Internal error
+- `400`: Bad request: your payload is not valid, malformed, or missing some field
+- `401`: Unauthorized: you haven't logged in yet, or your JWT is not valid/expired
+- `403`: Forbidden: you do not have permissions to do what you're asking for
+- `404`: Not found: what you are looking for does not exist
+- `409`: Conflict: a write operation is attemped, but system is in readonly mode
+- `412`: Personal secret not set: user hasn't set a password for personal folder yet
+- `417`: Personal secret not specified: user hasn't specified a personal password when accessing a personal item
+- `422`: Unprocessable entity: the entity you are accessing exists, but the data you provided is not acceptable
+- `500`: Internal error
 
 Along with HTTP response code, you'll always get this minimum payload:
 ```json
@@ -351,14 +351,7 @@ Along with HTTP response code, you'll always get this minimum payload:
 
 In case of errors (status="failed"), you can find the explanation in the "message" field.
 
-If any data is returned by the endpoint, it will be always encapsulated in the "data" field:
-```json
-{
-  "status": "success/failed",
-  "message": "text",
-  "data": { whatever }
-}
-```
+If any data is returned by the endpoint, it will be always encapsulated in the "data" field.
 
 # Install and run
 
