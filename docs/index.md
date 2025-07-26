@@ -230,37 +230,44 @@ near future.
 
 ### Personal items
 
-Personal items are encrypted with a double envelope encryption:
+Personal items are encrypted with a double encryption:
 
-- When a user set its personal password for the first time, a random key (PKEY) is automatically generated
-- PKEY is encrypted with a key derived from the user password using PBKDF2, and stored in the database
-- The personal password (PPWD) is stored in the db using bcrypt algo
-- When user unlocks the personal folder providing his PPWD, the authentication JWT will be updated adding a claim with his seeded and encrypted password:
-  - the PPWD is seeded with random bytes initialized on Password-API startup, and then encrypted with AES-256-ECB using random key and i.v. also initialized at startup
+- When a user set its personal password for the first time:
+  - a random key (PDEK) is automatically generated; this will be used to encrypt the data
+  - another key (PKEK) is derived from the user password using PBKDF2 and a random seed (RSEED); this key is NOT stored into the database (only the RSEED is)
+  - the PDEK is then encrypted (envelope encryption) with PKEK, and stored into the database
+  - The personal password (PPWD) is hashed (HPPWD), and this hash is stored in the db using bcrypt algo (to verify the user in the folder unlock process)
+- When user unlocks the personal folder providing his PPWD, the authentication JWT will be updated adding a claim with his 'personal data' (RSEED and PPWD)
+  - the RSEED and PPWD are encrypted with AES-256-ECB using a random key and a random i.v. initialized at application startup, forming the personal token (PTOKEN)
+  - the PTOKEN is added to the JWT
   - this updated JWT needs to be used for subsequent calls in order to identify a user that actually unlocked the personal folder
-  - **NOTE**: adding the encrypted password in the JWT is needed because Passweaver API is stateless and sessionless, so the only way to recognize the user and - in this case -
-    the fact that it has unlocked its personal folder - is the JWT itself
-- When a user wants to access a personal folder, the seeded and encrypted PPWD in the JWT is validated against the one stored into the DB in order to grant access
+  - **NOTE**: adding the (encrypted) password and seed in the JWT is needed because Passweaver API is stateless and sessionless, and the only way to reconstruct the PKEK is
+    having the data in the JWT itself
+- When a user wants to access a personal folder, the password hash is validated against the stored hash (HPPWD) in order to grant access
 
 Then, when creating an item in a personal folder:
-- PPWD is extracted from JWT and decrypted
-- PKEY is decrypted using the key derived from user password (PBKDF2)
-- Data is encrypted with AES-256-ECB using PKEY
-- Resulting data is then encrypted with your active KMS (thus, double envelope encryption)
+- PPWD and PSEED are extracted from the JWT (PTOKEN) and decrypted with the random key generated at application startup
+- PKEK is re-created on the fly using PPWD and PSEED
+- PDEK is decrypted using the PKEK
+- Data is encrypted with AES-256-ECB using PDEK
+- Resulting data is then encrypted with your active KMS (thus, double encryption)
 
 When reading a personal item:
-- PPWD is extracted from JWT and decrypted
-- PKEY is decrypted using the key derived from user password (PBKDF2)
+- PPWD and PSEED are extracted from the JWT (PTOKEN) and decrypted with the random key generated at application startup
+- PKEK is re-created on the fly using PPWD and PSEED
+- PDEK is decrypted using the PKEK
 - Data is decrypted with the KMS used to crypt it
-- Obtained data is then decrypted with AES-256-ECB using PKEY
+- Obtained data is then decrypted with AES-256-ECB using PDEK
 
-**No keys or passwords are retained in memory or cache, everything is recalculated when needed.**
+**No key or password is (intentionally) retained in memory or cache.**
+
+**All the sensitive data is managed with Buffers instead of plain strings, and those Buffers are zeroed immediately after use**
 
 ### Further security
 
 As further security measure, item data and onetime secrets are not sent in plain text as a response to the API, instead they are encrypted with the mandatory key given in the request: this ensures
 that the item data cannot be (easily) sniffed from the raw network traffic (provided that you generate a random key at every call): this is useful in case you keep the API (or the frontend) in
-plain HTTP instead of using HTTPS (maybe because you are already behind a reverse proxy).
+plain HTTP instead of using HTTPS (something YOU DON'T REALLY WANT!).
 
 Of course one could decrypt the data if it intercepts both the request and the response... so **please enable HTTPS** even if behind a secured network.
 
@@ -273,19 +280,12 @@ Passweaver API keeps a log about:
 - operations on users (creation, deletion, update)
 - operations on groups (creation, deletion, update)
 - operations on one time secrets
-- login and passwords changes
+- login (both user and API keys) and passwords changes
 - personal folders unlocks
 
 ## Application logs
 
 PassWeaver API logs every HTTP call in a 'combined log format' (the file is named passweaver-api-access.log) while errors are tracked in a separate log (passweaver-api-errors.log). There are configuration options to customize log files directories, rotation and retention.
-
-## Cache
-
-PassWeaver API makes use of a cache in order to avoid too much pressure on the database, especially in relation to permissions and folders tree for each user. You can choose between these cache providers:
-  - internal: when the "redis" configuration (see below) is false, `node-cache` npm module is used: be aware that this module is
-    **intentionally** non advisable for production environments
-  - Redis: you can use Redis by setting "redis" to true in the configuration and providing an URL to a running Redis instance
 
 ## Metrics
 
@@ -294,6 +294,13 @@ If enabled in configuration, PassWeaver API export various metrics (along defaul
   - API keys logins count (`login_apikeys_total`)
   - Item create, update, delete and read count (`items_created_total`, `items_updated_total`, `items_deleted_total`, `items_read_total`)
   - KMS encryptions and decryptions count (`kms_encryptions_total`, `kms_decryptions_total`)
+
+## Cache
+
+PassWeaver API makes use of a cache in order to avoid too much pressure on the database, especially in relation to permissions and visible folders trees for each user. You can choose between these cache providers:
+  - internal: when the "redis" configuration (see below) is false, `node-cache` npm module is used: be aware that this module is
+    **intentionally** non advisable for production environments
+  - Redis: you can use Redis by setting "redis" to true in the configuration and providing an URL to a running Redis instance
 
 ## The API
 
