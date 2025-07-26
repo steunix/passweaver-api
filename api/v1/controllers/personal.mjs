@@ -92,6 +92,8 @@ export async function setPassword (req, res, next) {
   let ekey = ckey.update(pkey, '', 'base64')
   ekey += ckey.final('base64')
 
+  dkey.fill(0)
+
   // Hash personal password for checking future personal items unlock
   const hpwd = await Crypt.hashPassword(req.body.password)
 
@@ -144,6 +146,8 @@ export async function updatePassword (req, res, next) {
 
   let ekey = cipher.update(pkey, '', 'base64')
   ekey += cipher.final('base64')
+
+  hash.fill(0)
 
   // Personal password
   const pwd = await Crypt.hashPassword(req.body.password)
