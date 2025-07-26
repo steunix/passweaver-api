@@ -61,6 +61,7 @@ describe('Personal folders', function () {
     assert.strictEqual(res1.status, 200)
     assert(Object.hasOwn(res1.body.data, 'jwt'))
 
+    // Create item
     const res2 = await agent
       .post(`${global.host}/api/v1/folders/user1/items`)
       .set('Authorization', `Bearer ${res1.body.data.jwt}`)
@@ -70,6 +71,7 @@ describe('Personal folders', function () {
     assert.strictEqual(res2.status, 201)
     const itemid = res2.body.data.id
 
+    // Update item
     const res3 = await agent
       .patch(`${global.host}/api/v1/items/${itemid}`)
       .set('Authorization', `Bearer ${res1.body.data.jwt}`)
@@ -78,12 +80,22 @@ describe('Personal folders', function () {
 
     assert.strictEqual(res3.status, 200)
 
-    // Cleanup
+    // Get item and verify data
     const res4 = await agent
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
+      .set('Authorization', `Bearer ${res1.body.data.jwt}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+    res4.body.data.data = await global.decryptBlock(res4.body.data.data, global.key)
+    assert.strictEqual(res4.body.data.data, global.itemCreateData.data)
+
+    // Cleanup
+    const res5 = await agent
       .delete(`${global.host}/api/v1/items/${itemid}`)
       .set('Authorization', `Bearer ${res1.body.data.jwt}`)
       .catch(v => v)
-    assert.strictEqual(res4.status, 200)
+    assert.strictEqual(res5.status, 200)
   })
 
   it('Reset personal password', async () => {
