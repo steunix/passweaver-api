@@ -41,7 +41,7 @@ These are the features this API support, in random order:
 - Global readonly mode
 - Export various metrics (including default NodeJS metrics) in Prometheus format
 
-## PassWeaver API elements
+## API objects
 
 PassWeaver API exposes the following objects:
 
@@ -126,7 +126,7 @@ You can create as many API keys you need for a given user and activate/disactiva
 
 ## Authentication
 
-PassWeaver API user can be authenticated via these methods:
+PassWeaver API users can be authenticated via these methods:
 
  - Local: the user password hash is stored locally in the database
  - LDAP: authenticate against a LDAP/Active Directory server
@@ -184,10 +184,6 @@ In other words, a permission on a folder is granted **for itself and all its chi
 While this may sound as a limitation, in the long run it allows to avoid wild permissions forests, such as "hidden" folders available only to a restricted number of people, in a point of the 'tree' where you would not expect it.
 
 That is indeed **exactly** how user **Admin** in PassWeaver API works: it's part of the builtin **Admins**, which has read+write access to 'Root' folder, thus to every folder - due to this kind of inheritance.
-
-## Authentication
-
-Users can authenticate by local user password or LDAP/Active directory, depending of the user config; PassWeaver uses signed JWTs to keep track of user id between calls, there is no persistent session handling.
 
 ## Items encryption
 
@@ -345,22 +341,22 @@ PassWeaver API endpoints respond with JSON payloads using standard HTTP response
 - 500: Internal error
 
 Along with HTTP response code, you'll always get this minimum payload:
-```
+```json
 {
-  status: "success/failed",
-  message: "text",
-  data: {}
+  "status": "success/failed",
+  "message": "text",
+  "data": {}
 }
 ```
 
 In case of errors (status="failed"), you can find the explanation in the "message" field.
 
 If any data is returned by the endpoint, it will be always encapsulated in the "data" field:
-```
+```json
 {
-  status: "success/failed",
-  message: "text",
-  data: { whatever }
+  "status": "success/failed",
+  "message": "text",
+  "data": { whatever }
 }
 ```
 
