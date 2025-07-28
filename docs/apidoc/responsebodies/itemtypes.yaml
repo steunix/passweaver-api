@@ -18,13 +18,15 @@ getsuccess:
               id:
                 type: string
                 description: Item type ID
-                example: db
+                example: 123456789
               description:
                 type: string
                 description: Item type description
+                example: Database account
               icon:
                 type: string
                 description: Font Awesome icon name
+                example: fa-database
 
 listsuccess:
   description: Success
@@ -43,10 +45,12 @@ listsuccess:
                 id:
                   type: string
                   description: Item type ID
-                  example: db
+                  example: 123456789
                 description:
                   type: string
                   description: Item type description
+                  example: Database account
                 icon:
                   type: string
                   description: Font Awesome icon name
+                  example: fa-database

@@ -3,7 +3,9 @@ get:
     - One time tokens
   operationId: "getOneTimeToken"
   summary: Get and burn one time token content
-  description: Get one time token content, encrypted with the key provided in the request. The token is then deleted and will not be accessible anymore.
+  description: |
+    Get one time token content, encrypted with the key provided in the request. The token is then deleted and will not be accessible anymore.
+    The response will contain the initialization vector and the base64-encoded encrypted data in the form "iv:data". The key used for encryption is provided in the request.
   security:
     - bearerAuth: []
   parameters:

@@ -69,7 +69,7 @@ itemslistsuccess:
                 title:
                   type: string
                   description: Item title
-                  example: Database accout
+                  example: Database account
                 data:
                   type: string
                   description: Item content data

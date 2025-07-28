@@ -3,7 +3,8 @@ get:
     - Items
   operationId: "getItem"
   summary: Get item
-  description: Get item details. This endpoint will return the base64-encoded, AES-256-CBC encrypted item data (encrypted using the key provided in the request), in the form of a string composed by the initialization vector and the data, separated by a semicolon.
+  description: |
+    Get item details. This endpoint will return the base64-encoded, AES-256-CBC encrypted item data (encrypted using the key provided in the request), in the form of a string composed by the initialization vector and the data, separated by a semicolon.
   security:
     - bearerAuth: []
   parameters:

@@ -6,9 +6,11 @@ itemTypeCreateBody:
     description:
       type: string
       description: Item type description
+      example: Database account
     icon:
       type: string
       description: Font Awesome icon
+      example: fa-database
   required:
     - description
 
