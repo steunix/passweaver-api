@@ -15,6 +15,3 @@ loginBody:
     secret:
       type: string
       example: abcd
-  required:
-    - username
-    - password
