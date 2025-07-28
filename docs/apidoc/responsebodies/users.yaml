@@ -117,7 +117,7 @@ getsettingssuccess:
                 setting:
                   type: string
                   description: Setting name
-                  example: "user.param"
+                  example: "mysetting"
                 value:
                   type: string
                   description: Setting value

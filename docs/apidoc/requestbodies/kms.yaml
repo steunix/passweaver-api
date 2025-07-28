@@ -6,15 +6,18 @@ kmsCreateBody:
     type:
       type: number
       description: KMS type; 1 is "Local key"
+      example: 1
     description:
       type: string
       description: KMS description
+      example: Local key storage
     config:
       type: string
-      description: KMS configuration
+      description: KMS configuration in JSON format
     active:
       type: boolean
       description: KMS active status
+      example: true
   required:
     - description
     - config

@@ -22,13 +22,14 @@ getsuccess:
               title:
                 type: string
                 description: Item title
-                example: Database accout
+                example: Database account
               data:
                 type: string
                 description: AES-256-CBC encrypted and base64 encoded item data in the form "iv:data", encrypted using the key provided in the request
+                example: ZXhhbXBsZQ==:ZXhhbXBsZQ==
               metadata:
                 type: string
-                description: ZXhhbXBsZQ==:ZXhhbXBsZQ==
+                description: Item metadata
               folderid:
                 type: string
                 description: Item folder

@@ -89,7 +89,7 @@ settingsUpdateBody:
       name:
         type: string
         description: Setting name
-        example: user.param
+        example: mysetting
       secret:
         type: string
         description: Setting value

@@ -2,7 +2,7 @@ get:
   tags:
     - Users
   operationId: "getUserActivity"
-  summary: Get user activity.
+  summary: Get user activity
   description: It returns 50 records of activity log; you can paginate by specifying 'lastid' parameter with the last ID you have read in the previous bulk
     and sort asc or desc specifying the sort parameter
   security:

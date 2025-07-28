@@ -24,8 +24,8 @@ patch:
   tags:
     -  Users
   operationId: "updateUser"
-  summary: Updates a user
-  description: Updates a user
+  summary: Update a user
+  description: Update a user
   security:
     - bearerAuth: []
   parameters:
