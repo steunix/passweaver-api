@@ -28,7 +28,7 @@ getsuccess:
                 description: AES-256-CBC encrypted and base64 encoded item data in the form "iv:data", encrypted using the key provided in the request
               metadata:
                 type: string
-                description: Item metadata
+                description: ZXhhbXBsZQ==:ZXhhbXBsZQ==
               folderid:
                 type: string
                 description: Item folder
