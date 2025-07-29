@@ -59,7 +59,7 @@ sort:
 key:
   name: key
   in: query
-  description: The key to use for encryption. Avoid using the same key for multiple requests, use a different key for each request.
+  description: The base64-encoded key to use for encryption. Avoid reusing the key, use a different key for each request.
   required: true
   schema:
     type: string
