@@ -131,6 +131,8 @@ if (cfg?.enable_metrics) {
   Metrics.createCounter(Const.METRICS_ITEMS_READ, 'Read items')
   Metrics.createCounter(Const.METRICS_KMS_ENCRYPTIONS, 'Encryptions')
   Metrics.createCounter(Const.METRICS_KMS_DECRYPTIONS, 'Decryptions')
+  Metrics.createCounter(Const.METRICS_KMS_ENCRYPTIONS_PER_KMS, 'Encryptions per KMS', '', ['kms_id', 'kms_description'])
+  Metrics.createCounter(Const.METRICS_KMS_DECRYPTIONS_PER_KMS, 'Decryptions per KMS', '', ['kms_id', 'kms_description'])
 }
 
 // HTTP(S) server start
