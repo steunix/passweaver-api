@@ -1,4 +1,5 @@
 /* global describe, it, assert */
+require('./common.cjs')
 
 // Test for the new per-KMS metrics functionality
 describe('KMS Per-KMS Metrics', function () {
