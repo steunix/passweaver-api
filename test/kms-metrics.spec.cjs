@@ -13,20 +13,13 @@ describe('KMS Per-KMS Metrics', function () {
     // Initialize metrics
     init()
     
-    // Create the per-KMS counters with labels
-    createCounter(METRICS_KMS_ENCRYPTIONS_PER_KMS, 'Encryptions per KMS', '', ['kms_id', 'kms_description'])
-    createCounter(METRICS_KMS_DECRYPTIONS_PER_KMS, 'Decryptions per KMS', '', ['kms_id', 'kms_description'])
+    // Create the per-KMS counters with single label
+    createCounter(METRICS_KMS_ENCRYPTIONS_PER_KMS, 'Encryptions per KMS', 'kms_description')
+    createCounter(METRICS_KMS_DECRYPTIONS_PER_KMS, 'Decryptions per KMS', 'kms_description')
     
-    // Increment counters with different KMS labels
-    counterInc(METRICS_KMS_ENCRYPTIONS_PER_KMS, '', {
-      kms_id: 'test-kms-1',
-      kms_description: 'Test Local File KMS'
-    })
-    
-    counterInc(METRICS_KMS_DECRYPTIONS_PER_KMS, '', {
-      kms_id: 'test-kms-2', 
-      kms_description: 'Test Google Cloud KMS'
-    })
+    // Increment counters with different KMS descriptions
+    counterInc(METRICS_KMS_ENCRYPTIONS_PER_KMS, 'Test Local File KMS')
+    counterInc(METRICS_KMS_DECRYPTIONS_PER_KMS, 'Test Google Cloud KMS')
     
     // Get metrics output
     const metricsOutput = await output()
@@ -34,9 +27,7 @@ describe('KMS Per-KMS Metrics', function () {
     // Verify the metrics exist and have the correct labels
     assert.match(metricsOutput, /kms_encryptions_per_kms_total/, 'Per-KMS encryption metric should exist')
     assert.match(metricsOutput, /kms_decryptions_per_kms_total/, 'Per-KMS decryption metric should exist')
-    assert.match(metricsOutput, /kms_id="test-kms-1"/, 'Should have kms_id label')
-    assert.match(metricsOutput, /kms_description="Test Local File KMS"/, 'Should have kms_description label')
-    assert.match(metricsOutput, /kms_id="test-kms-2"/, 'Should have second kms_id label')
-    assert.match(metricsOutput, /kms_description="Test Google Cloud KMS"/, 'Should have second kms_description label')
+    assert.match(metricsOutput, /kms_description="Test Local File KMS"/, 'Should have kms_description label for local file')
+    assert.match(metricsOutput, /kms_description="Test Google Cloud KMS"/, 'Should have kms_description label for google cloud')
   })
 })
