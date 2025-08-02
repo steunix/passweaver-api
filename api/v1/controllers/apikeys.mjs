@@ -13,6 +13,7 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as KMS from '../../../lib/kms/kms.mjs'
 import * as User from '../../../model/user.mjs'
+import * as APIKey from '../../../model/apikey.mjs'
 
 import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
@@ -113,6 +114,11 @@ export async function create (req, res, next) {
     return
   }
 
+  if (req.body.ipwhitelist && !APIKey.validateCIDRList(req.body.ipwhitelist)) {
+    res.status(R.BAD_REQUEST).send(R.badRequest('Invalid IP whitelist format'))
+    return
+  }
+
   // Creates the API key
   const secret = Crypt.randomString(20)
   const encsecret = await KMS.encrypt(secret, 'aes-256-gcm')
@@ -129,7 +135,8 @@ export async function create (req, res, next) {
       description: req.body.description,
       userid: req.body.userid,
       expiresat: req.body.expiresat + 'T00:00:00.000Z',
-      active: req.body.active
+      active: req.body.active,
+      ipwhitelist: req.body.ipwhitelist || null
     }
   })
 
@@ -187,6 +194,15 @@ export async function update (req, res, next) {
   }
   if (Object.prototype.hasOwnProperty.call(req.body, 'active')) {
     updateStruct.active = req.body.active
+  }
+  if (Object.prototype.hasOwnProperty.call(req.body, 'ipwhitelist')) {
+    // Validate IP whitelist
+    if (!APIKey.validateCIDRList(req.body.ipwhitelist)) {
+      res.status(R.BAD_REQUEST).send(R.badRequest('Invalid IP whitelist format'))
+      return
+    }
+
+    updateStruct.ipwhitelist = req.body.ipwhitelist || null
   }
 
   await DB.apikeys.update({

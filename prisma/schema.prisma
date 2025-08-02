@@ -272,6 +272,7 @@ model apikeys {
   userid      String
   expiresat   DateTime
   active      Boolean
+  ipwhitelist String?
 
   createdat   DateTime @default(now())
   updatedat   DateTime @updatedAt

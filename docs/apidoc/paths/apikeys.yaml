@@ -24,8 +24,8 @@ post:
   tags:
     - API keys
   operationId: "createAPIKey"
-  summary: Create API key
-  description: Create API key
+  summary: Create an API key
+  description: Create an API key
   requestBody:
     content:
       application/json:

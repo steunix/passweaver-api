@@ -56,15 +56,25 @@ export async function login (req, res, next) {
       return
     }
 
-    // Search the API key anc check if it is active
+    // Search the API key and check if it is active
     const apik = await DB.apikeys.findUnique({
       where: { id: data.apikey },
-      select: { userid: true, active: true }
+      select: { userid: true, active: true, ipwhitelist: true }
     })
     if (!apik.active) {
       Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTVALID, Const.EV_ENTITY_APIKEY, data.apikey)
       res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
       return
+    }
+
+    // Check if IP is whitelisted
+    if (apik.ipwhitelist) {
+      const clientIp = req.connection.remoteAddress
+      if (!ApiKey.checkIPWhitelist(apik.ipwhitelist, clientIp)) {
+        Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_IPNOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
+        res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
+        return
+      }
     }
 
     // Get corresponding user
