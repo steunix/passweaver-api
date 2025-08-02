@@ -24,13 +24,17 @@ getsuccess:
                 description: Description
               userid:
                 type: string
-                description: Connected user
+                description: Connected user ID
               expiresat:
                 type: string
                 description: Expiring date
               active:
                 type: boolean
                 description: Active status
+              ipwhitelist:
+                type: string
+                description: Comma-separated list of IPs or CIDR ranges
+                example: '192.168.1.1/32,192.168.2.0/24'
               createdat:
                 type: string
                 description: Creation time
@@ -70,6 +74,10 @@ listsuccess:
                 active:
                   type: boolean
                   description: Active status
+                ipwhitelist:
+                  type: string
+                  description: Comma-separated list of IPs or CIDR ranges
+                  example: '192.168.1.1/32,192.168.2.0/24'
                 createdat:
                   type: string
                   description: Creation time

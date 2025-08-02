@@ -35,7 +35,9 @@
     "prisma": "6.13.0",
     "redis": "5.6.1",
     "rotating-file-stream": "3.2.6",
-    "uuidv7": "1.0.2"
+    "uuidv7": "1.0.2",
+    "is-in-subnet": "4.0.1",
+    "is-cidr": "6.0.0"
   },
   "prisma": {
     "seed": "node prisma/seed.cjs"

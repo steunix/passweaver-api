@@ -6,15 +6,22 @@ apikeyCreateBody:
     description:
       type: string
       description: Description
+      example: 'API key for automated client'
     userid:
       type: string
       description: Connected user
+      example: 'user_123'
     expiresat:
       type: string
       description: Expiring date, YYYY-MM-DD
+      example: '2023-12-31'
     active:
       type: boolean
       description: Active status
+    ipwhitelist:
+      type: string
+      description: Comma-separated list of IPs or CIDR ranges
+      example: '192.168.1.1/32,192.168.2.0/24'
   required:
     - description
     - userid
@@ -27,12 +34,19 @@ apikeyUpdateBody:
     description:
       type: string
       description: Description
+      example: 'Updated API key description'
     userid:
       type: string
       description: Connected user
+      example: 'user_123'
     expiresat:
       type: string
       description: Expiring date, YYYY-MM-DD
+      example: '2023-12-31'
     active:
       type: boolean
       description: Active status
+    ipwhitelist:
+      type: string
+      description: Comma-separated list of IPs or CIDR ranges
+      example: '192.168.1.1/32,192.168.2.0/24'

@@ -8,6 +8,8 @@
 
 import DB from '../lib/db.mjs'
 import * as KMS from '../lib/kms/kms.mjs'
+import isInSubnet from 'is-in-subnet'
+import isCIDR from 'is-cidr'
 
 /**
  * Check if API key exists
@@ -40,4 +42,35 @@ export async function checkSecret (apikey, secret) {
 
   const dec = await KMS.decrypt(apik.kmsid, apik.dek, apik.secret, apik.secretiv, apik.secretauthtag, apik.algorithm)
   return (dec === secret)
+}
+
+/**
+ * Validate string as a valid list of CIDR ranges
+ * @param {string} cidrlist Comma-separated list of IPs or CIDR ranges
+ * @returns {boolean} True if valid, false otherwise
+ */
+export function validateCIDRList (cidrlist) {
+  if (!cidrlist) return true // Empty list is valid
+
+  const cidrs = cidrlist.split(',')
+  for (const cidr of cidrs) {
+    const tcdr = cidr.trim()
+    if (!isCIDR(tcdr)) {
+      return false
+    }
+  }
+  return true
+}
+
+/**
+ * Check if IP is contained in the whitelist of CIDR ranges
+ * @param {string} cidrlist Comma-separated list of CIDR ranges
+ * @param {string} ip IP address to check
+ * @returns {boolean} True if IP is whitelisted, false otherwise
+ */
+export function checkIPWhitelist (cidrlist, ip) {
+  if (!cidrlist) return true
+
+  const cidrs = cidrlist.split(',')
+  return isInSubnet.isInSubnet(ip, cidrs)
 }
