@@ -22,6 +22,10 @@ apikeyCreateBody:
       type: string
       description: Comma-separated list of IPs or CIDR ranges
       example: '192.168.1.1/32,192.168.2.0/24'
+    timewhitelist:
+      type: string
+      description: Comma-separated list of day of week and time ranges, e.g. 'MON:0100-0200,TUE:0200-0300'; days can be ANY (for any day of the week), MON, TUE, WED, THU, FRI, SAT, SUN
+      example: 'ANY:1400-1500,TUE:1600-1615'
   required:
     - description
     - userid
@@ -50,3 +54,7 @@ apikeyUpdateBody:
       type: string
       description: Comma-separated list of IPs or CIDR ranges
       example: '192.168.1.1/32,192.168.2.0/24'
+    timewhitelist:
+      type: string
+      description: Comma-separated list of day of week and time ranges, e.g. 'MON:0100-0200,TUE:0200-0300'; days can be ANY (for any day of the week), MON, TUE, WED, THU, FRI, SAT, SUN
+      example: 'ANY:1400-1500,TUE:1600-1615'

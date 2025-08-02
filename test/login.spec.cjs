@@ -120,6 +120,32 @@ describe('Login', function () {
     assert.strictEqual(res3.status, 200)
   })
 
+  it('Login via API, time not whitelisted', async function () {
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, timewhitelist: 'SUN:0100-0200' })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const apikId = res1.body.data.id
+    const secret = res1.body.data.secret
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 401)
+
+    const res3 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res3.status, 200)
+  })
+
   it('Login via API, bad secret', async function () {
     const res1 = await global.agent
       .post(`${global.host}/api/v1/apikeys`)

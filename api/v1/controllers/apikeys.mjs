@@ -114,8 +114,15 @@ export async function create (req, res, next) {
     return
   }
 
+  // Check IP whitelist format
   if (req.body.ipwhitelist && !APIKey.validateCIDRList(req.body.ipwhitelist)) {
     res.status(R.BAD_REQUEST).send(R.badRequest('Invalid IP whitelist format'))
+    return
+  }
+
+  // Check time whitelist format
+  if (req.body.timewhitelist && !APIKey.validateTimeWhitelist(req.body.timewhitelist)) {
+    res.status(R.BAD_REQUEST).send(R.badRequest('Invalid time whitelist format'))
     return
   }
 
@@ -136,7 +143,8 @@ export async function create (req, res, next) {
       userid: req.body.userid,
       expiresat: req.body.expiresat + 'T00:00:00.000Z',
       active: req.body.active,
-      ipwhitelist: req.body.ipwhitelist || null
+      ipwhitelist: req.body.ipwhitelist || null,
+      timewhitelist: req.body.timewhitelist || null
     }
   })
 
@@ -203,6 +211,15 @@ export async function update (req, res, next) {
     }
 
     updateStruct.ipwhitelist = req.body.ipwhitelist || null
+  }
+  if (Object.prototype.hasOwnProperty.call(req.body, 'timewhitelist')) {
+    // Validate time whitelist
+    if (!APIKey.validateTimeWhitelist(req.body.timewhitelist)) {
+      res.status(R.BAD_REQUEST).send(R.badRequest('Invalid time whitelist format'))
+      return
+    }
+
+    updateStruct.timewhitelist = req.body.timewhitelist || null
   }
 
   await DB.apikeys.update({
