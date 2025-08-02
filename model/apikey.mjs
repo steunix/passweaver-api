@@ -10,6 +10,7 @@ import DB from '../lib/db.mjs'
 import * as KMS from '../lib/kms/kms.mjs'
 import isInSubnet from 'is-in-subnet'
 import isCIDR from 'is-cidr'
+import dateFormat from 'dateformat'
 
 /**
  * Check if API key exists
@@ -73,4 +74,49 @@ export function checkIPWhitelist (cidrlist, ip) {
 
   const cidrs = cidrlist.split(',')
   return isInSubnet.isInSubnet(ip, cidrs)
+}
+
+/**
+ * Validate time whitelist format
+ * @param {string} timeWhitelist Comma-separated list of time ranges in DOW:HHMM-HHMM, where DOW is day of week (MON-SUN or ANY) and HHMM is hour (24h format) and minute (initial and final)
+ */
+export function validateTimeWhitelist (timeWhitelist) {
+  if (!timeWhitelist) return true // Empty list is valid
+
+  const ranges = timeWhitelist.split(',')
+  for (const range of ranges) {
+    const [dow, time] = range.trim().split(':')
+    if (!['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN', 'ANY'].includes(dow)) {
+      return false
+    }
+    if (!/^\d{4}-\d{4}$/.test(time)) {
+      return false
+    }
+  }
+  return true
+}
+
+/**
+ * Check if the IP is whitelisted based on the time whitelist and current time
+ * @param {string} timeWhitelist Comma-separated list of time ranges in DOW:HH:MM
+ * @param {Date} date Date to check
+ * @returns {boolean} True if IP is whitelisted, false otherwise
+ */
+export function checkTimeWhitelist (timeWhitelist, date) {
+  if (!timeWhitelist) return true
+
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+  const currentDay = new Date().getDay()
+  const currentTime = dateFormat(new Date(), 'HHMM')
+
+  const ranges = timeWhitelist.split(',')
+  for (const range of ranges) {
+    const [rangeDow, rangeTime] = range.trim().split(':')
+    const [startTime, endTime] = rangeTime.split('-')
+    if ((rangeDow === 'ANY' || rangeDow === days[currentDay]) &&
+        (currentTime >= startTime && currentTime <= endTime)) {
+      return true
+    }
+  }
+  return false
 }

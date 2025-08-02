@@ -7,7 +7,7 @@ describe('API keys', () => {
     const res1 = await global.agent
       .post(`${global.host}/api/v1/apikeys`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
-      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, ipwhitelist: '192.160.0.0/24,fd44:9ba1:1234:aa1b::/64' })
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, ipwhitelist: '192.160.0.0/24,fd44:9ba1:1234:aa1b::/64', timewhitelist: 'MON:0100-0200,TUE:0200-0300' })
       .catch(v => v)
 
     assert.strictEqual(res1.status, 201)
@@ -57,6 +57,29 @@ describe('API keys', () => {
       .post(`${global.host}/api/v1/apikeys`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, ipwhitelist: '192.168.0.0/24,a084:1e02:3852:e9f7:9a21' })
+      .catch(v => v)
+    assert.strictEqual(res3.status, 400)
+  })
+
+  it('Create API key bad time whitelist', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, timewhitelist: 'TUI:0100-0200' })
+      .catch(v => v)
+    assert.strictEqual(res1.status, 400)
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, ipwhitelist: 'MON:0100-0200,TUI:01000200' })
+      .catch(v => v)
+    assert.strictEqual(res2.status, 400)
+
+    const res3 = await agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: '0', expiresat: '2050-01-01', active: true, ipwhitelist: 'BAD' })
       .catch(v => v)
     assert.strictEqual(res3.status, 400)
   })

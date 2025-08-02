@@ -35,6 +35,10 @@ getsuccess:
                 type: string
                 description: Comma-separated list of IPs or CIDR ranges
                 example: '192.168.1.1/32,192.168.2.0/24'
+              timewhitelist:
+                type: string
+                description: Comma-separated list of day of week and time ranges, e.g. 'MON:0100-0200,TUE:0200-0300'
+                example: 'ANY:1400-1500,TUE:1600-1615'
               createdat:
                 type: string
                 description: Creation time
@@ -78,6 +82,10 @@ listsuccess:
                   type: string
                   description: Comma-separated list of IPs or CIDR ranges
                   example: '192.168.1.1/32,192.168.2.0/24'
+                timewhitelist:
+                  type: string
+                  description: Comma-separated list of day of week and time ranges, e.g. 'MON:0100-0200,TUE:0200-0300'
+                  example: 'ANY:1400-1500,TUE:1600-1615'
                 createdat:
                   type: string
                   description: Creation time

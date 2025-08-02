@@ -59,7 +59,7 @@ export async function login (req, res, next) {
     // Search the API key and check if it is active
     const apik = await DB.apikeys.findUnique({
       where: { id: data.apikey },
-      select: { userid: true, active: true, ipwhitelist: true }
+      select: { userid: true, active: true, ipwhitelist: true, timewhitelist: true }
     })
     if (!apik.active) {
       Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTVALID, Const.EV_ENTITY_APIKEY, data.apikey)
@@ -72,6 +72,15 @@ export async function login (req, res, next) {
       const clientIp = req.connection.remoteAddress
       if (!ApiKey.checkIPWhitelist(apik.ipwhitelist, clientIp)) {
         Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_IPNOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
+        res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
+        return
+      }
+    }
+
+    // Check if time is whitelisted
+    if (apik.timewhitelist) {
+      if (!ApiKey.checkTimeWhitelist(apik.timewhitelist)) {
+        Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_TIMENOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
         res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
         return
       }

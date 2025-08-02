@@ -6,7 +6,8 @@
     "userid": { "type": "string", "maxLength": 50},
     "expiresat" : { "type": "string" },
     "active": { "type": "boolean" },
-    "ipwhitelist": { "type": "string", "maxLength": 500, "nullable": true }
+    "ipwhitelist": { "type": "string", "maxLength": 500, "nullable": true },
+    "timewhitelist": { "type": "string", "maxLength": 500, "nullable": true }
   },
   "required": ["description", "userid", "expiresat", "active"]
 }

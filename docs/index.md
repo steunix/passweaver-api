@@ -27,7 +27,7 @@ This are the software you need to have in order to run PassWeaver API:
 These are the features this API support, in random order:
 
 - Cloud KMS integration (currently, only Google Cloud KMS)
-- API keys, with IP whitelist
+- API keys, with IP whitelist and day of week/time whitelist
 - Personal folders for each user
 - Favorite items
 - Share one-time secrets with anyone, even if they have not an account
@@ -122,7 +122,9 @@ You can share both random text, or an entire item.
 API keys can be created to easier credential handling in case of automated clients. An API key is bound to a user, whose authentication method must be 'apikey': this way you can easily manage permissions as you would do for a regular
 user (assigning it to a group), without the need of exposing users password or to disrupt functionalities in case the user changes it.
 
-For each API key you can optionally define a whitelist of CIDR to restrict access.
+For each API key you can optionally define two whitelists:
+- source IP whitelist: you can specify a list of CIDR notation IPs or subnet allowed to use the API key; for example 192.16.0.0/24,192.168.1.34/32
+- day of week and time whitelist: you can specify a list of days of week and start/end time when the API key is usable; for example ANY:1400-1500,TUE:1600-1615 means "Any day of the week from 14 to 15, and Tuesdays from 16:00 to 16:15"
 
 You can create as many API keys you need for a given user and activate/disactivate them at any time. They also have an expiration date.
 

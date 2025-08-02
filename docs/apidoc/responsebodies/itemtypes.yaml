@@ -18,7 +18,7 @@ getsuccess:
               id:
                 type: string
                 description: Item type ID
-                example: 123456789
+                example: "01986c87-73b8-7c65-acb0-4aad4ffb6755"
               description:
                 type: string
                 description: Item type description
@@ -45,7 +45,7 @@ listsuccess:
                 id:
                   type: string
                   description: Item type ID
-                  example: 123456789
+                  example: "01986c87-73b8-7c65-acb0-4aad4ffb6755"
                 description:
                   type: string
                   description: Item type description
