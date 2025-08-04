@@ -7,6 +7,7 @@ kmsid:
   required: true
   schema:
     type: string
+    example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
 
 search:
   name: search
@@ -15,3 +16,4 @@ search:
   required: false
   schema:
     type: string
+    example: "example search string"

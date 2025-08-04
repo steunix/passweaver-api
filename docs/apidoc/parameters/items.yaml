@@ -7,6 +7,7 @@ itemid:
   required: true
   schema:
     type: string
+    example: "06C61YC4GDX2HCA4B70V2FVVXC"
 
 folderid:
   name: folderid
@@ -15,6 +16,7 @@ folderid:
   required: true
   schema:
     type: string
+    example: "12345678-abcd-1234-ef00-1234567890ab"
 
 search:
   name: search
@@ -23,6 +25,7 @@ search:
   required: false
   schema:
     type: string
+    example: "example search string"
 
 type:
   name: type
@@ -31,6 +34,7 @@ type:
   required: false
   schema:
     type: string
+    example: "01984008-af8e-7337-97ff-b82dcd78e458"
 
 limit:
   name: limit
@@ -43,10 +47,11 @@ limit:
 lastid:
   name: lastid
   in: query
-  description: The last ID you have read in the previous page.
+  description: The last event ID you have read in the previous page.
   required: false
   schema:
     type: string
+    example: "01984008-af8e-7337-97ff-b82dcd78e458"
 
 sort:
   name: sort
@@ -63,3 +68,4 @@ key:
   required: true
   schema:
     type: string
+    example: "MTkzMTAxNjg2MzkxODUzOTA0OTQxMjc5MTM3Mzc4OTc="

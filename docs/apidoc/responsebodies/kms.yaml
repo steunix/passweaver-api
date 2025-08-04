@@ -18,10 +18,11 @@ getsuccess:
               id:
                 type: string
                 description: KMS ID
-                example: "123456"
+                example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
               description:
                 type: string
                 description: KMS description
+              example: "Example KMS"
               type:
                 type: number
                 description: KMS type
@@ -46,10 +47,11 @@ listsuccess:
                 id:
                   type: string
                   description: KMS ID
-                  example: "123456"
+                  example: "019205a1-90db-76c0-aae6-7726086bf748"
                 description:
                   type: string
                   description: KMS description
+                  example: "Example KMS"
                 type:
                   type: number
                   description: KMS type

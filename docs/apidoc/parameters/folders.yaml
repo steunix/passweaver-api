@@ -7,6 +7,7 @@ folderid:
   required: true
   schema:
     type: string
+    example: "12345678-abcd-1234-ef00-1234567890ab"
 
 parentfolderid:
   name: parentfolderid
@@ -15,3 +16,4 @@ parentfolderid:
   required: true
   schema:
     type: string
+    example: "87654321-dcba-4321-fe00-0987654321ba"

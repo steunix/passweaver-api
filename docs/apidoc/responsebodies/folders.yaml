@@ -65,7 +65,7 @@ itemslistsuccess:
                 type:
                   type: string
                   description: Item type
-                  example: db
+                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
                 title:
                   type: string
                   description: Item title
@@ -76,9 +76,11 @@ itemslistsuccess:
                 metadata:
                   type: string
                   description: Item metadata
+                  example: "example metadata"
                 folderid:
                   type: string
                   description: Item folder
+                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
                 favorite:
                   type: boolean
                   description: True if item is favorite, false otherwise
@@ -88,6 +90,7 @@ itemslistsuccess:
                     description:
                       type: string
                       description: Folder description
+                      example: "Example folder"
                 personal:
                   type: boolean
                   description: True if item is personal, false otherwise
@@ -97,9 +100,11 @@ itemslistsuccess:
                     description:
                       type: string
                       description: Item type description
+                      example: "Database account"
                     icon:
                       type: string
                       description: Item type icon
+                      example: "fa-database"
 
 groupslistsuccess:
   description: Success
@@ -118,9 +123,11 @@ groupslistsuccess:
                 id:
                   type: string
                   description: Group ID
+                  example: "group_123"
                 description:
                   type: string
                   description: Group description
+                  example: "Example group"
                 canmodify:
                   type: boolean
                   description: True if permissions can be modified, false otherwise
@@ -152,12 +159,15 @@ treesuccess:
                 id:
                   type: string
                   description: Folder id
+                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
                 parent:
                   type: string
                   description: Parent folder id
+                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
                 description:
                   type: string
                   description: Description
+                  example: "Example folder"
                 personal:
                   type: boolean
                   description: Flag for personal folder
@@ -188,12 +198,15 @@ treesuccess:
                       id:
                         type: string
                         description: Folder id
+                        example: "01984008-af8e-7337-97ff-b82dcd78e458"
                       parent:
                         type: string
                         description: Parent folder id
+                        example: "01984008-af8e-7337-97ff-b82dcd78e458"
                       description:
                         type: string
                         description: Description
+                        example: "Example subfolder"
                       personal:
                         type: boolean
                         description: Flag for personal folder

@@ -9,7 +9,7 @@ itemTypeCreateBody:
       example: Database account
     icon:
       type: string
-      description: Font Awesome icon
+      description: Font Awesome icon code
       example: fa-database
   required:
     - description
@@ -20,8 +20,10 @@ itemTypeUpdateBody:
     description:
       type: string
       description: Item type description
+      example: Updated description
     icon:
       type: string
-      description: Font Awesome icon
+      description: Font Awesome icon code
+      example: fa-database
   required:
     - description

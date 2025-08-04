@@ -7,6 +7,7 @@ groupid:
   required: true
   schema:
     type: string
+    example: "abcdef12-3456-7890-abcd-ef1234567890"
 
 parentgroupid:
   name: parentgroupid
@@ -15,6 +16,7 @@ parentgroupid:
   required: true
   schema:
     type: string
+    example: "fedcba98-7654-3210-fedc-ba9876543210"
 
 search:
   name: search
@@ -23,3 +25,4 @@ search:
   required: false
   schema:
     type: string
+    example: "example search string"
