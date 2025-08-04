@@ -18,7 +18,7 @@ getsuccess:
               type:
                 type: string
                 description: Item type
-                example: db
+                example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
               title:
                 type: string
                 description: Item title

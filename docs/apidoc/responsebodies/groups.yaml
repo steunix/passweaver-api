@@ -18,13 +18,16 @@ getsuccess:
             properties:
               id:
                 type: string
-                description: Folder id
+                description: Group id
+                example: "01984008-af8e-7337-97ff-b82dcd78e458"
               description:
                 type: string
                 description: Description
+                example: "Example group"
               parent:
                 type: string
-                description: Parent folder id
+                description: Parent group id
+                example: "01984008-af8e-7337-97ff-b82dcd78e458"
               createdat:
                 type: string
                 description: Creation date/time
@@ -91,13 +94,13 @@ treesuccess:
               properties:
                 id:
                   type: string
-                  description: Folder id
+                  description: Group id
                 description:
                   type: string
                   description: Description
                 parent:
                   type: string
-                  description: Parent folder id
+                  description: Parent group id
                 createdat:
                   type: string
                   description: Creation date/time
@@ -121,13 +124,13 @@ listsuccess:
               properties:
                 id:
                   type: string
-                  description: Folder id
+                  description: Group id
                 description:
                   type: string
                   description: Description
                 parent:
                   type: string
-                  description: Parent folder id
+                  description: Parent group id
                 createdat:
                   type: string
                   description: Creation date/time

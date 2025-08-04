@@ -6,7 +6,7 @@ itemCreateBody:
     type:
       type: string
       description: Item type
-      example: db
+      example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
     title:
       type: string
       description: Item title
@@ -17,6 +17,7 @@ itemCreateBody:
     metadata:
       type: string
       description: Item metadata
+      example: "example metadata"
   required:
     - title
     - data
@@ -28,7 +29,7 @@ itemUpdateBody:
     type:
       type: string
       description: Item type
-      example: db
+      example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
     title:
       type: string
       description: Item title
@@ -39,9 +40,11 @@ itemUpdateBody:
     metadata:
       type: string
       description: Item metadata
+      example: "example metadata"
     folder:
       type: string
       description: Item folder
+      example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
     favorite:
       type: boolean
       description: Set/unset favorite item

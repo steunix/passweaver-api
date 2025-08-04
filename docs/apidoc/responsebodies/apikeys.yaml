@@ -18,13 +18,15 @@ getsuccess:
               id:
                 type: string
                 description: Api key id
-                example: "123456"
+                example: "01984008-af8e-7337-97ff-b82dcd78e458"
               description:
                 type: string
                 description: Description
+                example: Example API key
               userid:
                 type: string
                 description: Connected user ID
+                example: "user_123"
               expiresat:
                 type: string
                 description: Expiring date

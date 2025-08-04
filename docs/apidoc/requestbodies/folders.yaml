@@ -20,7 +20,7 @@ folderUpdateBody:
     parent:
       type: string
       description: Parent folder
-      example: 067FQXHD7HZX1340XRYH96340R
+      example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
   required:
     - description
 

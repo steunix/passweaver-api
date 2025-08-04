@@ -7,6 +7,7 @@ userid:
   required: true
   schema:
     type: string
+    example: "0198757b"
 
 search:
   name: search
@@ -15,14 +16,16 @@ search:
   required: false
   schema:
     type: string
+    example: "example search string"
 
 lastid:
   name: lastid
   in: query
-  description: The last ID you have read in the previous page.
+  description: The last event ID you have read in the previous page.
   required: false
   schema:
     type: string
+    example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
 
 sort:
   name: sort

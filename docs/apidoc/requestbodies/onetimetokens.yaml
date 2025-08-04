@@ -14,6 +14,7 @@ oneTimeTokenCreateBody:
     itemid:
       type: string
       description: If type is 1, the item id to share
+      example: "067FQXHD7HZX1340XRYH96340R"
     userid:
       type: string
       description: If scope is 2, the user id to share with
