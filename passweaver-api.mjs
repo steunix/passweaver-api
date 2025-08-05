@@ -49,7 +49,7 @@ const cfg = Config.get()
 await Cache.init()
 
 // Set readonly flag in cache
-Cache.set(Const.PW_USER_ADMINID, 'readonly', Config.get().readonly)
+Cache.set(Const.PW_USER_ADMINID, Const.SYSTEM_READONLY, Config.get().readonly)
 
 // Rate limiter
 app.use(rateLimitMiddleware)
