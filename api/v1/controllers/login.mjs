@@ -119,7 +119,7 @@ export async function login (req, res, next) {
   if (!await Auth.isAdmin(user.id)) {
     const settings = await Settings.get(Const.PW_USER_ADMINID)
     for (const setting of settings) {
-      if (setting.setting === 'systemlock' && setting.value === '1') {
+      if (setting.setting === Const.SYSTEM_LOCK && setting.value === '1') {
         res.status(R.UNAUTHORIZED).send(R.ko('System is locked, retry later'))
         return
       }

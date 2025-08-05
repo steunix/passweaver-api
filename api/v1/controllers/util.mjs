@@ -102,7 +102,7 @@ export async function systemLock (req, res, next) {
     return
   }
 
-  await Settings.set(Const.PW_USER_ADMINID, 'systemlock', '1')
+  await Settings.set(Const.PW_USER_ADMINID, Const.SYSTEM_LOCK, '1')
   Config.generateJWTKey()
 
   res.send(R.ok())
@@ -121,7 +121,7 @@ export async function systemUnlock (req, res, next) {
     return
   }
 
-  await Settings.set(Const.PW_USER_ADMINID, 'systemlock', '0')
+  await Settings.set(Const.PW_USER_ADMINID, Const.SYSTEM_LOCK, '0')
 
   res.send(R.ok())
 }
@@ -139,7 +139,7 @@ export async function systemReadOnly (req, res, next) {
     return
   }
 
-  await Cache.set(Const.PW_USER_ADMINID, 'readonly', true)
+  await Cache.set(Const.PW_USER_ADMINID, Const.SYSTEM_READONLY, true)
 
   res.send(R.ok())
 }
@@ -157,7 +157,7 @@ export async function systemReadWrite (req, res, next) {
     return
   }
 
-  await Cache.set(Const.PW_USER_ADMINID, 'readonly', false)
+  await Cache.set(Const.PW_USER_ADMINID, Const.SYSTEM_READONLY, false)
 
   res.send(R.ok())
 }
@@ -169,7 +169,7 @@ export async function systemReadWrite (req, res, next) {
  * @param {Object} next Express next
  */
 export async function systemGetReadOnly (req, res, next) {
-  const readonly = await Cache.get(Const.PW_USER_ADMINID, 'readonly')
+  const readonly = await Cache.get(Const.PW_USER_ADMINID, Const.SYSTEM_READONLY)
   res.send(R.ok({ readonly }))
 }
 
@@ -180,9 +180,9 @@ export async function systemGetReadOnly (req, res, next) {
  * @param {Object} next Express next
  */
 export async function systemGetLock (req, res, next) {
-  const settings = await Settings.get(Const.PW_USER_ADMINID, 'systemlock')
+  const settings = await Settings.get(Const.PW_USER_ADMINID, Const.SYSTEM_LOCK)
   for (const setting of settings) {
-    if (setting.setting === 'systemlock') {
+    if (setting.setting === Const.SYSTEM_LOCK) {
       res.send(R.ok({ locked: setting.value === '1' }))
       return
     }
