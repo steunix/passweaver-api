@@ -41,6 +41,15 @@ export async function get (req, res, next) {
     return
   }
 
+  // Delete expired items
+  await DB.onetimetokens.deleteMany({
+    where: {
+      expiresat: {
+        lte: new Date()
+      }
+    }
+  })
+
   // Search token
   const ottoken = await DB.onetimetokens.findUnique({
     where: { token: tokenid }
@@ -84,6 +93,7 @@ export async function get (req, res, next) {
     // Reencrypt secret with key
     resp.secret = Crypt.encryptedPayload(key, resp.secret)
   }
+
   // Item share
   if (ottoken.type === 1) {
     // Get item relevant fields
