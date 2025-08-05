@@ -129,6 +129,8 @@ if (cfg?.enable_metrics) {
   Metrics.createCounter(Const.METRICS_ITEMS_DELETED, 'Deleted items')
   Metrics.createCounter(Const.METRICS_ITEMS_UPDATED, 'Updated items')
   Metrics.createCounter(Const.METRICS_ITEMS_READ, 'Read items')
+  Metrics.createCounter(Const.METRICS_ONETIMETOKENS_CREATED, 'One time tokens created')
+  Metrics.createCounter(Const.METRICS_ONETIMETOKENS_READ, 'One time tokens read')
   Metrics.createCounter(Const.METRICS_KMS_ENCRYPTIONS, 'Encryptions')
   Metrics.createCounter(Const.METRICS_KMS_DECRYPTIONS, 'Decryptions')
   Metrics.createCounter(Const.METRICS_KMS_ENCRYPTIONS_PER_KMS, 'Encryptions per KMS', 'kms_description')

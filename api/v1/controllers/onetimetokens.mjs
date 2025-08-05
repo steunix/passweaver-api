@@ -15,6 +15,7 @@ import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Items from '../../../model/item.mjs'
 import * as KMS from '../../../lib/kms/kms.mjs'
+import * as Metrics from '../../../lib/metrics.mjs'
 
 import jsonwebtoken from 'jsonwebtoken'
 
@@ -111,6 +112,9 @@ export async function get (req, res, next) {
     Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESHARE, ottoken.id)
     Events.add(req.user, Const.EV_ACTION_READVIATOKEN, Const.EV_ENTITY_ITEM, ottoken.itemid)
   }
+
+  // Update metrics
+  Metrics.inc(Const.METRICS_ONETIMETOKENS_READ)
   res.send(R.ok(resp))
 }
 
@@ -192,5 +196,8 @@ export async function create (req, res, next) {
     Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, created.id)
     Events.add(req.user, Const.EV_ACTION_ITEMSHARE, Const.EV_ENTITY_ITEM, req.body.itemid)
   }
+
+  // Update metrics
+  Metrics.inc(Const.METRICS_ONETIMETOKENS_CREATED)
   res.status(R.CREATED).send(R.ok({ token: newToken }))
 }

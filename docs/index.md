@@ -309,7 +309,9 @@ If enabled in configuration, PassWeaver API export various metrics (along defaul
   - Users logins count (`login_users_total`)
   - API keys logins count (`login_apikeys_total`)
   - Item create, update, delete and read count (`items_created_total`, `items_updated_total`, `items_deleted_total`, `items_read_total`)
+  - One time tokens count (`onetimetokens_created_total`, `onetimetokens_read_total`)
   - KMS encryptions and decryptions count (`kms_encryptions_total`, `kms_decryptions_total`)
+  - KMS encryptions and descriptions for each KMS
 
 ## Cache
 
