@@ -114,7 +114,7 @@ export async function get (req, res, next) {
   }
 
   // Update metrics
-  Metrics.inc(Const.METRICS_ONETIMETOKENS_READ)
+  Metrics.counterInc(Const.METRICS_ONETIMETOKENS_READ)
   res.send(R.ok(resp))
 }
 
@@ -198,6 +198,6 @@ export async function create (req, res, next) {
   }
 
   // Update metrics
-  Metrics.inc(Const.METRICS_ONETIMETOKENS_CREATED)
+  Metrics.counterInc(Const.METRICS_ONETIMETOKENS_CREATED)
   res.status(R.CREATED).send(R.ok({ token: newToken }))
 }
