@@ -411,6 +411,7 @@ Copy `config-skel.json` to `config.json` and adjust the options:
   - `max_hours`: Max one-time secrets duration
 - `readonly`: true or false; if true, no write operation is allowed both for admins and regolar users
 - `enable_metrics`: true or false, enables Prometheus formatted metrics
+- `generated_password_length`: length of random generated password, default is 20
 
 ## Environment variables
 

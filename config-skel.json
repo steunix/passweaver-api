@@ -35,5 +35,6 @@
     "max_hours": 168
   },
   "readonly": false,
-  "enable_metrics": true
+  "enable_metrics": true,
+  "generated_password_length": 20
 }

@@ -25,7 +25,7 @@ import DB from '../../../lib/db.mjs'
  */
 export async function generatePassword (req, res, next) {
   const pwd = generator.generate({
-    length: 15,
+    length: Config.get().generated_password_length || 20,
     numbers: true,
     symbols: req?.query?.symbols !== 'false',
     lowercase: true,
