@@ -6,7 +6,7 @@ PassWeaver API is a collaborative, enterprise-scale secrets manager REST API. It
 
 It's **collaborative**, meaning that users are organized in groups and protected items are organized in folders: different permissions can be defined for each folder for each user group.
 
-PassWeaver API is a standard REST API server: you can easily integrate it with your systems and let it act as a centralized password vault. Instead, for a ready to use, simple yet complete Web GUI to run along the API, have a look at the companion app PassWeaver GUI: https://github.com/steunix/passweaver-gui
+PassWeaver API is a standard REST API server: you can easily integrate it with your systems and let it act as a centralized password vault. Instead, for a ready to use, simple yet complete Web GUI to run along the API, have a look at the companion app [PassWeaver GUI](https://github.com/steunix/passweaver-gui).
 
 PassWeaver API is a NodeJS application, released under MIT license, and it uses these (great) opensource libraries, among several others:
 
@@ -361,24 +361,32 @@ If any data is returned by the endpoint, it will be always encapsulated in the "
 
 # Install and run
 
-## Prerequisites
+## 1. Pre-requisites
 
-In order to be able to install PassWeaver API, you need:
+In order to be able to install PassWeaver API:
+1. you need to install NodeJS and npm
+2. you need to have connectivity to a running PostgreSQL instance
+3. you'd better have connectivity to a running Redis instance
 
-- NodeJS and npm
-- A running PostgreSQL instance
+## 2. Install
 
-A running Redis instance is warmly advised.
-
-## Install
-
-Download the source from [this link](https://github.com/steunix/passweaver-api/releases/tag/v2.1.2), and install all dependencies with npm:
+Download the source at [this link](https://github.com/steunix/passweaver-api/releases/latest), and install all dependencies with npm:
 
 `npm install`
 
-## Configure
+## 3. Setup environment variables
 
-Copy `config-skel.json` to `config.json` and adjust the options:
+Passweaver API uses this environment variable:
+
+- `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
+
+See [Prisma Documentation](https://www.prisma.io/docs/orm/overview/databases/postgresql#connection-details) for further details.
+
+If you're installing a production environment, don't forget to set variable `NODE_ENV` to `production`, since some of Passweaver API dependencies use that variable to optimize operations.
+
+## 4. Configure
+
+Copy `config-skel.json` to `config.json` and adjust the options (all options are mandatory, unless a default is specified):
 
 - **obsolete** `master_key_file`: The file (with complete path) containing the (base64 encoded) master key; it is only necessary if you have a database with items created with version 1.x API
 - `jwt_duration`: JWT duration. For example, "2h" or "1d". When JWT expires, a new login is required.
@@ -408,37 +416,33 @@ Copy `config-skel.json` to `config.json` and adjust the options:
   - `enabled`: true or false; if false, internal cache is uses
   - `url`: Redis url
 - `onetimetokens`:
-  - `max_hours`: Max one-time secrets duration
-- `readonly`: true or false; if true, no write operation is allowed both for admins and regolar users
-- `enable_metrics`: true or false, enables Prometheus formatted metrics
+  - `max_hours`: Max one-time secrets duration, expressed in hours
+- `readonly`: true or false; if true, no write operation is allowed both for admins and non-admins (logging is still operational)
+- `enable_metrics`: true or false, enables Prometheus-formatted metrics
 - `generated_password_length`: length of random generated password, default is 20
 
-## Environment variables
-
-Passweaver API uses this environment variable:
-
-- `PASSWEAVERAPI_PRISMA_URL`: the database connection string in the form `postgresql://user:password@serverip:port/database`
-
-See [Prisma Documentation](https://www.prisma.io/docs/orm/overview/databases/postgresql#connection-details) for further details.
-
-If you're installing a production environment, don't forget to set variable `NODE_ENV` to `production`, since some of Passweaver API dependencies use that variable to optimize operations.
-
-## Database
+## 5. Prepare the database
 
 PassWeaver API uses PostgreSQL as RDBMS and Prisma ORM to access it.
 
-Create an empty database on your existent PostgreSQL instance, and set the environment variable `PASSWEAVERAPI_PRISMA_URL` accordingly.
+Create an empty database on your existent PostgreSQL instance, and set the environment variable `PASSWEAVERAPI_PRISMA_URL` (see above) accordingly.
 
-Then, from PassWeaver-API directory, run the following commands:
+Then, in PassWeaver-API install directory, run the following commands:
 
 - `npx prisma db push`: creates the database objects
 - `npx prisma db seed`: add initial default data
 - `npx prisma generate`: generates Prisma code
 
-## Default user
+## 6. Run PassWeaver API
 
-A default user `admin` will be created with password `0`: of course you should change it as soon as possible.
+Run `node passweaver-api.mjs`.
 
-## Run
+If no error is reported, the API is up and running.
 
-run `node passweaver-api.mjs`.
+## 7. First login
+
+A default user `admin` has been created, with password `0`: of course you should change it as soon as possible.
+
+## 8. Need a GUI to handle your passwords?
+
+If you need a GUI, have a look at [PassWeaver GUI](https://steunix.github.io/passweaver-gui/), a WEB based frontend for PassWeaver API.
