@@ -13,7 +13,7 @@ import * as Config from '../../../lib/config.mjs'
 import * as Events from '../../../lib/event.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
-import * as Items from '../../../model/item.mjs'
+import * as Item from '../../../model/item.mjs'
 import * as KMS from '../../../lib/kms/kms.mjs'
 import * as Metrics from '../../../lib/metrics.mjs'
 
@@ -98,16 +98,21 @@ export async function get (req, res, next) {
   if (ottoken.type === 1) {
     // Get item relevant fields
     const item = await DB.items.findUnique({
-      where: { id: ottoken.itemid },
-      select: { id: true, type: true, title: true }
+      where: { id: ottoken.itemid }
     })
     if (item === null) {
       res.status(R.NOT_FOUND).send(R.ko('Item not found'))
       return
     }
-    item.data = await Items.decrypt(ottoken.itemid, req)
+    item.data = await Item.decrypt(item, req)
 
-    resp.item = Crypt.encryptedPayload(key, JSON.stringify(item))
+    const retpayload = {
+      id: item.id,
+      title: item.title,
+      type: item.type,
+      data: item.data
+    }
+    resp.item = Crypt.encryptedPayload(key, JSON.stringify(retpayload))
   }
 
   // Delete token
