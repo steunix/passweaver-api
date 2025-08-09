@@ -36,14 +36,14 @@ export async function unlock (req, res, next) {
     select: { personalsecret: true, personalseed: true }
   })
   if (user === null) {
-    Events.add(req.user, Const.EV_ACTION_UNLOCKNF, Const.EV_ENTITY_USER, req.user)
+    await Events.add(req.user, Const.EV_ACTION_UNLOCKNF, Const.EV_ENTITY_USER, req.user)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
 
   // Check password
   if (!await Crypt.checkPassword(req.body.password, user.personalsecret)) {
-    Events.add(req.user, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, req.user)
+    await Events.add(req.user, Const.EV_ACTION_UNLOCKNV, Const.EV_ENTITY_USER, req.user)
     res.status(R.UNAUTHORIZED).send(R.ko('Wrong password'))
     return
   }
@@ -51,7 +51,7 @@ export async function unlock (req, res, next) {
   // Create JWT token
   const token = await Auth.createToken(req.user, `${user.personalseed || ''}:${req.body.password}`)
 
-  Events.add(req.user, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, req.user)
+  await Events.add(req.user, Const.EV_ACTION_UNLOCK, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
 }
 
@@ -109,7 +109,7 @@ export async function setPassword (req, res, next) {
   // Create new JWT token
   const token = await Auth.createToken(req.user, `${user.personalseed || ''}:${req.body.password}`)
 
-  Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
+  await Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
 }
 
@@ -164,7 +164,7 @@ export async function updatePassword (req, res, next) {
   // Create new JWT token
   const token = await Auth.createToken(req.user, `${user.personalseed || ''}:${req.body.password}`)
 
-  Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
+  await Events.add(req.user, Const.EV_ACTION_PERSCREATE, Const.EV_ENTITY_USER, req.user)
   res.send(R.ok({ jwt: token }))
 }
 
@@ -190,7 +190,7 @@ export async function resetPassword (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_PERSRESET, Const.EV_ENTITY_USER, req.user)
+  await Events.add(req.user, Const.EV_ACTION_PERSRESET, Const.EV_ENTITY_USER, req.user)
 
   // Create new JWT token
   const token = await Auth.createToken(req.user)

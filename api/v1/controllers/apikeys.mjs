@@ -46,7 +46,7 @@ export async function get (req, res, next) {
   }
 
   apik.expiresat = apik.expiresat.toISOString().substring(0, 10)
-  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_APIKEY, apiid)
+  await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_APIKEY, apiid)
   res.send(R.ok(apik))
 }
 
@@ -148,7 +148,7 @@ export async function create (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_APIKEY, created.id)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_APIKEY, created.id)
   res.status(R.CREATED).send(R.ok({ id: created.id, secret }))
 }
 
@@ -229,7 +229,7 @@ export async function update (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_APIKEY, apikid)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_APIKEY, apikid)
   res.send(R.ok())
 }
 
@@ -271,6 +271,6 @@ export async function remove (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_APIKEY, apikid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_APIKEY, apikid)
   res.send(R.ok())
 }

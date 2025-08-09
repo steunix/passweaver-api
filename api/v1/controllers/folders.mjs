@@ -105,7 +105,7 @@ export async function create (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, newid)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, newid)
   await Cache.resetFoldersTree()
   res.status(R.CREATED).send(R.ok({ id: newid }))
 }
@@ -239,7 +239,7 @@ export async function update (req, res, next) {
     await Folder.updateFTS(folder.id)
   }
 
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, folderid)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, folderid)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }
@@ -330,7 +330,7 @@ export async function remove (req, res, next) {
     })
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, folderid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, folderid)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }
@@ -402,7 +402,7 @@ export async function addGroup (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }
@@ -473,7 +473,7 @@ export async function setGroup (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, req.params.folder)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_FOLDER, req.params.folder)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }
@@ -535,7 +535,7 @@ export async function removeGroup (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)
   await Cache.resetFoldersTree()
   res.send(R.ok())
 }

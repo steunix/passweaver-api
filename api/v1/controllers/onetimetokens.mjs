@@ -121,11 +121,11 @@ export async function get (req, res, next) {
   })
 
   if (ottoken.type === 0) {
-    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, ottoken.id)
+    await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESECRET, ottoken.id)
   }
   if (ottoken.type === 1) {
-    Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESHARE, ottoken.id)
-    Events.add(req.user, Const.EV_ACTION_READVIATOKEN, Const.EV_ENTITY_ITEM, ottoken.itemid)
+    await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ONETIMESHARE, ottoken.id)
+    await Events.add(req.user, Const.EV_ACTION_READVIATOKEN, Const.EV_ENTITY_ITEM, ottoken.itemid)
   }
 
   // Update metrics
@@ -205,11 +205,11 @@ export async function create (req, res, next) {
   })
 
   if (req.body.type === Const.OTT_TYPE_SECRET) {
-    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
+    await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
   }
   if (req.body.type === Const.OTT_TYPE_ITEM) {
-    Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, created.id)
-    Events.add(req.user, Const.EV_ACTION_ITEMSHARE, Const.EV_ENTITY_ITEM, req.body.itemid)
+    await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, created.id)
+    await Events.add(req.user, Const.EV_ACTION_ITEMSHARE, Const.EV_ENTITY_ITEM, req.body.itemid)
   }
 
   // Update metrics

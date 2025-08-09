@@ -23,7 +23,7 @@ export async function create (req, res, next) {
     return
   }
 
-  await Events.add(
+  await await Events.add(
     req.user,
     req.body.event,
     req.body.entity,
