@@ -218,7 +218,7 @@ export async function create (req, res, next) {
     })
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_USER, newUserId)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_USER, newUserId)
   await Cache.resetFoldersTree()
 
   res.status(R.CREATED).send(R.ok({ id: newUserId }))
@@ -319,9 +319,9 @@ export async function update (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_USER, userid)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_USER, userid)
   if (req.body.secret) {
-    Events.add(req.user, Const.EV_ACTION_PWDUPDATE, Const.EV_ENTITY_USER, userid)
+    await Events.add(req.user, Const.EV_ACTION_PWDUPDATE, Const.EV_ENTITY_USER, userid)
   }
   res.send(R.ok())
 }
@@ -412,7 +412,7 @@ export async function remove (req, res, next) {
     })
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_USER, userid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_USER, userid)
 
   await Cache.resetFoldersTree(user)
   await Cache.resetGroupsTree()

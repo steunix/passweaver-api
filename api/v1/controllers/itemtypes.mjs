@@ -49,7 +49,7 @@ export async function get (req, res, next) {
     return
   }
 
-  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEMTYPE, typeid)
+  await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEMTYPE, typeid)
   res.send(R.ok(itemtype))
 }
 
@@ -121,7 +121,7 @@ export async function create (req, res, next) {
   })
 
   await Cache.resetItemTypes()
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
   res.status(R.CREATED).send(R.ok({ id: created.id }))
 }
 
@@ -178,7 +178,7 @@ export async function update (req, res, next) {
   })
 
   await Cache.resetItemTypes()
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEMTYPE, typeid)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEMTYPE, typeid)
   res.send(R.ok())
 }
 
@@ -231,6 +231,6 @@ export async function remove (req, res, next) {
   })
 
   await Cache.resetItemTypes()
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, typeid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEMTYPE, typeid)
   res.send(R.ok())
 }

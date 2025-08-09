@@ -132,7 +132,7 @@ export async function get (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
+  await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
   Metrics.counterInc(Const.METRICS_ITEMS_READ)
 
   res.send(R.ok(item))
@@ -372,7 +372,7 @@ export async function create (req, res, next) {
   // Update tsvector
   await Item.updateFTS(newid)
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
   Metrics.counterInc(Const.METRICS_ITEMS_CREATED)
   res.status(R.CREATED).send(R.ok({ id: newid }))
 }
@@ -572,7 +572,7 @@ export async function update (req, res, next) {
       }
     })
     Metrics.counterInc(Const.METRICS_ITEMS_UPDATED)
-    Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid, null, `Updated: ${changedFields.join(',')}`)
+    await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_ITEM, itemid, null, `Updated: ${changedFields.join(',')}`)
   }
 
   // Update tsvector
@@ -670,7 +670,7 @@ export async function remove (req, res, next) {
     })
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, itemid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, itemid)
   Metrics.counterInc(Const.METRICS_ITEMS_DELETED)
   res.send(R.ok())
 }
@@ -755,8 +755,8 @@ export async function clone (req, res, next) {
   // Update tsvector
   await Item.updateFTS(newid)
 
-  Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, itemid)
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
+  await Events.add(req.user, Const.EV_ACTION_CLONE, Const.EV_ENTITY_ITEM, itemid)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEM, newid)
   Metrics.counterInc(Const.METRICS_ITEMS_CREATED)
   res.status(R.CREATED).send(R.ok({ id: newid }))
 }

@@ -41,7 +41,7 @@ export async function get (req, res, next) {
     return
   }
 
-  Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_KMS, typeid)
+  await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_KMS, typeid)
   res.send(R.ok(kms))
 }
 
@@ -133,7 +133,7 @@ export async function create (req, res, next) {
   }
 
   KMS.resetWallet()
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_KMS, created.id)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_KMS, created.id)
   res.status(R.CREATED).send(R.ok({ id: created.id }))
 }
 
@@ -209,7 +209,7 @@ export async function update (req, res, next) {
   }
 
   KMS.resetWallet()
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_KMS, kmsid)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_KMS, kmsid)
   res.send(R.ok())
 }
 
@@ -263,6 +263,6 @@ export async function remove (req, res, next) {
   })
 
   KMS.resetWallet()
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_KMS, kmsid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_KMS, kmsid)
   res.send(R.ok())
 }

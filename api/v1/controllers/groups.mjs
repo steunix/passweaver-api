@@ -180,7 +180,7 @@ export async function create (req, res, next) {
   })
 
   // Tree cache doesn't need to be reset, because the group is empty
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, newid)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUP, newid)
 
   await Cache.resetGroupsTree()
   res.status(R.CREATED).send(R.ok({ id: newid }))
@@ -276,7 +276,7 @@ export async function update (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_GROUP, groupid)
+  await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_GROUP, groupid)
   await Cache.resetFoldersTree()
   await Cache.resetGroupsTree()
   res.send(R.ok())
@@ -370,7 +370,7 @@ export async function remove (req, res, next) {
     })
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUP, groupid)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUP, groupid)
   await Cache.resetFoldersTree()
   await Cache.resetGroupsTree()
   res.send(R.ok())
@@ -443,7 +443,7 @@ export async function addUser (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
 
   await Cache.resetFoldersTree(user)
   res.send(R.ok())
@@ -515,7 +515,7 @@ export async function removeUser (req, res, next) {
     }
   })
 
-  Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
+  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_GROUPMEMBERS, group, user)
 
   await Cache.resetFoldersTree(user)
   res.send(R.ok())

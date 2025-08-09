@@ -47,12 +47,12 @@ export async function login (req, res, next) {
   let isapikey = false
   if (data.apikey && data.secret) {
     if (!await ApiKey.exists(data.apikey)) {
-      Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTFOUND, Const.EV_ENTITY_APIKEY, data.apikey)
+      await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTFOUND, Const.EV_ENTITY_APIKEY, data.apikey)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad API key'))
       return
     }
     if (!await ApiKey.checkSecret(data.apikey, data.secret)) {
-      Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_FAILED, Const.EV_ENTITY_APIKEY, data.apikey)
+      await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_FAILED, Const.EV_ENTITY_APIKEY, data.apikey)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad API key secret'))
       return
     }
@@ -63,7 +63,7 @@ export async function login (req, res, next) {
       select: { userid: true, active: true, ipwhitelist: true, timewhitelist: true }
     })
     if (!apik.active) {
-      Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTVALID, Const.EV_ENTITY_APIKEY, data.apikey)
+      await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTVALID, Const.EV_ENTITY_APIKEY, data.apikey)
       res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
       return
     }
@@ -72,7 +72,7 @@ export async function login (req, res, next) {
     if (apik.ipwhitelist) {
       const clientIp = req.connection.remoteAddress
       if (!ApiKey.checkIPWhitelist(apik.ipwhitelist, clientIp)) {
-        Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_IPNOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
+        await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_IPNOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
         res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
         return
       }
@@ -81,7 +81,7 @@ export async function login (req, res, next) {
     // Check if time is whitelisted
     if (apik.timewhitelist) {
       if (!ApiKey.checkTimeWhitelist(apik.timewhitelist)) {
-        Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_TIMENOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
+        await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_TIMENOTWHITELISTED, Const.EV_ENTITY_APIKEY, data.apikey)
         res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
         return
       }
@@ -100,7 +100,7 @@ export async function login (req, res, next) {
     })
 
     // Add event
-    Events.add(apik.userid, Const.EV_ACTION_LOGIN_APIKEY, Const.EV_ENTITY_APIKEY, data.apikey)
+    await Events.add(apik.userid, Const.EV_ACTION_LOGIN_APIKEY, Const.EV_ENTITY_APIKEY, data.apikey)
 
     data.username = user.login
     isapikey = true
@@ -111,7 +111,7 @@ export async function login (req, res, next) {
     where: { login: data.username }
   })
   if (user === null) {
-    Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTFOUND, Const.EV_ENTITY_USER, data.username)
+    await Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTFOUND, Const.EV_ENTITY_USER, data.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
@@ -129,7 +129,7 @@ export async function login (req, res, next) {
 
   // Check if user is valid
   if (!user.active) {
-    Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTVALID, Const.EV_ENTITY_USER, data.username)
+    await Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTVALID, Const.EV_ENTITY_USER, data.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
@@ -182,7 +182,7 @@ export async function login (req, res, next) {
         throw new Error('User not found')
       }
     } catch (err) {
-      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
+      await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
     }
@@ -191,7 +191,7 @@ export async function login (req, res, next) {
   // Local authentication
   if (!isapikey && user.authmethod === 'local') {
     if (!await Crypt.checkPassword(data.password, user.secret)) {
-      Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
+      await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
     }
@@ -199,7 +199,7 @@ export async function login (req, res, next) {
 
   // API key method check
   if ((!isapikey && user.authmethod === 'apikey') || (isapikey && user.authmethod !== 'apikey')) {
-    Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
+    await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
   }
@@ -212,6 +212,6 @@ export async function login (req, res, next) {
   // Create user tree cache
   await Folder.userTree(user.id)
 
-  Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
+  await Events.add(user.id, Const.EV_ACTION_LOGIN, Const.EV_ENTITY_USER, user.id)
   res.send(R.ok({ jwt: token }))
 }
