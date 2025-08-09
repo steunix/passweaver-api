@@ -1,11 +1,14 @@
 changelog:
   categories:
+    - title: New features 🎉
+      labels:
+        - enhancement
     - title: Bugs fixed 🐛
       labels:
         - bug
-    - title: New Features 🎉
+    - title: Performance improvements
       labels:
-        - enhancement
+        - performance
     - title: Dependencies
       labels:
         - dependencies
