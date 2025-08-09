@@ -177,6 +177,15 @@ export async function permissions (id, user) {
     write: false
   }
 
+  // Check for cache existance
+  const cacheRead = await Cache.get(user, Cache.foldersReadableKey)
+  const cacheWrite = await Cache.get(user, Cache.foldersWritableKey)
+  if (cacheRead && cacheWrite) {
+    ret.read = cacheRead.find(elem => elem === id) !== undefined
+    ret.write = cacheWrite.find(elem => elem === id) !== undefined
+    return ret
+  }
+
   // Extracts the parents, and all the permissions for any group where user is a member
   const pPerms = await DB.$queryRaw`
     with recursive folder_parents as
@@ -274,17 +283,13 @@ export async function groupPermissions (folderid, groupid) {
 }
 
 /**
- * Return the tree structure of folders visible to the user.
- *
+ * Return the tree structure of folders visible to the user and generates the cache
  * @param {string} user User ID
- * @param {string} getpermissions If true, also permissions are extracted
  */
-export async function userTree (user, getpermissions) {
-  if (getpermissions !== 'true') {
-    const cache = await Cache.get(user, Cache.foldersTreeKey)
-    if (cache) {
-      return cache
-    }
+export async function userTree (user) {
+  const cache = await Cache.get(user, Cache.foldersTreeKey)
+  if (cache) {
+    return cache
   }
 
   // Get folders for cache
@@ -292,7 +297,7 @@ export async function userTree (user, getpermissions) {
 
   // Explicitly allowed folders, plus personal folder
   const readFolders = await DB.$queryRaw`
-    select f.*
+    select f.*, p.read, p.write
     from   folders f
     join   folderspermissions p
     on     f.id = p.folderid
@@ -303,13 +308,14 @@ export async function userTree (user, getpermissions) {
     where  p.read = true
     and    ug.userid = ${user}
     union
-    select pf.*
+    select pf.*, true, true
     from   folders pf
     where  pf.personal = true
     and    pf.userid = ${user}`
 
   // For each allowed folder, add all parents and children
   const readable = new Map()
+  const writable = new Map()
   const data = []
   const added = new Map()
   for (const folder of readFolders) {
@@ -317,6 +323,9 @@ export async function userTree (user, getpermissions) {
     const aparents = await parents(folder.id, allFolders)
 
     readable.set(folder.id, folder.id)
+    if (folder.write) {
+      writable.set(folder.id, folder.id)
+    }
 
     // Each child is also added to read-permitted folders for caching
     for (const el of achildren) {
@@ -326,22 +335,31 @@ export async function userTree (user, getpermissions) {
       }
 
       if (!added.get(el.id)) {
-        if (getpermissions === 'true') {
-          el.permissions = await permissions(el.id, user)
-        }
+        el.permissions = await permissions(el.id, user)
         data.push(el)
         added.set(el.id, el.id)
 
         readable.set(el.id, el.id)
+        if (el.permissions.write) {
+          writable.set(el.id, el.id)
+        }
       }
     }
+
+    // Scan parents and add to the tree, for representation sake
     for (const el of aparents) {
       if (!added.get(el.id)) {
-        if (getpermissions === 'true') {
-          el.permissions = await permissions(el.id, user)
-        }
+        el.permissions = await permissions(el.id, user)
         data.push(el)
         added.set(el.id, el.id)
+
+        // On parent folders, permissions need to be checked explicitly
+        if (el.read) {
+          readable.set(el.id, el.id)
+        }
+        if (el.write) {
+          writable.set(el.id, el.id)
+        }
       }
     }
   }
@@ -370,11 +388,12 @@ export async function userTree (user, getpermissions) {
 
   await Cache.set(user, Cache.foldersTreeKey, tree)
   await Cache.set(user, Cache.foldersReadableKey, Array.from(readable.keys()))
+  await Cache.set(user, Cache.foldersWritableKey, Array.from(writable.keys()))
   return tree
 }
 
 /**
- * Return the tree structure of folders visible to the user.
+ * Return the tree structure of folders visible to the group.
  *
  * @param {string} group Group
  */

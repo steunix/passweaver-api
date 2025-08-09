@@ -330,4 +330,40 @@ describe('Items', () => {
       .catch(v => v)
     assert.strictEqual(res6.status, 200)
   })
+
+  it('Get item 100 times and measure time (below 2 seconds)', async () => {
+    // Create an item to fetch
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    const start = Date.now()
+
+    for (let i = 0; i < 100; i++) {
+      const res = await agent
+        .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
+        .set('Authorization', `Bearer ${global.userJWT}`)
+        .catch(v => v)
+
+      assert.strictEqual(res.status, 200)
+    }
+
+    const end = Date.now()
+    const elapsed = end - start
+    console.log(`Fetching the item 100 times took ${elapsed} ms`)
+
+    assert(elapsed < 2000, 'Fetching took too long')
+
+    // Cleanup
+    const res2 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res2.status, 200)
+  })
 })
