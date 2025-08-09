@@ -106,7 +106,7 @@ export async function get (req, res, next) {
 
   // Decrypt content
   try {
-    item.data = await Item.decrypt(itemid, req)
+    item.data = await Item.decrypt(item, req)
   } catch (e) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('This item is corrupted and cannot be decrypted'))
     return
@@ -482,20 +482,23 @@ export async function update (req, res, next) {
     }
   }
 
-  // Recalculate the data
-  let encData
-  const updateStruct = {}
+  // Check if the new folder is personal
   let newIsPersonal = item.personal
   if (folderFromURL) {
     // If the folder is changing, check if the new folder is personal
     newIsPersonal = await Folder.isPersonal(folderFromURL)
   }
+
+  // Reencrypt the data
+  const updateStruct = {}
   let newData
+  let encData
+
+  // If data is given, use it, otherwise decrypt the current data
   if (req.body?.data) {
     newData = req.body.data
   } else {
-    // If no data is given, decrypt the current data
-    newData = await Item.decrypt(itemid, req)
+    newData = await Item.decrypt(item, req)
   }
 
   // Encrypt according to the new folder
@@ -527,7 +530,7 @@ export async function update (req, res, next) {
     updateStruct.type = req.body.type || null
   }
 
-  // Check if something has changed
+  // Check if something has changed in non encrypted fields
   const changedFields = []
   if (updateStruct?.title && updateStruct.title !== item.title) {
     changedFields.push('title')
@@ -544,7 +547,7 @@ export async function update (req, res, next) {
 
   // Check what has changed in data
   if (req.body?.data) {
-    const decData = await Item.decrypt(itemid, req)
+    const decData = await Item.decrypt(item, req)
     if (decData !== req.body.data) {
       // If JSON, check all properties for changes
       const olddata = JSON.parse(decData)
@@ -721,7 +724,7 @@ export async function clone (req, res, next) {
   }
 
   // Reencrypt data
-  const oldData = await Item.decrypt(itemid, req)
+  const oldData = await Item.decrypt(item, req)
   let newData
   if (item.personal) {
     newData = await Item.encrypt(oldData, req.user, req.personaltoken)

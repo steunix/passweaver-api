@@ -43,25 +43,11 @@ export async function updateFTS (id) {
 
 /**
  * Decrypt user data
- * @param {string} itemid Item ID
- * @param {object} req Express request
- * @returns {string} Decrypted data
+ * @param {Object} item Item db record
+ * @param {Object} req Express request
+ * @returns {string} Decrypted data, base64 encoded
  */
-export async function decrypt (itemid, req) {
-  // Search item
-  const item = await DB.items.findUniqueOrThrow({
-    where: { id: itemid },
-    select: {
-      data: true,
-      dataiv: true,
-      dataauthtag: true,
-      algo: true,
-      personal: true,
-      kmsid: true,
-      dek: true
-    }
-  })
-
+export async function decrypt (item, req) {
   let data
   data = await KMS.decrypt(item.kmsid, item.dek, item.data, item.dataiv, item.dataauthtag, item.algo)
 
