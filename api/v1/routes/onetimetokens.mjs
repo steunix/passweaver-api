@@ -2,7 +2,7 @@
  * One time tokens module
  * @module routes/onetimetokens
  * @author Stefano Rivoir <rs4000@gmail.com>
- * @licence MIT
+ * @license MIT
  * @copyright (c) 2023-2025 - Stefano Rivoir <rs4000@gmail.com>
  */
 
