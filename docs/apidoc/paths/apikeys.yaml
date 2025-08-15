@@ -8,6 +8,7 @@ get:
     - bearerAuth: []
   parameters:
     - $ref: '..\parameters\apikeys.yaml#/search'
+    - $ref: '..\parameters\apikeys.yaml#/userid'
   responses:
     "200":
       description: API key found

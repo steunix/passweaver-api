@@ -63,23 +63,15 @@ export async function list (req, res, next) {
     return
   }
 
-  const search = req.query?.search ?? ''
+  // Search API keys
+  const search = await APIKey.search(req.query?.search, req.query?.userid)
 
-  const apik = await DB.apikeys.findMany({
-    where: {
-      description: { contains: search, mode: 'insensitive' }
-    },
-    orderBy: {
-      description: 'asc'
-    }
-  })
-
-  if (apik.length === 0) {
+  if (search.length === 0) {
     res.status(R.NOT_FOUND).send(R.ko('No API key found'))
     return
   }
 
-  res.send(R.ok(apik))
+  res.send(R.ok(search))
 }
 
 /**
