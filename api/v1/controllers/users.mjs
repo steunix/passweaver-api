@@ -319,6 +319,14 @@ export async function update (req, res, next) {
     }
   })
 
+  // If the user is being disabled, disable all API keys
+  if (req.body.active === false) {
+    await DB.apikeys.updateMany({
+      where: { userid },
+      data: { active: false }
+    })
+  }
+
   await Events.add(req.user, Const.EV_ACTION_UPDATE, Const.EV_ENTITY_USER, userid)
   if (req.body.secret) {
     await Events.add(req.user, Const.EV_ACTION_PWDUPDATE, Const.EV_ENTITY_USER, userid)
