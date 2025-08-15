@@ -40,13 +40,60 @@ describe('Users', function () {
     assert.strictEqual(res1.status, 400)
   })
 
-  it('Delete unexistent user', async () => {
+  it('Delete nonexistent user', async () => {
     const res1 = await agent
       .delete(`${global.host}/api/v1/users/000`)
       .set('Authorization', `Bearer ${global.adminJWT}`)
       .catch(v => v)
 
     assert.strictEqual(res1.status, 404)
+  })
+
+  it('Delete user, API key exists', async () => {
+    const data = { ...global.userCreateDataApiKey }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    // Create user
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+
+    // Create API key
+    const res2 = await agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: res1.body.data.id, expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+
+    // Try to delete user
+    const res3 = await agent
+      .delete(`${global.host}/api/v1/users/${res1.body.data.id}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res3.status, 422)
+
+    // Cleanup API key and user
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${res2.body.data.id}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/users/${res1.body.data.id}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res5.status, 200)
   })
 
   it('Delete user', async () => {

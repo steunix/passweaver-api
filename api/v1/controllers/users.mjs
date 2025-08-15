@@ -363,6 +363,15 @@ export async function remove (req, res, next) {
     return
   }
 
+  // Check there is no API key associated with the user
+  const apiKey = await DB.apikeys.findFirst({
+    where: { userid }
+  })
+  if (apiKey) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('User has associated API keys'))
+    return
+  }
+
   // Delete user
   await DB.$transaction(async (tx) => {
     // Delete user groups
