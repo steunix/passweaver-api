@@ -13,6 +13,31 @@ import isCIDR from 'is-cidr'
 import dateFormat from 'dateformat'
 
 /**
+ * Search API key
+ * @param {String} description Description to filter
+ * @param {String} userid User ID to filter
+ * @returns
+ */
+export async function search (description, userid) {
+  const where = {}
+  if (description) {
+    where.description = { contains: description, mode: 'insensitive' }
+  }
+  if (userid) {
+    where.userid = { equals: userid }
+  }
+
+  const apik = await DB.apikeys.findMany({
+    where,
+    orderBy: {
+      description: 'asc'
+    }
+  })
+
+  return apik
+}
+
+/**
  * Check if API key exists
  * @param {*} apikey API key id
  * @returns {boolean} Returns true if API key exists, otherwise false

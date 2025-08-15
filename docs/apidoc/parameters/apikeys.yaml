@@ -17,3 +17,11 @@ search:
   schema:
     type: string
     example: "example search string"
+
+userid:
+  name: userid
+  in: query
+  description: User ID to filter
+  required: false
+  schema:
+    type: string

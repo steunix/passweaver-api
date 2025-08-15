@@ -214,6 +214,63 @@ describe('API keys', () => {
     assert.strictEqual(res3.status, 200)
   })
 
+  it('Search API keys', async () => {
+    // Create user
+    const data = { ...global.userCreateData }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const userId = res1.body.data.id
+
+    // Create API key
+    const res2 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: rnd, userid: userId, expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+    const apikId = res2.body.data.id
+
+    // Search by description
+    const res3 = await agent
+      .get(`${global.host}/api/v1/apikeys/?search=${encodeURIComponent(rnd)}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 200)
+
+    // Search by user
+    const res4 = await agent
+      .get(`${global.host}/api/v1/apikeys/?userid=${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+    assert.strictEqual(res4.body.data.length, 1)
+
+    // Cleanup API key
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res5.status, 200)
+
+    // Cleanup user
+    const res6 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res6.status, 200)
+  })
+
   it('List API keys, unauthorized', async () => {
     const res1 = await agent
       .get(`${global.host}/api/v1/apikeys/`)

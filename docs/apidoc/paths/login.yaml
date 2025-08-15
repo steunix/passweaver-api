@@ -3,6 +3,7 @@ post:
     - Authentication
   operationId: login
   summary: Login
+
   description: Login in and return a JWT token; username and password must be provided for regular login, while apikey and secret are used for API keys.
   requestBody:
     required: true
