@@ -342,4 +342,69 @@ describe('Login', function () {
       .catch(v => v)
     assert.strictEqual(res5.status, 200)
   })
+
+  it('Login via API, disable user makes API disabled', async function () {
+    // Create a user with API key authentication
+    const data = { ...global.userCreateDataApiKey }
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+    assert.strictEqual(res1.status, 201)
+    const userId = res1.body.data.id
+
+    // Create API key
+    const res2 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid: userId, expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+    const apikId = res2.body.data.id
+    const secret = res2.body.data.secret
+
+    // Login with API key, OK
+    const res3 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res3.status, 200)
+
+    // Disable the user
+    const res4 = await agent
+      .patch(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ active: false })
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+
+    // Try to login again with the API key, must be unauthorized
+    const res5 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res5.status, 401)
+
+    // Cleanup
+    const res6 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res6.status, 200)
+
+    const res7 = await agent
+      .delete(`${global.host}/api/v1/users/${userId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res7.status, 200)
+  })
 })
