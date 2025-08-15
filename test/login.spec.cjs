@@ -155,7 +155,7 @@ describe('Login', function () {
 
     assert.strictEqual(res1.status, 201)
     const apikId = res1.body.data.id
-    const secret = res1.body.data.id
+    const secret = 'nosecret'
 
     const res2 = await agent
       .post(`${global.host}/api/v1/login`)
@@ -181,7 +181,7 @@ describe('Login', function () {
 
     assert.strictEqual(res1.status, 201)
     const apikId = res1.body.data.id
-    const secret = res1.body.data.id
+    const secret = res1.body.data.secret
 
     const res2 = await agent
       .post(`${global.host}/api/v1/login`)
@@ -207,7 +207,7 @@ describe('Login', function () {
 
     assert.strictEqual(res1.status, 201)
     const apikId = res1.body.data.id
-    const secret = res1.body.data.id
+    const secret = res1.body.data.secret
 
     const res2 = await agent
       .post(`${global.host}/api/v1/login`)
@@ -222,6 +222,57 @@ describe('Login', function () {
       .catch(v => v)
 
     assert.strictEqual(res4.status, 200)
+  })
+
+  it('Login via API, user not active', async function () {
+    // Create inactive user
+    const data = { ...global.userCreateData }
+    data.active = false
+    const rnd = global.rnd()
+    data.login = `${data.login}_${rnd}`
+
+    const res0 = await agent
+      .post(`${global.host}/api/v1/users`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send(data)
+      .catch(v => v)
+    assert.strictEqual(res0.status, 201)
+    const userid = res0.body.data.id
+
+    // Create API key
+    const res1 = await global.agent
+      .post(`${global.host}/api/v1/apikeys`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .send({ description: 'test api key', userid, expiresat: '2050-01-01', active: true })
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const apikId = res1.body.data.id
+    const secret = res1.body.data.secret
+
+    // Login and ensure API key is not allowed
+    const res2 = await agent
+      .post(`${global.host}/api/v1/login`)
+      .send({ apikey: apikId, secret })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 401)
+
+    // Cleanup API key
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/apikeys/${apikId}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+
+    // Cleanup user
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/users/${userid}`)
+      .set('Authorization', `Bearer ${global.adminJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res5.status, 200)
   })
 
   it('Login user, apikey auth method mismatch', async function () {
