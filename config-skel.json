@@ -36,5 +36,5 @@
   },
   "readonly": false,
   "enable_metrics": true,
-  "generated_password_length": 20
+  "generated_password_length": 15
 }
