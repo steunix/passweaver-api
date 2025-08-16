@@ -7,3 +7,14 @@ symbols:
   required: false
   schema:
     type: string
+
+length:
+  name: length
+  in: query
+  description: The length of the generated password
+  required: false
+  schema:
+    type: integer
+    minimum: 1
+    maximum: 50
+    default: 15
