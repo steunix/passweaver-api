@@ -19,24 +19,31 @@ getsuccess:
               id:
                 type: string
                 description: Folder id
+                example: 06CANZR79NTK3BJVSW6SH35MV8
               parent:
                 type: string
                 description: Parent folder id
+                example: 06C4DB61ADYZV2HVJENGB550B8
               description:
                 type: string
                 description: Description
+                example: Folder 1
               personal:
                 type: boolean
                 description: Flag for personal folder
+                example: true
               user:
                 type: string
                 description: If personal folder, owner user
+                example: user1
               createdat:
                 type: string
                 description: Creation date/time
+                example: "2024-09-18T14:55:27.451Z"
               updatedat:
                 type: string
                 description: Update date/time
+                example: "2024-09-18T14:55:27.451Z"
               permissions:
                 type: object
                 description: Permissions for current user
@@ -44,9 +51,11 @@ getsuccess:
                   read:
                     type: boolean
                     description: Read permission
+                    example: true
                   write:
                     type: boolean
                     description: Write permission
+                    example: false
 
 itemslistsuccess:
   description: Success
@@ -80,10 +89,11 @@ itemslistsuccess:
                 folderid:
                   type: string
                   description: Item folder
-                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                  example: "06CANZR79NTK3BJVSW6SH35MV8"
                 favorite:
                   type: boolean
                   description: True if item is favorite, false otherwise
+                  example: false
                 folder:
                   type: object
                   properties:
@@ -94,6 +104,7 @@ itemslistsuccess:
                 personal:
                   type: boolean
                   description: True if item is personal, false otherwise
+                  example: false
                 itemtype:
                   type: object
                   properties:
@@ -123,7 +134,7 @@ groupslistsuccess:
                 id:
                   type: string
                   description: Group ID
-                  example: "group_123"
+                  example: "06CANZTTT9ZVF1XF2AN8SQQK7M"
                 description:
                   type: string
                   description: Group description
@@ -131,15 +142,19 @@ groupslistsuccess:
                 canmodify:
                   type: boolean
                   description: True if permissions can be modified, false otherwise
+                  example: true
                 inherited:
                   type: string
                   description: True if permissions are inherited from a parent folder
+                  example: true
                 read:
                   type: boolean
                   description: Read permission
+                  example: true
                 write:
                   type: boolean
                   description: Write permission
+                  example: false
 
 treesuccess:
   description: Success
@@ -159,11 +174,11 @@ treesuccess:
                 id:
                   type: string
                   description: Folder id
-                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                  example: "06CANZTB95RJB4J2BSEF09MDZ0"
                 parent:
                   type: string
                   description: Parent folder id
-                  example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                  example: "06C4DB61ADYZV2HVJENGB550B8"
                 description:
                   type: string
                   description: Description
@@ -171,15 +186,19 @@ treesuccess:
                 personal:
                   type: boolean
                   description: Flag for personal folder
+                  example: false
                 user:
                   type: string
                   description: If personal folder, owner user
+                  example: user1
                 createdat:
                   type: string
                   description: Creation date/time
+                  example: "2024-09-18T14:55:27.451Z"
                 updatedat:
                   type: string
                   description: Update date/time
+                  example: "2024-09-18T14:55:27.451Z"
                 permissions:
                   type: object
                   description: Permissions for current user
@@ -187,9 +206,11 @@ treesuccess:
                     read:
                       type: boolean
                       description: Read permission
+                      example: true
                     write:
                       type: boolean
                       description: Write permission
+                      example: false
                 children:
                   type: array
                   items:
@@ -198,11 +219,11 @@ treesuccess:
                       id:
                         type: string
                         description: Folder id
-                        example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                        example: "06CASYBKZ1SP5FGK4QS9AK2SGM"
                       parent:
                         type: string
                         description: Parent folder id
-                        example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                        example: "06CANZTB95RJB4J2BSEF09MDZ0"
                       description:
                         type: string
                         description: Description
@@ -210,15 +231,19 @@ treesuccess:
                       personal:
                         type: boolean
                         description: Flag for personal folder
+                        example: false
                       user:
                         type: string
                         description: If personal folder, owner user
+                        example: user1
                       createdat:
                         type: string
                         description: Creation date/time
+                        example: "2024-09-18T14:55:27.451Z"
                       updatedat:
                         type: string
                         description: Update date/time
+                        example: "2024-09-18T14:55:27.451Z"
                       permissions:
                         type: object
                         description: Permissions for current user
@@ -226,6 +251,8 @@ treesuccess:
                           read:
                             type: boolean
                             description: Read permission
+                            example: true
                           write:
                             type: boolean
                             description: Write permission
+                            example: false

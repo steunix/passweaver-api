@@ -44,10 +44,11 @@ itemUpdateBody:
     folder:
       type: string
       description: Item folder
-      example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+      example: "06CASZFMXHZMV43YR2ZWWKSMXW"
     favorite:
       type: boolean
       description: Set/unset favorite item
+      example: true
   required:
     - title
     - data

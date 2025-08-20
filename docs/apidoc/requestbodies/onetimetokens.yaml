@@ -5,12 +5,15 @@ oneTimeTokenCreateBody:
     type:
       type: integer
       description: 0 for generic text (in data field), 1 for specific item (in itemid field)
+      example: 0
     scope:
       type: integer
       description: Share scope; 0 for public, 1 for logged in users, 2 specific user (in userid field)
+      example: 0
     data:
       type: string
       description: Secret text, if type is 0
+      example: "The secret"
     itemid:
       type: string
       description: If type is 1, the item id to share
@@ -18,9 +21,11 @@ oneTimeTokenCreateBody:
     userid:
       type: string
       description: If scope is 2, the user id to share with
+      example: "06CANZW6EHVB39SC5T4NHEHW0G"
     hours:
       type: integer
       description: Number of hours after which the token will expire. Must not exceed configured limit.
+      example: 24
   required:
     - type
     - scope
