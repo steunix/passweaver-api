@@ -4,7 +4,9 @@ post:
   operationId: login
   summary: Login
 
-  description: Login in and return a JWT token; username and password must be provided for regular login, while apikey and secret are used for API keys.
+  description: |
+    Login in and return a JWT token; username and password must be provided for regular login, while apikey and secret are used for API keys logins.
+    The returned HS512 signed JWT token must be used in subsequent requests.
   requestBody:
     required: true
     content:

@@ -19,7 +19,7 @@ getsuccess:
               id:
                 type: string
                 description: Group id
-                example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                example: "06CASYH6PNTZXBYSZGE8YM4KJR"
               description:
                 type: string
                 description: Description
@@ -27,13 +27,15 @@ getsuccess:
               parent:
                 type: string
                 description: Parent group id
-                example: "01984008-af8e-7337-97ff-b82dcd78e458"
+                example: "06CANZW6EHVB39SC5T4NHEHW0G"
               createdat:
                 type: string
                 description: Creation date/time
+                example: "2024-09-18T14:55:27.451Z"
               updatedat:
                 type: string
                 description: Update date/time
+                example: "2024-09-18T14:55:27.451Z"
 
 userslistsuccess:
   description: Success
@@ -52,30 +54,39 @@ userslistsuccess:
                 id:
                   type: string
                   description: User ID
+                  example: "06CANZR79NTK3BJVSW6SH35MV8"
                 login:
                   type: string
                   description: Login
+                  example: "user1"
                 firstname:
                   type: string
                   description: First name
+                  example: "John"
                 lastname:
                   type: string
                   description: Last name
+                  example: "Doe"
                 authmethod:
                   type: string
-                  description: Authentication method (local/ldap)
+                  description: Authentication method (local/ldap/apikey)
+                  example: "local"
                 locale:
                   type: string
                   description: Locale
+                  example: "en-US"
                 active:
                   type: boolean
                   description: User is active
+                  example: true
                 createdat:
                   type: string
                   description: Creation date/time
+                  example: "2024-09-18T14:55:27.451Z"
                 updatedat:
                   type: string
                   description: Update date/time
+                  example: "2024-09-18T14:55:27.451Z"
 
 treesuccess:
   description: Success
@@ -95,18 +106,23 @@ treesuccess:
                 id:
                   type: string
                   description: Group id
+                  example: 06CANZTTT9ZVF1XF2AN8SQQK7M
                 description:
                   type: string
                   description: Description
+                  example: "Example group"
                 parent:
                   type: string
                   description: Parent group id
+                  example: "06C8Y9Z8QSVTZERHG6HC66TVPW"
                 createdat:
                   type: string
                   description: Creation date/time
+                  example: "2024-09-18T14:55:27.451Z"
                 updatedat:
                   type: string
                   description: Update date/time
+                  example: "2024-09-18T14:55:27.451Z"
 
 listsuccess:
   description: Success
@@ -125,15 +141,20 @@ listsuccess:
                 id:
                   type: string
                   description: Group id
+                  example: "06CANZTTT9ZVF1XF2AN8SQQK7M"
                 description:
                   type: string
                   description: Description
+                  example: "Example group"
                 parent:
                   type: string
                   description: Parent group id
+                  example: "06C8Y9Z8QSVTZERHG6HC66TVPW"
                 createdat:
                   type: string
                   description: Creation date/time
+                  example: "2024-09-18T14:55:27.451Z"
                 updatedat:
                   type: string
                   description: Update date/time
+                  example: "2024-09-18T14:55:27.451Z"

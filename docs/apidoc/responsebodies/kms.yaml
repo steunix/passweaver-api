@@ -22,13 +22,15 @@ getsuccess:
               description:
                 type: string
                 description: KMS description
-              example: "Example KMS"
+                example: "Example KMS"
               type:
                 type: number
                 description: KMS type
+                example: 1
               active:
                 type: boolean
                 description: KMS active status
+                example: true
 
 listsuccess:
   description: Success
@@ -55,6 +57,8 @@ listsuccess:
                 type:
                   type: number
                   description: KMS type
+                  example: 1
                 active:
                   type: boolean
                   description: KMS active status
+                  example: true

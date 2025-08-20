@@ -19,36 +19,47 @@ getsuccess:
               id:
                 type: string
                 description: User id
+                example: 067FQXHD7HZX1340XRYH96340R
               login:
                 type: string
                 description: Login
+                example: user1
               firstname:
                 type: string
                 description: First name
+                example: John
               lastname:
                 type: string
                 description: Last name
+                example: Doe
               authmethod:
                 type: string
                 description: Authentication method (local/ldap)
+                example: local
               locale:
                 type: string
                 description: Locale
+                example: en_US
               email:
                 type: string
                 description: Email address
+                example: me@me.com
               active:
                 type: boolean
                 description: User is active
+                example: true
               haspersonalsecret:
                 type: boolean
                 description: User has set a personal secret for personal items
+                example: true
               createdat:
                 type: string
                 description: Creation date/time
+                example: "2024-09-18T14:55:27.451Z"
               updatedat:
                 type: string
                 description: Update date/time
+                example: "2024-09-18T14:55:27.451Z"
 
 searchsuccess:
   description: Success
@@ -68,36 +79,47 @@ searchsuccess:
                 id:
                   type: string
                   description: User id
+                  example: 067FQXHD7HZX1340XRYH96340R
                 login:
                   type: string
                   description: Login
+                  example: user1
                 firstname:
                   type: string
                   description: First name
+                  example: John
                 lastname:
                   type: string
                   description: Last name
+                  example: Doe
                 authmethod:
                   type: string
                   description: Authentication method (local/ldap)
+                  example: local
                 locale:
                   type: string
                   description: Locale
+                  example: en_US
                 email:
                   type: string
                   description: Email address
+                  example: me@me.com
                 active:
                   type: boolean
                   description: User is active
+                  example: true
                 haspersonalsecret:
                   type: boolean
                   description: User has set a personal secret for personal items
+                  example: true
                 createdat:
                   type: string
                   description: Creation date/time
+                  example: "2024-09-18T14:55:27.451Z"
                 updatedat:
                   type: string
                   description: Update date/time
+                  example: "2024-09-18T14:55:27.451Z"
 
 getsettingssuccess:
   description: Success

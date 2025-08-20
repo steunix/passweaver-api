@@ -20,5 +20,6 @@ groupUpdateBody:
     parent:
       type: string
       description: Parent body
+      example: 06CANZW6EHVB39SC5T4NHEHW0G
   required:
     - description

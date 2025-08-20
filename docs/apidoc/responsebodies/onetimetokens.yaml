@@ -18,6 +18,7 @@ oneTimeTokenGetResult:
               type:
                 type: integer
                 description: Secret type, 0 for plain data (result in 'secret' field), 1 for item (result in 'item' field)
+                example: 0
               secret:
                 type: string
                 description: If token type is 0, AES-256-CBC encrypted and base64 encoded secret in the form "iv:data", encrypted using the key provided in the request
@@ -29,9 +30,12 @@ oneTimeTokenGetResult:
                   title:
                     type: string
                     description: Item title
+                    example: Item 1
                   type:
                     type: string
                     description: Item type
+                    example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
                   data:
                     type: string
                     description: Item data
+                    example: "example item data"

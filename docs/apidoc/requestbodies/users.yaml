@@ -38,6 +38,7 @@ userCreateBody:
   required:
     - login
     - firstname
+    - authmethod
     - email
     - secret
 

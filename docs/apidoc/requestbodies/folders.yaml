@@ -20,7 +20,7 @@ folderUpdateBody:
     parent:
       type: string
       description: Parent folder
-      example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+      example: 06CANZW6EHVB39SC5T4NHEHW0G
   required:
     - description
 
@@ -30,9 +30,11 @@ folderAddGroupBody:
     read:
       type: boolean
       description: Group can view items in folder
+      example: true
     write:
       type: boolean
       description: Group can add and delete items or subfolders in folder
+      example: false
   required:
     - read
     - write
