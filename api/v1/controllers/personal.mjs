@@ -85,7 +85,7 @@ export async function setPassword (req, res, next) {
   const seed = Crypt.randomBytes(16).toString('base64')
 
   // Derive a key from the personal password
-  const dkey = crypto.pbkdf2Sync(req.body.password, seed, 12, 32, 'sha256')
+  const dkey = crypto.pbkdf2Sync(req.body.password, seed, 10000, 32, 'sha256')
 
   // Encrypt personal key with derived key
   const ckey = crypto.createCipheriv('aes-256-ecb', dkey, '')
@@ -141,7 +141,7 @@ export async function updatePassword (req, res, next) {
   const seed = Crypt.randomBytes(16).toString('base64')
 
   // Encrypt personal key with personal password
-  const hash = crypto.pbkdf2Sync(req.body.password, seed, 12, 32, 'sha256')
+  const hash = crypto.pbkdf2Sync(req.body.password, seed, 10000, 32, 'sha256')
   const cipher = crypto.createCipheriv('aes-256-ecb', hash, '')
 
   let ekey = cipher.update(pkey, '', 'base64')
