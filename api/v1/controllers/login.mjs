@@ -135,6 +135,7 @@ export async function login (req, res, next) {
   }
 
   // Validate user password
+  let ldapClient
   if (!isapikey && user.authmethod === 'ldap') {
     const ldap = Config.get().ldap
 
@@ -146,7 +147,6 @@ export async function login (req, res, next) {
       }
 
       // Bind to LDAP server for searching user
-      let ldapClient
       try {
         ldapClient = new LDAP.Client(ldapOpts)
         await ldapClient.bind(ldap.bindDn, ldap.bindPassword)
@@ -176,7 +176,6 @@ export async function login (req, res, next) {
           } catch (err) { }
         }
       }
-      ldapClient.unbind()
 
       if (!authenticated) {
         throw new Error('User not found')
@@ -185,6 +184,8 @@ export async function login (req, res, next) {
       await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
       return
+    } finally {
+      ldapClient.unbind()
     }
   }
 
