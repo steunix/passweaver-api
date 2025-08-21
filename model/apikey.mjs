@@ -130,9 +130,10 @@ export function validateTimeWhitelist (timeWhitelist) {
 export function checkTimeWhitelist (timeWhitelist, date) {
   if (!timeWhitelist) return true
 
+  const refDate = date || new Date()
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
-  const currentDay = new Date().getDay()
-  const currentTime = dateFormat(new Date(), 'HHMM')
+  const currentDay = refDate.getDay()
+  const currentTime = dateFormat(refDate, 'HHMM')
 
   const ranges = timeWhitelist.split(',')
   for (const range of ranges) {
