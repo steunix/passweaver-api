@@ -252,13 +252,13 @@ Personal items are encrypted with a double encryption:
   - a random key (PDEK) is automatically generated; this will be used to encrypt the data
   - another key (PKEK) is derived from the user password using PBKDF2 and a random seed (RSEED); this key is NOT stored into the database (only the RSEED is)
   - the PDEK is then encrypted (envelope encryption) with PKEK, and stored into the database
-  - The personal password (PPWD) is hashed (HPPWD), and this hash is stored in the db using bcrypt algo (to verify the user in the folder unlock process)
+  - The personal password (PPWD) is hashed (HPPWD) using bcrypt algo, and this hash is stored in the db
 - When user unlocks the personal folder providing his PPWD, the authentication JWT will be updated adding a claim with his 'personal data' (RSEED and PPWD)
-  - the RSEED and PPWD are encrypted with AES-256-ECB using a random key and a random i.v. initialized at application startup, forming the personal token (PTOKEN)
+  - the RSEED and PPWD are encrypted with AES-256-CBC using a random key and a random i.v. initialized at application startup, forming the personal token (PTOKEN)
   - the PTOKEN is added to the JWT
-  - this updated JWT needs to be used for subsequent calls in order to identify a user that actually unlocked the personal folder
+  - this updated JWT needs to be used for subsequent calls in order to identify a user who actually unlocked the personal folder
   - **NOTE**: adding the (encrypted) password and seed in the JWT is needed because Passweaver API is stateless and sessionless, and the only way to reconstruct the PKEK is
-    having the data in the JWT itself
+    having the data forming it in the JWT itself
 - When a user wants to access a personal folder, the password hash is validated against the stored hash (HPPWD) in order to grant access
 
 Then, when creating an item in a personal folder:
