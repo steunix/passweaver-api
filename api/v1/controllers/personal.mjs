@@ -12,6 +12,7 @@ import * as Auth from '../../../lib/auth.mjs'
 import * as Crypt from '../../../lib/crypt.mjs'
 import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
+import * as Config from '../../../lib/config.mjs'
 import * as crypto from 'crypto'
 
 import DB from '../../../lib/db.mjs'
@@ -85,7 +86,7 @@ export async function setPassword (req, res, next) {
   const seed = Crypt.randomBytes(16).toString('base64')
 
   // Derive a key from the personal password
-  const dkey = crypto.pbkdf2Sync(req.body.password, seed, 10000, 32, 'sha256')
+  const dkey = crypto.pbkdf2Sync(req.body.password, seed, Config.get().crypto.personal_key_pbkdf2_iterations, 32, 'sha256')
 
   // Encrypt personal key with derived key
   const ckey = crypto.createCipheriv('aes-256-ecb', dkey, '')
@@ -141,7 +142,7 @@ export async function updatePassword (req, res, next) {
   const seed = Crypt.randomBytes(16).toString('base64')
 
   // Encrypt personal key with personal password
-  const hash = crypto.pbkdf2Sync(req.body.password, seed, 10000, 32, 'sha256')
+  const hash = crypto.pbkdf2Sync(req.body.password, seed, Config.get().crypto.personal_key_pbkdf2_iterations, 32, 'sha256')
   const cipher = crypto.createCipheriv('aes-256-ecb', hash, '')
 
   let ekey = cipher.update(pkey, '', 'base64')

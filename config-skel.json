@@ -34,6 +34,9 @@
   "onetimetokens": {
     "max_hours": 168
   },
+  "crypto": {
+    "personal_key_pbkdf2_iterations": 100000
+  },
   "readonly": false,
   "enable_metrics": true,
   "generated_password_length": 15
