@@ -135,6 +135,7 @@ if (cfg?.enable_metrics) {
   Metrics.createCounter(Const.METRICS_KMS_DECRYPTIONS, 'Decryptions')
   Metrics.createCounter(Const.METRICS_KMS_ENCRYPTIONS_PER_KMS, 'Encryptions per KMS', 'kms_description')
   Metrics.createCounter(Const.METRICS_KMS_DECRYPTIONS_PER_KMS, 'Decryptions per KMS', 'kms_description')
+  Metrics.createCounter(Const.METRICS_LOGIN_APIKEYS_PER_KEY, 'Login per API key', 'apikey_description')
 }
 
 // HTTP(S) server start
