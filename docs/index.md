@@ -305,13 +305,14 @@ PassWeaver API logs every HTTP call in a 'combined log format' (the file is name
 
 ## Metrics
 
-If enabled in configuration, PassWeaver API export various metrics (along default NodeJS ones) at the `/api/v1/metrics' endpoint:
+If enabled in configuration, PassWeaver API export various metrics (along with default NodeJS environment ones) at the `/api/v1/metrics' endpoint:
   - Users logins count (`login_users_total`)
   - API keys logins count (`login_apikeys_total`)
+  - API keys logins per single key (`login_apikeys_per_key_total`)
   - Item create, update, delete and read count (`items_created_total`, `items_updated_total`, `items_deleted_total`, `items_read_total`)
   - One time tokens count (`onetimetokens_created_total`, `onetimetokens_read_total`)
   - KMS encryptions and decryptions count (`kms_encryptions_total`, `kms_decryptions_total`)
-  - KMS encryptions and descriptions for each KMS
+  - KMS encryptions and descriptions for each KMS (`kms_encryptions_per_kms_total`, `kms_decryptions_per_kms_total`)
 
 ## Cache
 

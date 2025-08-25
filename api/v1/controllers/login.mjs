@@ -45,6 +45,7 @@ export async function login (req, res, next) {
 
   // If an API key is provided, validate it and get the user
   let isapikey = false
+  let apikeydescription = ''
   if (data.apikey && data.secret) {
     if (!await ApiKey.exists(data.apikey)) {
       await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTFOUND, Const.EV_ENTITY_APIKEY, data.apikey)
@@ -60,8 +61,10 @@ export async function login (req, res, next) {
     // Search the API key and check if it is active
     const apik = await DB.apikeys.findUnique({
       where: { id: data.apikey },
-      select: { userid: true, active: true, ipwhitelist: true, timewhitelist: true }
+      select: { userid: true, active: true, ipwhitelist: true, timewhitelist: true, description: true }
     })
+    apikeydescription = apik.description
+
     if (!apik.active) {
       await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTVALID, Const.EV_ENTITY_APIKEY, data.apikey)
       res.status(R.UNAUTHORIZED).send(R.ko('API key not valid'))
@@ -208,7 +211,11 @@ export async function login (req, res, next) {
   // Creates JWT token
   const token = await Auth.createToken(user.id, false)
 
+  // API key metrics
   Metrics.counterInc(isapikey ? Const.METRICS_LOGIN_APIKEYS : Const.METRICS_LOGIN_USERS)
+  if (isapikey) {
+    Metrics.counterInc(Const.METRICS_LOGIN_APIKEYS_PER_KEY, apikeydescription)
+  }
 
   // Create user tree cache
   await Folder.userTree(user.id)
