@@ -417,6 +417,9 @@ Copy `config-skel.json` to `config.json` and adjust the options (all options are
   - `url`: Redis url
 - `onetimetokens`:
   - `max_hours`: Max one-time secrets duration, expressed in hours
+- `crypto`
+  - `personal_key_pbkdf2_iterations`: The number of iterations for PBKDF2 functions (100000 is a good value); note that this value is used in personal keys encryption,
+     so you should NOT change it on a production system, otherwise all personal items will be unreadable
 - `readonly`: true or false; if true, no write operation is allowed both for admins and non-admins (logging is still operational)
 - `enable_metrics`: true or false, enables Prometheus-formatted metrics
 - `generated_password_length`: default length of random generated password (default is 15)

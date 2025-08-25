@@ -67,9 +67,16 @@
       },
       "required": [ "max_hours" ]
     },
+    "crypto": {
+      "type": "object",
+      "properties": {
+        "personal_key_pbkdf2_iterations": { "type": "integer", "minimum": 1000, "maximum": 1000000 }
+      },
+      "required": [ "personal_key_pbkdf2_iterations" ]
+    },
     "readonly": { "type": "boolean" },
     "enable_metrics": { "type": "boolean" },
     "generated_password_length": { "type": "integer", "minimum": 10, "maximum": 50 }
   },
-  "required": ["jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly"]
+  "required": ["jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly", "crypto"]
 }
