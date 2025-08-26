@@ -33,6 +33,8 @@ describe('Metrics', function () {
     assert.match(res1.text, /kms_encryptions_per_kms_total/)
     assert.match(res1.text, /kms_decryptions_per_kms_total/)
     assert.match(res1.text, /login_apikeys_per_key_total/)
+    assert.match(res1.text, /cache_hits_total/)
+    assert.match(res1.text, /cache_misses_total/)
   })
 
   it('Check per-KMS metrics', async () => {
