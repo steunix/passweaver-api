@@ -70,7 +70,7 @@
     "crypto": {
       "type": "object",
       "properties": {
-        "personal_key_pbkdf2_iterations": { "type": "integer", "minimum": 1000, "maximum": 1000000 }
+        "personal_key_pbkdf2_iterations": { "type": "integer", "minimum": 1 }
       },
       "required": [ "personal_key_pbkdf2_iterations" ]
     },
