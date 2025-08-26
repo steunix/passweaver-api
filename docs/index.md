@@ -313,6 +313,7 @@ If enabled in configuration, PassWeaver API export various metrics (along with d
   - One time tokens count (`onetimetokens_created_total`, `onetimetokens_read_total`)
   - KMS encryptions and decryptions count (`kms_encryptions_total`, `kms_decryptions_total`)
   - KMS encryptions and descriptions for each KMS (`kms_encryptions_per_kms_total`, `kms_decryptions_per_kms_total`)
+  - Cache hits and misses (`cache_hits_total`, `cache_misses_total`)
 
 ## Cache
 
