@@ -736,6 +736,7 @@ export async function clone (req, res, next) {
   const newid = newId()
   const newItem = {
     id: newid,
+    personal: item.personal,
     folderid: item.folderid,
     title: `${item.title} - Copy`,
     kmsid: newData.kmsId,

@@ -98,6 +98,65 @@ describe('Personal folders', function () {
     assert.strictEqual(res5.status, 200)
   })
 
+  it('Clone item, personal folder', async () => {
+    // Set personal password. Ignore the error, the password could be already set
+    await agent
+      .post(`${global.host}/api/v1/personal/password`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    const res0 = await agent
+      .post(`${global.host}/api/v1/personal/unlock`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ password: '123' })
+      .catch(v => v)
+
+    assert.strictEqual(res0.status, 200)
+    assert(Object.hasOwn(res0.body.data, 'jwt'))
+
+    const personalJWT = res0.body.data.jwt
+
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/user1/items`)
+      .set('Authorization', `Bearer ${personalJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/items/${itemid}/clone`)
+      .set('Authorization', `Bearer ${personalJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+    const clonedid = res2.body.data.id
+
+    const res3 = await agent
+      .get(`${global.host}/api/v1/items/${clonedid}?key=${global.key}`)
+      .set('Authorization', `Bearer ${personalJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res3.status, 200)
+    res3.body.data.data = await global.decryptBlock(res3.body.data.data, global.key)
+    assert.strictEqual(res3.body.data.data, global.itemCreateData.data)
+
+    // Cleanup
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${personalJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/items/${clonedid}`)
+      .set('Authorization', `Bearer ${personalJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res5.status, 200)
+  })
+
   it('Reset personal password', async () => {
     // Delete personal password. Ignore the error.
     await agent
