@@ -170,20 +170,23 @@ export async function children (id, foldersRecordset) {
  * so that if a user has read or write on a folder it has it on all the children
  * @param {string} id Folder id
  * @param {string} user User id
+ * @param {boolean} useCache If explicitly false, don't use cache
 */
-export async function permissions (id, user) {
+export async function permissions (id, user, useCache) {
   const ret = {
     read: false,
     write: false
   }
 
   // Check for cache existance
-  const cacheRead = await Cache.get(user, Cache.foldersReadableKey)
-  const cacheWrite = await Cache.get(user, Cache.foldersWritableKey)
-  if (cacheRead && cacheWrite) {
-    ret.read = cacheRead.find(elem => elem === id) !== undefined
-    ret.write = cacheWrite.find(elem => elem === id) !== undefined
-    return ret
+  if (useCache !== false) {
+    const cacheRead = await Cache.get(user, Cache.foldersReadableKey)
+    const cacheWrite = await Cache.get(user, Cache.foldersWritableKey)
+    if (cacheRead && cacheWrite) {
+      ret.read = cacheRead.find(elem => elem === id) !== undefined
+      ret.write = cacheWrite.find(elem => elem === id) !== undefined
+      return ret
+    }
   }
 
   // Extracts the parents, and all the permissions for any group where user is a member
@@ -335,7 +338,8 @@ export async function userTree (user) {
       }
 
       if (!added.get(el.id)) {
-        el.permissions = await permissions(el.id, user)
+        // Get permissions avoiding cache checks, since we're building it
+        el.permissions = await permissions(el.id, user, false)
         data.push(el)
         added.set(el.id, el.id)
 
@@ -349,7 +353,7 @@ export async function userTree (user) {
     // Scan parents and add to the tree, for representation sake
     for (const el of aparents) {
       if (!added.get(el.id)) {
-        el.permissions = await permissions(el.id, user)
+        el.permissions = await permissions(el.id, user, false)
         data.push(el)
         added.set(el.id, el.id)
 
