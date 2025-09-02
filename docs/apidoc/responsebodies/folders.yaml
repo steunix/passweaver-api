@@ -144,7 +144,7 @@ groupslistsuccess:
                   description: True if permissions can be modified, false otherwise
                   example: true
                 inherited:
-                  type: string
+                  type: boolean
                   description: True if permissions are inherited from a parent folder
                   example: true
                 read:

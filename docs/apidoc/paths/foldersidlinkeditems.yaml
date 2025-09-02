@@ -1,0 +1,25 @@
+post:
+  tags:
+    -  Linked items
+  operationId: "createLinkedItem"
+  summary: Create a linked item into a folder
+  description: Create a linked item in given folder
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\folders.yaml#/folderid'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '..\requestbodies\folders.yaml#/linkedItemCreateBody'
+  responses:
+    "201":
+      $ref: '..\responsebodies\default.yaml#/created'
+      description: Linked item created, the new id is returned
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      $ref: '..\responsebodies\default.yaml#/notfound'

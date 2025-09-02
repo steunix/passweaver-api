@@ -10,7 +10,9 @@ import { Router } from 'express'
 
 import * as auth from '../../../lib/auth.mjs'
 import * as foldersController from '../controllers/folders.mjs'
+
 import itemsRouter from './items.mjs'
+import linkedItemsController from './linkeditems.mjs'
 
 const router = Router({ mergeParams: true })
 
@@ -20,7 +22,9 @@ router.use(auth.validateJWT)
 // Items router
 router.use('/:folder/items', itemsRouter)
 
-// Folders routes
+// Linked items router
+router.use('/:folder/linkeditems', linkedItemsController)
+
 router.get('/:id', foldersController.get)
 
 router.get('/:id/groups', foldersController.groups)

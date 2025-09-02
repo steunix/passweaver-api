@@ -38,3 +38,13 @@ folderAddGroupBody:
   required:
     - read
     - write
+
+linkedItemCreateBody:
+  type: object
+  properties:
+    linkeditemid:
+      type: string
+      description: Linked item ID
+      example: 06CANZW6EHVB39SC5T4NHEHW0G
+  required:
+    - linkeditemid

@@ -19,9 +19,17 @@ import * as KMS from '../lib/kms/kms.mjs'
  * @returns
  */
 export async function updateFTS (id) {
+  const idlist = [id]
+
   const item = await DB.items.findUnique({
     where: { id }
   })
+
+  // Get all linked items
+  const linkedItems = await DB.items.findMany({
+    where: { linkeditemid: item.id }
+  })
+  linkedItems.forEach(li => idlist.push(li.id))
 
   const pfolders = await Folder.parents(item.folderid)
   let ftsf = ''
@@ -33,12 +41,16 @@ export async function updateFTS (id) {
   ftsf += item.title + ' ' + (item.metadata || '')
   const ftsi = item.title + ' ' + (item.metadata || '')
 
-  await DB.$queryRaw`
-    insert into itemsfts (id,fts_vectorfull,fts_vectoritem)
-    values ( ${id}, to_tsvector('simple',${ftsf}), to_tsvector('simple',${ftsi}) )
-    on     conflict(id) do
-    update set fts_vectorfull = to_tsvector('simple',${ftsf}),
-      fts_vectoritem = to_tsvector('simple',${ftsi})`
+  await DB.$transaction(async () => {
+    for (const itmid of idlist) {
+      await DB.$queryRaw`
+        insert into itemsfts (id,fts_vectorfull,fts_vectoritem)
+        values ( ${itmid}, to_tsvector('simple',${ftsf}), to_tsvector('simple',${ftsi}) )
+        on     conflict(id) do
+        update set fts_vectorfull = to_tsvector('simple',${ftsf}),
+          fts_vectoritem = to_tsvector('simple',${ftsi})`
+    }
+  })
 }
 
 /**
