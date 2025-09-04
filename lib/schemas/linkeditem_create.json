@@ -1,0 +1,8 @@
+{
+  "$id": "linkeditem_create",
+  "type": "object",
+  "properties": {
+    "linkeditemid" : { "type": "string" }
+  },
+  "required": ["linkeditemid"]
+}

@@ -79,13 +79,30 @@ export async function get (req, res, next) {
   }
 
   // Search item
-  const item = await DB.items.findUnique({
+  let item
+  item = await DB.items.findUnique({
     where: { id: itemid }
   })
 
   if (item === null) {
     res.status(R.NOT_FOUND).send(R.ko('Item not found'))
     return
+  }
+
+  // Check read permissions on folder
+  const perm = await Folder.permissions(item.folderid, req.user)
+  if (!perm.read) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  // If linked item, get original item
+  let originalItem
+  if (item.linkeditemid) {
+    originalItem = item
+    item = await DB.items.findUnique({
+      where: { id: item.linkeditemid }
+    })
   }
 
   // If personal item, ensure personal password has been set and activated
@@ -95,13 +112,6 @@ export async function get (req, res, next) {
       res.status(check).send(R.ko('Personal folder not accessible'))
       return
     }
-  }
-
-  // Check read permissions on folder
-  const perm = await Folder.permissions(item.folderid, req.user)
-  if (!perm.read) {
-    res.status(R.FORBIDDEN).send(R.forbidden())
-    return
   }
 
   // Decrypt content
@@ -132,8 +142,19 @@ export async function get (req, res, next) {
     }
   })
 
+  // If linked item, update the linked item id with the input one
+  if (originalItem) {
+    item.id = originalItem.id
+    item.folderid = originalItem.folderid
+  }
+
   await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
   Metrics.counterInc(Const.METRICS_ITEMS_READ)
+
+  // If reading a linked item, add read event to original item too
+  if (originalItem) {
+    await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, originalItem.id)
+  }
 
   res.send(R.ok(item))
 }
@@ -227,7 +248,7 @@ export async function list (req, res, next) {
   const folderList = folders.map(folders => folders)
 
   const items = await DB.$queryRaw`
-    select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, i.personal, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
+    select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, i.personal, i.linkeditemid, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
       case when fav.id is not null then true else false end as favorite
     from   items i
     join   itemsfts fts
@@ -415,6 +436,12 @@ export async function update (req, res, next) {
     return
   }
 
+  // If linked item, it cannot be modified
+  if (item.linkeditemid) {
+    res.status(R.FORBIDDEN).send(R.forbidden('Linked items cannot be modified'))
+    return
+  }
+
   const folderFromURL = req.params.folder ?? req.body.folder
 
   // Check write permissions on current folder
@@ -578,6 +605,9 @@ export async function update (req, res, next) {
   // Update tsvector
   await Item.updateFTS(itemid)
 
+  // Sync linked items
+  await Item.syncLinkedItems(itemid, updateStruct?.type)
+
   // Update favorite flag
   if ('favorite' in req.body) {
     await Item.setFavorite(itemid, req.user, req.body.favorite)
@@ -606,16 +636,24 @@ export async function remove (req, res, next) {
     return
   }
 
-  const itemid = req.params.id
-
   // Search item
-  const item = await DB.items.findUnique({
-    where: { id: itemid }
+  let item
+  item = await DB.items.findUnique({
+    where: { id: req.params.id }
   })
 
   if (item === null) {
     res.status(R.NOT_FOUND).send(R.ko('Item not found'))
     return
+  }
+
+  // If linked item, get original item
+  let originalItem = null
+  if (item.linkeditemid) {
+    originalItem = item
+    item = await DB.items.findUnique({
+      where: { id: item.linkeditemid }
+    })
   }
 
   // Search folder
@@ -647,32 +685,56 @@ export async function remove (req, res, next) {
 
   // Delete item and move it to deleted items table
   await DB.$transaction(async (tx) => {
-    await DB.itemsdeleted.create({
-      data: item
-    })
-
-    await DB.itemsfts.delete({
-      where: {
-        id: itemid
+    // If a non linked item, first delete any linked item, then the item itself
+    if (originalItem === null) {
+      // Find any linked item
+      const linkedItems = await DB.items.findMany({
+        where: { linkeditemid: item.id }
+      })
+      for (const linked of linkedItems) {
+        await hardDelete(linked, req.user)
       }
-    })
+      await hardDelete(item, req.user)
+    }
 
-    await DB.itemsfav.deleteMany({
-      where: {
-        itemid
-      }
-    })
-
-    await DB.items.delete({
-      where: {
-        id: itemid
-      }
-    })
+    // If a linked item, delete only the original item
+    if (originalItem !== null) {
+      await hardDelete(originalItem, req.user)
+    }
   })
 
-  await Events.add(req.user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, itemid)
-  Metrics.counterInc(Const.METRICS_ITEMS_DELETED)
   res.send(R.ok())
+}
+
+/**
+ * Phisically remove an item
+ * @param {Object} item Item recordset
+ */
+async function hardDelete (item, user) {
+  await DB.itemsdeleted.create({
+    data: item
+  })
+
+  await DB.itemsfts.delete({
+    where: {
+      id: item.id
+    }
+  })
+
+  await DB.itemsfav.deleteMany({
+    where: {
+      itemid: item.id
+    }
+  })
+
+  await DB.items.delete({
+    where: {
+      id: item.id
+    }
+  })
+
+  await Events.add(user, Const.EV_ACTION_DELETE, Const.EV_ENTITY_ITEM, item.id)
+  Metrics.counterInc(Const.METRICS_ITEMS_DELETED)
 }
 
 /**
@@ -698,13 +760,21 @@ export async function clone (req, res, next) {
   const itemid = req.params.id
 
   // Search item
-  const item = await DB.items.findUnique({
+  let item
+  item = await DB.items.findUnique({
     where: { id: itemid }
   })
 
   if (item === null) {
     res.status(R.NOT_FOUND).send(R.ko('Item not found'))
     return
+  }
+
+  // If linked item, get the original
+  if (item.linkeditemid) {
+    item = await DB.items.findUnique({
+      where: { id: item.linkeditemid }
+    })
   }
 
   // Check write permissions on folder

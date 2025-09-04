@@ -19,7 +19,7 @@ See below for a full API documentation.
 
 This are the software you need to have in order to run PassWeaver API:
 
-- PostgreSQL: PassWeaver API uses PostgreSQL for storing data
+- PostgreSQL: PassWeaver API uses PostgreSQL for storing data, with tsvector extension enabled
 - Redis: (optional) for caching
 
 ## Features
@@ -30,6 +30,7 @@ These are the features this API support, in random order:
 - API keys, with IP whitelist and day of week/time whitelist
 - Personal folders for each user
 - Favorite items
+- Linked items
 - Share one-time secrets with anyone, even if they have not an account
 - One-time share items
 - Share items through permalinks
@@ -84,6 +85,13 @@ It's up to the consumer to decode and handle the data, maybe based on the `type`
 An item has also a mandatory `title` field, that can be searched for and is NOT encrypted: do not use it for storing sensitive information.
 
 The `metadata` field is NOT encrypted as well but not mandatory, and it allows to store any additional uncrypted info for a given item.
+
+### Linked items
+
+You can "link" an item into many other folders: this avoids duplicating items that need to appear in many places, allowing to manage updates only on the original item. They work like Unix file system symlinks, with
+the exception that linked items cannot be modified, only the original item can accept updates.
+
+Linked items can be cloned and shared as any regular item.
 
 ### Item types
 
@@ -367,7 +375,7 @@ If any data is returned by the endpoint, it will be always encapsulated in the "
 
 In order to be able to install PassWeaver API:
 1. you need to install NodeJS and npm
-2. you need to have connectivity to a running PostgreSQL instance
+2. you need to have connectivity to a running PostgreSQL instance with tsvector extension enabled
 3. you'd better have connectivity to a running Redis instance
 
 ## 2. Install

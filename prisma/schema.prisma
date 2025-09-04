@@ -144,14 +144,20 @@ model items {
   updatedat   DateTime  @updatedAt
   accessedat  DateTime?
 
-  folder   folders    @relation(fields: [folderid], references: [id], onUpdate: Cascade, onDelete: Restrict )
-  itemtype itemtypes? @relation(fields: [type], references: [id], onUpdate: Cascade, onDelete: Restrict )
-  kms      kms?       @relation(fields: [kmsid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  linkeditemid String?
+
+  folder      folders    @relation(fields: [folderid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  itemtype    itemtypes? @relation(fields: [type], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  kms         kms?       @relation(fields: [kmsid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+
+  linkeditem  items?     @relation("ItemToLinkedItem", fields: [linkeditemid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  linkeditems items[]    @relation("ItemToLinkedItem")
 
   fav      itemsfav[]
   fts      itemsfts[]
 
   @@index([folderid])
+  @@index([linkeditemid])
 }
 
 model itemsfts {
@@ -195,6 +201,8 @@ model itemsdeleted {
   updatedat   DateTime  @updatedAt
   deletedat   DateTime  @default(now())
   accessedat  DateTime?
+
+  linkeditemid String?
 }
 
 model itemtypes {
