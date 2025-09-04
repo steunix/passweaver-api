@@ -89,6 +89,13 @@ export async function get (req, res, next) {
     return
   }
 
+  // Check read permissions on folder
+  const perm = await Folder.permissions(item.folderid, req.user)
+  if (!perm.read) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
   // If linked item, get original item
   let originalItem
   if (item.linkeditemid) {
@@ -105,13 +112,6 @@ export async function get (req, res, next) {
       res.status(check).send(R.ko('Personal folder not accessible'))
       return
     }
-  }
-
-  // Check read permissions on folder
-  const perm = await Folder.permissions(item.folderid, req.user)
-  if (!perm.read) {
-    res.status(R.FORBIDDEN).send(R.forbidden())
-    return
   }
 
   // Decrypt content
