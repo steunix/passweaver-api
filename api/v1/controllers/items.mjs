@@ -142,6 +142,12 @@ export async function get (req, res, next) {
     }
   })
 
+  // If linked item, update the linked item id with the input one
+  if (originalItem) {
+    item.id = originalItem.id
+    item.folderid = originalItem.folderid
+  }
+
   await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
   Metrics.counterInc(Const.METRICS_ITEMS_READ)
 
