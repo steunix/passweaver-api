@@ -605,6 +605,9 @@ export async function update (req, res, next) {
   // Update tsvector
   await Item.updateFTS(itemid)
 
+  // Sync linked items
+  await Item.syncLinkedItems(itemid, updateStruct?.type)
+
   // Update favorite flag
   if ('favorite' in req.body) {
     await Item.setFavorite(itemid, req.user, req.body.favorite)
