@@ -65,11 +65,9 @@ export async function list (req, res, next) {
   const cache = await Cache.get('all', Cache.itemTypesKey)
   let itemtypes
 
+  // Build cache if necessary
   if (!cache) {
     itemtypes = await DB.itemtypes.findMany({
-      where: {
-        description: { contains: search, mode: 'insensitive' }
-      },
       orderBy: {
         description: 'asc'
       }
@@ -77,6 +75,13 @@ export async function list (req, res, next) {
     await Cache.set('all', Cache.itemTypesKey, itemtypes)
   } else {
     itemtypes = cache
+  }
+
+  // If search, filter the results
+  if (search) {
+    itemtypes = itemtypes.filter(itm => {
+      return itm.description.toLowerCase().includes(search.toLowerCase())
+    })
   }
 
   if (itemtypes.length === 0) {
