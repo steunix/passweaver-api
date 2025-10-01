@@ -298,9 +298,25 @@ export async function userTree (user) {
   // Get folders for cache
   const allFolders = await DB.folders.findMany()
 
-  // Explicitly allowed folders, plus personal folder
+  // Explicitly allowed folders, plus personal folder. The result must be ordered by tree level,
+  // because permissions are inherited from parents to children and they must be processed in order
   const readFolders = await DB.$queryRaw`
-    select f.*, p.read, p.write
+    with tree as (
+      with recursive folder_tree as
+      (
+          select 1 as level, *
+          from   folders froot
+          where  froot.id='0'
+          union all
+          select fparent.level+1 as level, fchild.*
+          from   folders fchild
+          join   folder_tree fparent
+          on     fchild.parent = fparent.id
+      )
+      select id, level
+      from   folder_tree
+    )
+    select t.level,f.*, p.read, p.write
     from   folders f
     join   folderspermissions p
     on     f.id = p.folderid
@@ -308,13 +324,16 @@ export async function userTree (user) {
     on     g.id = p.groupid
     join   groupsmembers ug
     on     ug.groupid = g.id
+    join   tree t
+    on     t.id = f.id
     where  p.read = true
     and    ug.userid = ${user}
     union
-    select pf.*, true, true
+    select 0,pf.*, true, true
     from   folders pf
     where  pf.personal = true
-    and    pf.userid = ${user}`
+    and    pf.userid = ${user}
+    order  by level`
 
   // For each allowed folder, add all parents and children
   const readable = new Map()
