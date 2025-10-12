@@ -76,7 +76,8 @@
     },
     "readonly": { "type": "boolean" },
     "enable_metrics": { "type": "boolean" },
-    "generated_password_length": { "type": "integer", "minimum": 10, "maximum": 50 }
+    "generated_password_length": { "type": "integer", "minimum": 10, "maximum": 50 },
+    "cache-control": { "type": "string" }
   },
   "required": ["jwt_duration", "listen", "log", "https", "redis", "onetimetokens", "readonly", "crypto"]
 }
