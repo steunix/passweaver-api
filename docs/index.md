@@ -433,6 +433,7 @@ Copy `config-skel.json` to `config.json` and adjust the options (all options are
 - `readonly`: true or false; if true, no write operation is allowed both for admins and non-admins (logging is still operational)
 - `enable_metrics`: true or false, enables Prometheus-formatted metrics
 - `generated_password_length`: default length of random generated password (default is 15)
+- `cache-control`: Cache-Control header to be sent along GET/HEAD responses
 
 ## 5. Prepare the database
 

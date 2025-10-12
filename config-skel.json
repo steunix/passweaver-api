@@ -39,5 +39,6 @@
   },
   "readonly": false,
   "enable_metrics": true,
-  "generated_password_length": 15
+  "generated_password_length": 15,
+  "cache-control": ""
 }

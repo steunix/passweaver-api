@@ -65,6 +65,16 @@ if (cfg?.https?.hsts) {
   app.use(helmet.hsts())
 }
 
+// Set Cache-Control headers
+const cacheControl = Config.get()['cache-control']
+app.use((req, res, next) => {
+  if ((req.method === 'GET' || req.method === 'HEAD') && cacheControl) {
+    res.set('Cache-Control', cacheControl)
+  }
+  res.set('Vary', 'Authorization, Accept-Encoding, Accept-Language')
+  next()
+})
+
 if (!FS.existsSync(cfg.log.dir)) {
   FS.mkdirSync(cfg.log.dir)
 }
