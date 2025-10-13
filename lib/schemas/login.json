@@ -2,9 +2,10 @@
   "$id": "login",
   "type": "object",
   "properties": {
-    "username" : { "type": "string", "maxLength": 50 },
-    "password" : { "type": "string", "maxLength": 100 },
-    "apikey": { "type": "string", "maxLength": 50 },
-    "secret": { "type": "string", "maxLength": 100 }
+    "username" : { "type": "string", "maxLength": 50, "nullable": true },
+    "password" : { "type": "string", "maxLength": 100, "nullable": true },
+    "apikey": { "type": "string", "maxLength": 50, "nullable": true },
+    "secret": { "type": "string", "maxLength": 100, "nullable": true },
+    "googleoauth2token": { "type": "string", "maxLength": 10000, "nullable": true }
   }
 }

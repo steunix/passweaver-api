@@ -19,8 +19,17 @@ import * as Settings from '../../../lib/settings.mjs'
 import * as ApiKey from '../../../model/apikey.mjs'
 import * as Metrics from '../../../lib/metrics.mjs'
 import * as Folder from '../../../model/folder.mjs'
+import * as GOAuth2 from 'google-auth-library'
 
 import DB from '../../../lib/db.mjs'
+
+// Google OAuth2 setup
+let GOAuth2Client = null
+if (Config.get().auth?.google_oauth2?.enabled === true) {
+  GOAuth2Client = new GOAuth2.OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID
+  )
+}
 
 /**
  * Login
@@ -40,12 +49,14 @@ export async function login (req, res, next) {
     username: req.body.username?.toLowerCase() || '',
     password: req.body?.password || '',
     apikey: req.body?.apikey || '',
-    secret: req.body?.secret || ''
+    secret: req.body?.secret || '',
+    googleoauth2token: req.body?.googleoauth2token || ''
   }
 
   // If an API key is provided, validate it and get the user
   let isapikey = false
   let apikeydescription = ''
+  let isGoogleToken = false
   if (data.apikey && data.secret) {
     if (!await ApiKey.exists(data.apikey)) {
       await Events.add(data.username, Const.EV_ACTION_LOGIN_APIKEY_NOTFOUND, Const.EV_ENTITY_APIKEY, data.apikey)
@@ -107,6 +118,41 @@ export async function login (req, res, next) {
 
     data.username = user.login
     isapikey = true
+  }
+
+  // If a Google OAuth2 token is provided, validate it and get the user
+  if (GOAuth2Client && data.googleoauth2token) {
+    try {
+      // Extract info from ID token
+      const ticket = await GOAuth2Client.verifyIdToken({
+        idToken: data.googleoauth2token,
+        audience: process.env.GOOGLE_CLIENT_ID
+      })
+      const payload = ticket.getPayload()
+
+      if (!payload?.email) {
+        res.status(R.UNAUTHORIZED).send(R.ko('Google OAuth2 authentication failed'))
+        return
+      }
+
+      // Get corresponding user
+      const user = await DB.users.findFirst({
+        where: { email: payload.email },
+        select: { login: true }
+      })
+
+      if (user === null) {
+        await Events.add(payload.email, Const.EV_ACTION_LOGIN_USERNOTFOUND, Const.EV_ENTITY_USER, payload.email)
+        res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
+        return
+      }
+
+      data.username = user.login
+      isGoogleToken = true
+    } catch (err) {
+      res.status(R.UNAUTHORIZED).send(R.ko('Google OAuth2 authentication failed'))
+      return
+    }
   }
 
   // Check user
@@ -193,7 +239,7 @@ export async function login (req, res, next) {
   }
 
   // Local authentication
-  if (!isapikey && user.authmethod === 'local') {
+  if (!isapikey && !isGoogleToken && user.authmethod === 'local') {
     if (!await Crypt.checkPassword(data.password, user.secret)) {
       await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
       res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
