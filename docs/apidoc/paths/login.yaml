@@ -5,7 +5,11 @@ post:
   summary: Login
 
   description: |
-    Login in and return a JWT token; username and password must be provided for regular login, while apikey and secret are used for API keys logins.
+    Login in and return a JWT token:
+      - `username` and `password` must be provided for regular login
+      - `apikey` and `secret` are used for API keys logins.
+      - `googleoauth2token` (Google OAuth2 token) can be provided to validate the token and log the user in
+
     The returned HS512 signed JWT token must be used in subsequent requests.
   requestBody:
     required: true

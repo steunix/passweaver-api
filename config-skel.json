@@ -40,5 +40,10 @@
   "readonly": false,
   "enable_metrics": true,
   "generated_password_length": 15,
-  "cache-control": ""
+  "cache-control": "",
+  "auth": {
+    "google_oauth2": {
+      "enabled": true
+    }
+  }
 }

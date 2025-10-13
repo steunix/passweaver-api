@@ -15,3 +15,6 @@ loginBody:
     secret:
       type: string
       example: abcd
+    googleoauth2token:
+      type: string
+      example: ya29.a0AfH6SMB...

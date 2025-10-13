@@ -27,6 +27,7 @@ This are the software you need to have in order to run PassWeaver API:
 These are the features this API support, in random order:
 
 - Cloud KMS integration (currently, only Google Cloud KMS)
+- Login via Google OAuth2 token validation
 - API keys, with IP whitelist and day of week/time whitelist
 - Personal folders for each user
 - Favorite items
@@ -143,6 +144,14 @@ PassWeaver API users can be authenticated via these methods:
  - Local: the user password hash is stored locally in the database
  - LDAP: authenticate against a LDAP/Active Directory server
  - API key: authenticate only via an existing API key
+ - Google OAuth2 token validation: see below
+
+### Google OAuth2 token validation
+
+You can integrate your frontend with Google OAuth2 (PassWeaver GUI supports is), and once you obtain a valid token PassWeaver API can validate it and obtain the informations to log you in:
+it will look for an existing user with the email obtained from the token.
+
+In order to enable Google OAuth2, you have to set auth.google_oauth2 in the configuration, and export GOOGLE_CLIENT_ID of your Google API Key in your environment.
 
 ## Authorization
 
@@ -434,6 +443,10 @@ Copy `config-skel.json` to `config.json` and adjust the options (all options are
 - `enable_metrics`: true or false, enables Prometheus-formatted metrics
 - `generated_password_length`: default length of random generated password (default is 15)
 - `cache-control`: Cache-Control header to be sent along GET/HEAD responses
+- `auth`:
+  - `google_oauth2`:
+    - `enabled`: if true, the login endpoint will accept the token for authenticating with Google OAuth2 token. Note that you have to set "GOOGLE_CLIENT_ID" in your environment
+      to your API Key Client ID.
 
 ## 5. Prepare the database
 
