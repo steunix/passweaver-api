@@ -6,8 +6,7 @@ get:
   description: |
     Get one time token content, encrypted with the key provided in the request. The token is then deleted and will not be accessible anymore.
     The response will contain the initialization vector and the base64-encoded encrypted data in the form "iv:data". The key used for encryption is provided in the request.
-  security:
-    - bearerAuth: []
+    You don't need to be authenticated to use this endpoint, but the token will be retreived only if you're the correct audience.
   parameters:
     - $ref: '..\parameters\onetimetokens.yaml#/token'
     - $ref: '..\parameters\onetimetokens.yaml#/key'
@@ -26,14 +25,12 @@ post:
     - One time tokens
   operationId: "createOneTimeToken"
   summary: Create a one time token
-  description: Create a one time token
+  description: Create a one time token; you don't need to be authenticated to use it.
   requestBody:
     content:
       application/json:
         schema:
           $ref: '..\requestbodies\onetimetokens.yaml#/oneTimeTokenCreateBody'
-  security:
-    - bearerAuth: []
   responses:
     "201":
       $ref: '..\responsebodies\default.yaml#/created'

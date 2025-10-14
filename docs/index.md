@@ -120,11 +120,16 @@ While groups can be nested to form a tree, there is no membership inheritance: i
 
 ### One time secrets
 
-OTS are an easy way to share a secret with someone: you provide the data to share and you will receive back a unique token: accessing the token through the API, you will have access to the the decrypted data, **but only once**: once "consumed", the token will be deleted.
+OTS are an easy way to share a secret with someone: you provide the data to share and you will receive back a unique token: accessing the token through the API, you will have access to the the decrypted data, **but only once**: once "consumed", the token will be deleted. You can choose the audience of the OTS:
+- anyone (logged in or not)
+- anyone logged in (requires authentication for reading the token)
+- a specific user (both creator and reader must be authenticated)
 
 This is similar to various public services you can find online.
 
 You can share both random text, or an entire item.
+
+Note that both creation and consumption of OTS don't require any authentication.
 
 ### API keys
 
