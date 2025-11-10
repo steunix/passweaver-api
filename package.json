@@ -11,7 +11,7 @@
   "author": "Stefano Rivoir",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "11.7.4",
+    "mocha": "11.7.5",
     "standard": "17.1.2",
     "superagent": "10.2.3"
   },
