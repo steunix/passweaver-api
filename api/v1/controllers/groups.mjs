@@ -171,12 +171,12 @@ export async function create (req, res, next) {
 
   // Creates group
   const newid = newId()
-  await DB.groups.create({
-    data: {
+  await DB.groups.createMany({
+    data: [{
       id: newid,
       description: req.body.description,
       parent: req.params.parent
-    }
+    }]
   })
 
   // Tree cache doesn't need to be reset, because the group is empty
@@ -269,7 +269,7 @@ export async function update (req, res, next) {
   }
 
   // Update group
-  await DB.groups.update({
+  await DB.groups.updateMany({
     data: updateStruct,
     where: {
       id: groupid
@@ -436,11 +436,11 @@ export async function addUser (req, res, next) {
     return
   }
 
-  await DB.groupsmembers.create({
-    data: {
+  await DB.groupsmembers.createMany({
+    data: [{
       groupid: group,
       userid: user
-    }
+    }]
   })
 
   await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_GROUPMEMBERS, group, user)

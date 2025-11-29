@@ -124,39 +124,39 @@ async function main () {
   /** USERS GROUP ASSOCIATION */
   console.log('- Users/groups')
   // Admin in Admins
-  await prisma.groupsmembers.create({
-    data: {
+  await prisma.groupsmembers.createMany({
+    data: [{
       groupid: Const.PW_GROUP_ADMINSID,
       userid: Const.PW_USER_ADMINID
-    }
+    }]
   })
 
   // Admin in Everyone
-  await prisma.groupsmembers.create({
-    data: {
+  await prisma.groupsmembers.createMany({
+    data: [{
       groupid: Const.PW_GROUP_EVERYONEID,
       userid: Const.PW_USER_ADMINID
-    }
+    }]
   })
 
   /** FOLDER GROUP PERMISSIONS */
   console.log('- Folders/group')
-  await prisma.folderspermissions.create({
-    data: {
+  await prisma.folderspermissions.createMany({
+    data: [{
       folderid: Const.PW_FOLDER_ROOTID,
       groupid: Const.PW_GROUP_ADMINSID,
       read: true,
       write: true
-    }
+    }]
   })
 
   /** ITEMS TYPE */
   console.log('- Item type')
-  await prisma.itemtypes.create({
-    data: {
+  await prisma.itemtypes.createMany({
+    data: [{
       description: 'default',
       icon: 'key'
-    }
+    }]
   })
 
   /** DEVELOPMENT DATA */
@@ -201,11 +201,11 @@ async function main () {
       })
 
       // Add user to Everyone
-      await prisma.groupsmembers.create({
-        data: {
+      await prisma.groupsmembers.createMany({
+        data: [{
           groupid: Const.PW_GROUP_EVERYONEID,
           userid: id
-        }
+        }]
       })
 
       // Personal folders
@@ -224,13 +224,13 @@ async function main () {
 
     // Folder permissions
     console.log('- Folders permissions')
-    await prisma.folderspermissions.create({
-      data: {
+    await prisma.folderspermissions.createMany({
+      data: [{
         folderid: 'sample1',
         groupid: Const.PW_GROUP_EVERYONEID,
         read: true,
         write: true
-      }
+      }]
     })
   }
 }

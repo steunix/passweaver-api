@@ -32,5 +32,5 @@ export async function create (req, res, next) {
     req.body.note
   )
 
-  res.status(201).send(R.ok())
+  res.status(R.CREATED).send(R.ok())
 }

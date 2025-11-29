@@ -183,8 +183,8 @@ export async function create (req, res, next) {
   const newUserId = newId()
   await DB.$transaction(async (tx) => {
     const hash = await Crypt.hashPassword(req.body.secret)
-    await DB.users.create({
-      data: {
+    await DB.users.createMany({
+      data: [{
         id: newUserId,
         login: req.body.login.toLowerCase(),
         firstname: req.body.firstname,
@@ -194,27 +194,27 @@ export async function create (req, res, next) {
         email: req.body.email.toLowerCase(),
         secret: hash,
         secretexpiresat: new Date(2050, 12, 31, 23, 59, 59)
-      }
+      }]
     })
 
     // Creates personal folder
     const newFolderId = newId()
-    await DB.folders.create({
-      data: {
+    await DB.folders.createMany({
+      data: [{
         id: newFolderId,
         description: req.body.login,
         parent: Const.PW_FOLDER_PERSONALROOTID,
         personal: true,
         userid: newUserId
-      }
+      }]
     })
 
     // Add user to 'Everyone' group
-    await DB.groupsmembers.create({
-      data: {
+    await DB.groupsmembers.createMany({
+      data: [{
         groupid: Const.PW_GROUP_EVERYONEID,
         userid: newUserId
-      }
+      }]
     })
   })
 
@@ -312,7 +312,7 @@ export async function update (req, res, next) {
   }
 
   // Updates user
-  await DB.users.update({
+  await DB.users.updateMany({
     data: updateStruct,
     where: {
       id: userid
@@ -419,8 +419,8 @@ export async function remove (req, res, next) {
     }
 
     // Backup user
-    await DB.usersdeleted.create({
-      data: user
+    await DB.usersdeleted.createMany({
+      data: [user]
     })
 
     // Delete user

@@ -95,14 +95,14 @@ export async function create (req, res, next) {
 
   // Creates the folder
   const newid = newId()
-  await DB.folders.create({
-    data: {
+  await DB.folders.createMany({
+    data: [{
       id: newid,
       description: req.body.description,
       personal: ispersonal,
       parent: req.params.parent,
       userid: ispersonal ? req.user : null
-    }
+    }]
   })
 
   await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, newid)
@@ -225,7 +225,7 @@ export async function update (req, res, next) {
   }
 
   // Update folder
-  await DB.folders.update({
+  await DB.folders.updateMany({
     data: updateStruct,
     where: {
       id: folderid
@@ -393,13 +393,13 @@ export async function addGroup (req, res, next) {
   }
 
   // Adds the permission
-  await DB.folderspermissions.create({
-    data: {
+  await DB.folderspermissions.createMany({
+    data: [{
       groupid: req.params.group,
       folderid: req.params.folder,
       read: req.body.read,
       write: req.body.write
-    }
+    }]
   })
 
   await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_FOLDER, req.params.folder, req.params.group)

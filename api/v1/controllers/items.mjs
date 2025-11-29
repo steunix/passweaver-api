@@ -372,8 +372,8 @@ export async function create (req, res, next) {
 
   // Creates the item
   const newid = newId()
-  await DB.items.create({
-    data: {
+  await DB.items.createMany({
+    data: [{
       id: newid,
       folderid: folder,
       personal,
@@ -387,7 +387,7 @@ export async function create (req, res, next) {
       dataiv: encData.iv,
       dataauthtag: encData.authTag,
       metadata: req.body.metadata
-    }
+    }]
   })
 
   // Update tsvector
@@ -592,7 +592,7 @@ export async function update (req, res, next) {
   }
 
   if (changedFields.length) {
-    await DB.items.update({
+    await DB.items.updateMany({
       data: updateStruct,
       where: {
         id: itemid
@@ -711,8 +711,8 @@ export async function remove (req, res, next) {
  * @param {Object} item Item recordset
  */
 async function hardDelete (item, user) {
-  await DB.itemsdeleted.create({
-    data: item
+  await DB.itemsdeleted.createMany({
+    data: [item]
   })
 
   await DB.itemsfts.delete({
@@ -819,8 +819,8 @@ export async function clone (req, res, next) {
     metadata: item.metadata
   }
 
-  await DB.items.create({
-    data: newItem
+  await DB.items.createMany({
+    data: [newItem]
   })
 
   // Update tsvector

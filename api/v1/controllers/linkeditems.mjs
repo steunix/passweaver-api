@@ -90,8 +90,8 @@ export async function create (req, res, next) {
 
   // Creates the item
   const newid = newId()
-  await DB.items.create({
-    data: {
+  await DB.items.createMany({
+    data: [{
       id: newid,
       folderid: folder,
       personal: false,
@@ -106,7 +106,7 @@ export async function create (req, res, next) {
       dataauthtag: '.',
       metadata: linkedItem.metadata,
       linkeditemid: linkedItem.id
-    }
+    }]
   })
 
   // Update tsvector on original item
