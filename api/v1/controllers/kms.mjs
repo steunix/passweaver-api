@@ -13,6 +13,7 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as KMS from '../../../lib/kms/kms.mjs'
 
 import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
+import { newUuid7 } from '../../../lib/id.mjs'
 import DB from '../../../lib/db.mjs'
 
 /**
@@ -111,20 +112,22 @@ export async function create (req, res, next) {
   }
 
   // Creates the KMS
-  const created = await DB.kms.create({
-    data: {
+  const newid = newUuid7()
+  await DB.kms.createMany({
+    data: [{
+      id: newid,
       description: req.body.description,
       type: req.body.type,
       config: req.body.config,
       active: req.body.active
-    }
+    }]
   })
 
   // If active, set false all other KMS
   if (req.body.active === true) {
     await DB.kms.updateMany({
       where: {
-        id: { not: created.id }
+        id: { not: newid }
       },
       data: {
         active: false
@@ -133,8 +136,8 @@ export async function create (req, res, next) {
   }
 
   KMS.resetWallet()
-  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_KMS, created.id)
-  res.status(R.CREATED).send(R.ok({ id: created.id }))
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_KMS, newid)
+  res.status(R.CREATED).send(R.ok({ id: newid }))
 }
 
 /**

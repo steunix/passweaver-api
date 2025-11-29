@@ -16,6 +16,7 @@ import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Item from '../../../model/item.mjs'
 import * as KMS from '../../../lib/kms/kms.mjs'
 import * as Metrics from '../../../lib/metrics.mjs'
+import { newUuid7 } from '../../../lib/id.mjs'
 
 import jsonwebtoken from 'jsonwebtoken'
 
@@ -200,15 +201,16 @@ export async function create (req, res, next) {
     newdata.dataauthtag = encData.authTag
   }
 
-  const created = await DB.onetimetokens.create({
-    data: newdata
+  const newid = newUuid7()
+  await DB.onetimetokens.createMany({
+    data: [newdata]
   })
 
   if (req.body.type === Const.OTT_TYPE_SECRET) {
-    await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, created.id)
+    await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESECRET, newid)
   }
   if (req.body.type === Const.OTT_TYPE_ITEM) {
-    await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, created.id)
+    await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ONETIMESHARE, newid)
     await Events.add(req.user, Const.EV_ACTION_ITEMSHARE, Const.EV_ENTITY_ITEM, req.body.itemid)
   }
 

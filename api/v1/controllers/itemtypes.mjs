@@ -14,6 +14,7 @@ import * as Cache from '../../../lib/cache.mjs'
 
 import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
 import DB from '../../../lib/db.mjs'
+import { newUuid7 } from '../../../lib/id.mjs'
 
 /**
  * Get item type
@@ -118,16 +119,18 @@ export async function create (req, res, next) {
   }
 
   // Creates the item type
-  const created = await DB.itemtypes.create({
+  const newid = newUuid7()
+  await DB.itemtypes.createMany({
     data: {
+      id: newid,
       description: req.body.description,
       icon: req.body?.icon
     }
   })
 
   await Cache.resetItemTypes()
-  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, created.id)
-  res.status(R.CREATED).send(R.ok({ id: created.id }))
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_ITEMTYPE, newid)
+  res.status(R.CREATED).send(R.ok({ id: newid }))
 }
 
 /**
@@ -175,7 +178,7 @@ export async function update (req, res, next) {
   if (req.body.icon) {
     updateStruct.icon = req.body.icon
   }
-  await DB.itemtypes.update({
+  await DB.itemtypes.updateMany({
     data: updateStruct,
     where: {
       id: typeid

@@ -114,8 +114,8 @@ export async function setFavorite (itemid, userid, favorite) {
   })
 
   if (favorite) {
-    await DB.itemsfav.create({
-      data: { itemid, userid }
+    await DB.itemsfav.createMany({
+      data: [{ itemid, userid }]
     })
   }
 

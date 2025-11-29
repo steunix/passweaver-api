@@ -16,6 +16,8 @@ import * as User from '../../../model/user.mjs'
 import * as APIKey from '../../../model/apikey.mjs'
 
 import { isAdmin, isReadOnly } from '../../../lib/auth.mjs'
+import { newUuid7 } from '../../../lib/id.mjs'
+
 import DB from '../../../lib/db.mjs'
 
 /**
@@ -122,8 +124,10 @@ export async function create (req, res, next) {
   const secret = Crypt.randomString(20)
   const encsecret = await KMS.encrypt(secret, 'aes-256-gcm')
 
-  const created = await DB.apikeys.create({
-    data: {
+  const newid = newUuid7()
+  await DB.apikeys.createMany({
+    data: [{
+      id: newid,
       secret: encsecret.encrypted,
       secretiv: encsecret.iv,
       secretauthtag: encsecret.authTag,
@@ -137,11 +141,11 @@ export async function create (req, res, next) {
       active: req.body.active,
       ipwhitelist: req.body.ipwhitelist || null,
       timewhitelist: req.body.timewhitelist || null
-    }
+    }]
   })
 
-  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_APIKEY, created.id)
-  res.status(R.CREATED).send(R.ok({ id: created.id, secret }))
+  await Events.add(req.user, Const.EV_ACTION_CREATE, Const.EV_ENTITY_APIKEY, newid)
+  res.status(R.CREATED).send(R.ok({ id: newid, secret }))
 }
 
 /**
@@ -214,7 +218,7 @@ export async function update (req, res, next) {
     updateStruct.timewhitelist = req.body.timewhitelist || null
   }
 
-  await DB.apikeys.update({
+  await DB.apikeys.updateMany({
     data: updateStruct,
     where: {
       id: apikid
