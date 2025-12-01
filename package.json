@@ -23,7 +23,7 @@
     "bcrypt": "6.0.0",
     "compression": "1.8.1",
     "crockford-base32": "2.0.0",
-    "express": "5.1.0",
+    "express": "5.2.1",
     "express-rate-limit": "8.2.1",
     "generate-password": "1.7.1",
     "helmet": "8.1.0",
