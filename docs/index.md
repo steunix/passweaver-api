@@ -452,6 +452,7 @@ Copy `config-skel.json` to `config.json` and adjust the options (all options are
   - `google_oauth2`:
     - `enabled`: if true, the login endpoint will accept the token for authenticating with Google OAuth2 token. Note that you have to set "GOOGLE_CLIENT_ID" in your environment
       to your API Key Client ID.
+- `prisma_options`: these settings will be passed to Prisma PGClient creation. See [Prisma documentation](https://www.prisma.io/docs/orm/reference/prisma-client-reference#prismaclient) for possible values.
 
 ## 5. Prepare the database
 
