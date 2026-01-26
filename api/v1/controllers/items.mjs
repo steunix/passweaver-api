@@ -98,7 +98,9 @@ export async function get (req, res, next) {
 
   // If linked item, get original item
   let originalItem
+  let sourceItemId
   if (item.linkeditemid) {
+    sourceItemId = item.linkeditemid
     originalItem = item
     item = await DB.items.findUnique({
       where: { id: item.linkeditemid }
@@ -149,11 +151,12 @@ export async function get (req, res, next) {
   }
 
   await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
+
   Metrics.counterInc(Const.METRICS_ITEMS_READ)
 
   // If reading a linked item, add read event to original item too
-  if (originalItem) {
-    await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, originalItem.id)
+  if (sourceItemId) {
+    await Events.add(req.user, Const.EV_ACTION_READVIALINKED, Const.EV_ENTITY_ITEM, sourceItemId)
   }
 
   res.send(R.ok(item))
