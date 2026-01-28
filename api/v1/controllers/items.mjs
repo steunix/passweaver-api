@@ -148,6 +148,7 @@ export async function get (req, res, next) {
   if (originalItem) {
     item.id = originalItem.id
     item.folderid = originalItem.folderid
+    item.linkeditemid = sourceItemId
   }
 
   await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
