@@ -609,7 +609,7 @@ export async function update (req, res, next) {
   await Item.updateFTS(itemid)
 
   // Sync linked items
-  await Item.syncLinkedItems(itemid, updateStruct?.type)
+  await Item.syncLinkedItems(itemid, updateStruct?.type, updateStruct?.title)
 
   // Update favorite flag
   if ('favorite' in req.body) {

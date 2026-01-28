@@ -51,6 +51,64 @@ describe('Linked items', () => {
     assert.strictEqual(res5.status, 200)
   })
 
+  it('Create linked item and modify original title', async () => {
+    // Create an item
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    // Create linked item
+    const res2 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/linkeditems`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ linkeditemid: itemid })
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+    const linkeditemid = res2.body.data.id
+
+    // Modify original item's title
+    const newTitle = 'Modified title'
+    const resMod = await agent
+      .patch(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ title: newTitle })
+      .catch(v => v)
+
+    assert.strictEqual(resMod.status, 200)
+
+    // Get item via linked item
+    const res3 = await agent
+      .get(`${global.host}/api/v1/items/${linkeditemid}?key=${global.key}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    res3.body.data.data = await global.decryptBlock(res3.body.data.data, global.key)
+
+    assert.strictEqual(res3.status, 200)
+    assert.strictEqual(res3.body.data.title, newTitle)
+
+    // Delete linked item
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/items/${linkeditemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res4.status, 200)
+
+    // Delete item
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res5.status, 200)
+  })
+
   it('Create linked item, and delete original item', async () => {
     // Create an item
     const res1 = await agent
