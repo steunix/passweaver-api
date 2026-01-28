@@ -140,10 +140,12 @@ export async function isFavorite (itemid, userid) {
  * Synchronize linked items with the original one
  * @param {string} itemid Item ID
  * @param {number} itemtypeid Item type ID
+ * @param {string} title Item title
  */
-export async function syncLinkedItems (itemid, itemtypeid) {
+export async function syncLinkedItems (itemid, itemtypeid, title) {
   const linkedItems = await DB.items.findMany({
-    where: { linkeditemid: itemid }
+    where: { linkeditemid: itemid },
+    select: { id: true }
   })
 
   await DB.$transaction(async () => {
@@ -152,6 +154,12 @@ export async function syncLinkedItems (itemid, itemtypeid) {
         await DB.items.update({
           where: { id: li.id },
           data: { type: itemtypeid }
+        })
+      }
+      if (title) {
+        await DB.items.update({
+          where: { id: li.id },
+          data: { title }
         })
       }
     }
