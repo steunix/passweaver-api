@@ -51,6 +51,72 @@ describe('Linked items', () => {
     assert.strictEqual(res5.status, 200)
   })
 
+  it('Check linked items list on original', async () => {
+    // Create an item
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    // Create linked item #1
+    const res21 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/linkeditems`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ linkeditemid: itemid })
+      .catch(v => v)
+
+    assert.strictEqual(res21.status, 201)
+    const linkeditemid1 = res21.body.data.id
+
+    // Create linked item #2
+    const res22 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/linkeditems`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ linkeditemid: itemid })
+      .catch(v => v)
+
+    assert.strictEqual(res22.status, 201)
+    const linkeditemid2 = res22.body.data.id
+
+    // Get original item and check linked items list
+    const res3 = await agent
+      .get(`${global.host}/api/v1/items/${itemid}?key=${global.key}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    res3.body.data.data = await global.decryptBlock(res3.body.data.data, global.key)
+
+    assert.strictEqual(res3.status, 200)
+    assert.strictEqual(res3.body.data.childrenlinkeditems.length, 2)
+    assert.strictEqual(res3.body.data.childrenlinkeditems.includes(linkeditemid1), true)
+    assert.strictEqual(res3.body.data.childrenlinkeditems.includes(linkeditemid2), true)
+
+    // Delete linked item #1
+    const res41 = await agent
+      .delete(`${global.host}/api/v1/items/${linkeditemid1}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res41.status, 200)
+
+    // Delete linked item #2
+    const res42 = await agent
+      .delete(`${global.host}/api/v1/items/${linkeditemid2}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res42.status, 200)
+
+    // Delete item
+    const res5 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res5.status, 200)
+  })
+
   it('Create linked item and modify original title', async () => {
     // Create an item
     const res1 = await agent
