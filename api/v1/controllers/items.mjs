@@ -128,6 +128,9 @@ export async function get (req, res, next) {
   item.data = Crypt.encryptedPayload(key, item.data)
 
   // Removes unneeded info
+  delete (item.kmsid)
+  delete (item.dek)
+  delete (item.kekversion)
   delete (item.dataauthtag)
   delete (item.dataiv)
   delete (item.algo)
