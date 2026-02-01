@@ -154,6 +154,17 @@ export async function get (req, res, next) {
     item.linkeditemid = sourceItemId
   }
 
+  // Get all linked items
+  const linkedItems = await DB.items.findMany({
+    where: { linkeditemid: item.id },
+    select: { id: true }
+  })
+  const linkedItemsIds = []
+  for (const linked of linkedItems) {
+    linkedItemsIds.push(linked.id)
+  }
+  item.childrenlinkeditems = linkedItemsIds
+
   await Events.add(req.user, Const.EV_ACTION_READ, Const.EV_ENTITY_ITEM, itemid)
 
   Metrics.counterInc(Const.METRICS_ITEMS_READ)

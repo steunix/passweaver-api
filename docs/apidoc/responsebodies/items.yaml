@@ -45,6 +45,12 @@ getsuccess:
                 type: string
                 description: Linked item ID (if any)
                 example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+              childrenlinkeditems:
+                type: array
+                description: Array of items linked to this item (if any)
+                items:
+                  type: string
+                  example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
               created:
                 type: string
                 description: Item creation timestamp
