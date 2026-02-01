@@ -15,6 +15,17 @@ getsuccess:
           data:
             type: object
             properties:
+              id:
+                type: string
+                description: Item ID
+                example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+              folderid:
+                type: string
+                description: Item folder
+              personal:
+                type: boolean
+                description: Personal item flag
+                example: false
               type:
                 type: string
                 description: Item type
@@ -30,9 +41,22 @@ getsuccess:
               metadata:
                 type: string
                 description: Item metadata
-              folderid:
+              linkeditemid:
                 type: string
-                description: Item folder
+                description: Linked item ID (if any)
+                example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+              created:
+                type: string
+                description: Item creation timestamp
+                example: "2024-09-18T14:55:27.451Z"
+              updatedat:
+                type: string
+                description: Item last update timestamp
+                example: "2024-09-18T14:55:27.451Z"
+              accessedat:
+                type: string
+                description: Item last accessed timestamp
+                example: "2024-09-18T14:55:27.451Z"
 
 getactivity:
   description: Success
