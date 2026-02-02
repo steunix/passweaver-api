@@ -267,7 +267,8 @@ export async function list (req, res, next) {
 
   const items = await DB.$queryRaw`
     select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, i.personal, i.linkeditemid, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
-      case when fav.id is not null then true else false end as favorite
+      case when fav.id is not null then true else false end as favorite,
+      (select array(select l.id from items l where l.linkeditemid = i.id)) childrenlinkeditems
     from   items i
     join   itemsfts fts
     on     fts.id = i.id
