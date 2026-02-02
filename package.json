@@ -16,7 +16,7 @@
     "superagent": "10.3.0"
   },
   "dependencies": {
-    "@google-cloud/kms": "^5.2.1",
+    "@google-cloud/kms": "^5.3.0",
     "@prisma/adapter-pg": "7.3.0",
     "@prisma/client": "7.3.0",
     "ajv": "8.17.1",
