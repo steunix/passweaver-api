@@ -71,6 +71,14 @@ itemslistsuccess:
             items:
               type: object
               properties:
+                id:
+                  type: string
+                  description: Item ID
+                  example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+                folderid:
+                  type: string
+                  description: Item folder
+                  example: "06CANZR79NTK3BJVSW6SH35MV8"
                 type:
                   type: string
                   description: Item type
@@ -86,14 +94,20 @@ itemslistsuccess:
                   type: string
                   description: Item metadata
                   example: "example metadata"
-                folderid:
-                  type: string
-                  description: Item folder
-                  example: "06CANZR79NTK3BJVSW6SH35MV8"
                 favorite:
                   type: boolean
                   description: True if item is favorite, false otherwise
                   example: false
+                linkeditemid:
+                  type: string
+                  description: Linked item ID (if any)
+                  example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
+                childrenlinkeditems:
+                  type: array
+                  description: Array of items linked to this item (if any)
+                  items:
+                    type: string
+                    example: "0198757b-8a46-718e-a1ab-614d7b0d598d"
                 folder:
                   type: object
                   properties:
