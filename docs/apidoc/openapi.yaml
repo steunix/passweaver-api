@@ -103,6 +103,10 @@ paths:
     $ref: '.\paths\itemsidactivity.yaml'
   /items/{itemid}/clone:
     $ref: '.\paths\itemsidclone.yaml'
+  /items/{itemid}/passwordread:
+    $ref: '.\paths\itemsidpasswordread.yaml'
+  /items/{itemid}/passwordcopied:
+    $ref: '.\paths\itemsidpasswordcopied.yaml'
   /items:
     $ref: '.\paths\items.yaml'
   /itemtypes:

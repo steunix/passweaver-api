@@ -406,4 +406,54 @@ describe('Items', () => {
       .catch(v => v)
     assert.strictEqual(res2.status, 200)
   })
+
+  it('Add password read event', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/items/${itemid}/passwordread`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+
+    // Cleanup
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+  })
+
+  it('Add password copied event', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample1/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    const res2 = await agent
+      .post(`${global.host}/api/v1/items/${itemid}/passwordcopied`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+
+    assert.strictEqual(res2.status, 201)
+
+    // Cleanup
+    const res4 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res4.status, 200)
+  })
 })
