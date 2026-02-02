@@ -28,6 +28,10 @@ router.delete('/:id', itemsController.remove)
 
 router.post('/:id/clone', itemsController.clone)
 
+router.post('/:id/passwordread', itemsController.passwordRead)
+
+router.post('/:id/passwordcopied', itemsController.passwordCopied)
+
 router.get('/:id/activity', itemsController.activity)
 
 export default router
