@@ -860,3 +860,75 @@ export async function activity (req, res, next) {
   const act = await Events.activity(req.query?.lastid, null, req.params.id, req.query?.sort)
   res.send(R.ok(act))
 }
+
+/**
+ * Register password read event
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @param {Object} next Next
+ */
+export async function passwordRead (req, res, next) {
+  const itemid = req.params.id
+
+  // Check if item exists, and get linked item
+  const item = await DB.items.findUnique({
+    where: { id: itemid },
+    select: { linkeditemid: true, folderid: true }
+  })
+  if (item === null) {
+    res.status(R.NOT_FOUND).send(R.ko('Item not found'))
+    return
+  }
+
+  // Check read permissions on folder
+  const perm = await Folder.permissions(item.folderid, req.user)
+  if (!perm.read) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  await Events.add(req.user, Const.EV_ACTION_PWDREAD, Const.EV_ENTITY_ITEM, itemid)
+
+  // If linked item, add event to original item too
+  if (item.linkeditemid) {
+    await Events.add(req.user, Const.EV_ACTION_PWDREADVIALINKED, Const.EV_ENTITY_ITEM, item.linkeditemid)
+  }
+
+  res.status(R.CREATED).send(R.ok())
+}
+
+/**
+ * Register password copied event
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @param {Object} next Next
+ */
+export async function passwordCopied (req, res, next) {
+  const itemid = req.params.id
+
+  // Check if item exists, and get linked item
+  const item = await DB.items.findUnique({
+    where: { id: itemid },
+    select: { linkeditemid: true, folderid: true }
+  })
+  if (item === null) {
+    res.status(R.NOT_FOUND).send(R.ko('Item not found'))
+    return
+  }
+
+  // Check read permissions on folder
+  const perm = await Folder.permissions(item.folderid, req.user)
+  if (!perm.read) {
+    res.status(R.FORBIDDEN).send(R.forbidden())
+    return
+  }
+
+  await Events.add(req.user, Const.EV_ACTION_PWDCOPY, Const.EV_ENTITY_ITEM, itemid)
+
+  // If linked item, add event to original item too
+  if (item.linkeditemid) {
+    await Events.add(req.user, Const.EV_ACTION_PWDCOPYVIALINKED, Const.EV_ENTITY_ITEM, item.linkeditemid)
+  }
+
+  res.status(R.CREATED).send(R.ok())
+}
