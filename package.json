@@ -28,7 +28,7 @@
     "generate-password": "1.7.1",
     "helmet": "8.1.0",
     "jsonwebtoken": "9.0.3",
-    "ldapts": "8.1.4",
+    "ldapts": "8.1.6",
     "morgan": "1.10.1",
     "prom-client": "15.1.3",
     "node-cache": "5.1.2",
