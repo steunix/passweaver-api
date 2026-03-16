@@ -351,8 +351,8 @@ export async function userTree (user) {
 
     // Each child is also added to read-permitted folders for caching
     for (const el of achildren) {
-      // Only 'admin' user can see all personal folders
-      if (el.personal === true && el.user !== user && user !== '0') {
+      // Admin can see all personal folders, but only at the first level
+      if (el.personal && !(user === Const.PW_USER_ADMINID && el.parent === Const.PW_FOLDER_PERSONALROOTID)) {
         continue
       }
 
