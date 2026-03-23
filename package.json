@@ -35,7 +35,7 @@
     "prisma": "7.5.0",
     "redis": "5.11.0",
     "rotating-file-stream": "3.2.9",
-    "uuidv7": "1.1.0",
+    "uuidv7": "1.2.1",
     "is-in-subnet": "4.0.1",
     "is-cidr": "6.0.3",
     "dateformat": "5.0.3"
