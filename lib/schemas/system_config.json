@@ -36,6 +36,17 @@
             "ca": { "type": "string" },
             "ciphers": { "type": "string" }
           }
+        },
+        "provisioning": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "first_name_attribute": { "type": "string" },
+            "last_name_attribute": { "type": "string" },
+            "email_attribute": { "type": "string" },
+            "login_attribute": { "type": "string" }
+          },
+          "required": [ "enabled" ]
         }
       },
       "dependencies": {

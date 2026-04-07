@@ -39,6 +39,7 @@ These are the features this API support, in random order:
 - User groups
 - Extensive log actions on items
 - Both LDAP and local authentication
+- LDAP user provisioning
 - Immediate system lock (only admins can login)
 - Global readonly mode
 - Export various metrics (including default NodeJS metrics) in Prometheus format
@@ -148,6 +149,7 @@ PassWeaver API users can be authenticated via these methods:
 
  - Local: the user password hash is stored locally in the database
  - LDAP: authenticate against a LDAP/Active Directory server
+   - if enabled in config, authenticated users in LDAP/AD are automatically created at login, so they don't need to be created before hand by an admin
  - API key: authenticate only via an existing API key
  - Google OAuth2 token validation: see below
 
@@ -431,6 +433,12 @@ Copy `config-skel.json` to `config.json` and adjust the options (all options are
   - `tlsOptions`: will be passed to ldapts Node package. Note that `cert` and `ca` will accept a file path instead of file content.
     - `cert`: path to certificate
     - `ca`: path to CA certificate
+  - `provisioning`
+    - `enabled`: if enabled, authenticated users via LDAP are automatically created; they are only added to "Everyone" group
+    - `first_name_attribute`: first name attribute, defaults to "givenName"
+    - `last_name_attribute`: last name attribute, defaults "sn"
+    - `email_attribute`: email address attribute, defaults to "mail"
+    - `login_attribute`: login attribute, defaults to "cn"
 - `https`:
   - `enabled`: HTTPS enabled (true/false)
   - `certificate`: certificate file path

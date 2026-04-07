@@ -17,6 +17,7 @@ import * as Const from '../../../lib/const.mjs'
 import * as JV from '../../../lib/jsonvalidator.mjs'
 import * as Settings from '../../../lib/settings.mjs'
 import * as ApiKey from '../../../model/apikey.mjs'
+import * as User from '../../../model/user.mjs'
 import * as Metrics from '../../../lib/metrics.mjs'
 import * as Folder from '../../../model/folder.mjs'
 import * as GOAuth2 from 'google-auth-library'
@@ -155,14 +156,102 @@ export async function login (req, res, next) {
     }
   }
 
-  // Check user
+  // To user LDAP:
+  // - must not be an API key login
+  // - must not be a Google OAuth2 login
+  // - if the user exists, it must have LDAP as auth method, otherwise it may have provisioning enabled with LDAP as auth method
+  const userex = await DB.users.findUnique({
+    where: { login: data.username }
+  })
+  const checkLdap = !isapikey && !isGoogleToken && ((userex && userex.authmethod === 'ldap') || !userex)
+
+  // Validate user password
+  let ldapClient
+  if (checkLdap) {
+    const ldapConf = Config.get().ldap
+
+    // LDAP authentication
+    try {
+      const ldapOpts = {
+        url: `${ldapConf.url}:${ldapConf.port}`,
+        tlsOptions: ldapConf?.tlsOptions
+      }
+
+      // Bind to LDAP server for searching user
+      try {
+        ldapClient = new LDAP.Client(ldapOpts)
+        await ldapClient.bind(ldapConf.bindDn, ldapConf.bindPassword)
+      } catch (err) {
+        res.status(R.UNAUTHORIZED).send(R.ko(err.message))
+        return
+      }
+
+      // Loop in baseDNs to find user
+      let authenticated = false
+      let search
+      for (const baseDn of ldapConf.baseDn) {
+        search = await ldapClient.search(baseDn, {
+          filter: `(${ldapConf.userDn}=${data.username})`,
+          scope: 'sub'
+        })
+
+        // Authenticate user if found
+        if (search.searchEntries.length > 0) {
+          try {
+            await ldapClient.bind(
+              `${search.searchEntries[0].dn}`,
+              data.password
+            )
+            authenticated = true
+            break
+          } catch (err) { }
+        }
+      }
+
+      if (!authenticated) {
+        throw new Error('User not found')
+      }
+
+      if (authenticated && !userex && ldapConf.provisioning?.enabled === true) {
+        // If provisioning is enabled and user does not exist, create it
+        await User.provisionLDAP(
+          data.username,
+          search.searchEntries[0][ldapConf.provisioning.first_name_attribute || 'givenName'] || '',
+          search.searchEntries[0][ldapConf.provisioning.last_name_attribute || 'sn'] || '',
+          search.searchEntries[0][ldapConf.provisioning.email_attribute || 'mail'] || '',
+          'en_US',
+          'ldap',
+          '0'
+        )
+      }
+    } catch (err) {
+      await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
+      res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
+      return
+    } finally {
+      ldapClient.unbind()
+    }
+  }
+
+  // Now we can get the final user
   const user = await DB.users.findUnique({
     where: { login: data.username }
   })
+
+  // Check user
   if (user === null) {
     await Events.add(data.username, Const.EV_ACTION_LOGIN_USERNOTFOUND, Const.EV_ENTITY_USER, data.username)
     res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
     return
+  }
+
+  // Local authentication
+  if (!isapikey && !isGoogleToken && user.authmethod === 'local') {
+    if (!await Crypt.checkPassword(data.password, user.secret)) {
+      await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
+      res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
+      return
+    }
   }
 
   // Check if system is locked, if not admin
@@ -183,70 +272,6 @@ export async function login (req, res, next) {
     return
   }
 
-  // Validate user password
-  let ldapClient
-  if (!isapikey && user.authmethod === 'ldap') {
-    const ldap = Config.get().ldap
-
-    // LDAP authentication
-    try {
-      const ldapOpts = {
-        url: `${ldap.url}:${ldap.port}`,
-        tlsOptions: ldap?.tlsOptions
-      }
-
-      // Bind to LDAP server for searching user
-      try {
-        ldapClient = new LDAP.Client(ldapOpts)
-        await ldapClient.bind(ldap.bindDn, ldap.bindPassword)
-      } catch (err) {
-        res.status(R.UNAUTHORIZED).send(R.ko(err.message))
-        return
-      }
-
-      // Loop in baseDNs to find user
-      let authenticated = false
-      for (const baseDn of ldap.baseDn) {
-        const search = await ldapClient.search(baseDn, {
-          filter: `(${ldap.userDn}=${data.username})`,
-          scope: 'sub',
-          attributes: [ldap.userDn]
-        })
-
-        // Authenticate user if found
-        if (search.searchEntries.length > 0) {
-          try {
-            await ldapClient.bind(
-              `${search.searchEntries[0].dn}`,
-              data.password
-            )
-            authenticated = true
-            break
-          } catch (err) { }
-        }
-      }
-
-      if (!authenticated) {
-        throw new Error('User not found')
-      }
-    } catch (err) {
-      await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
-      res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
-      return
-    } finally {
-      ldapClient.unbind()
-    }
-  }
-
-  // Local authentication
-  if (!isapikey && !isGoogleToken && user.authmethod === 'local') {
-    if (!await Crypt.checkPassword(data.password, user.secret)) {
-      await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
-      res.status(R.UNAUTHORIZED).send(R.ko('Bad user or wrong password'))
-      return
-    }
-  }
-
   // API key method check
   if ((!isapikey && user.authmethod === 'apikey') || (isapikey && user.authmethod !== 'apikey')) {
     await Events.add(null, Const.EV_ACTION_LOGINFAILED, Const.EV_ENTITY_USER, data.username)
@@ -254,7 +279,7 @@ export async function login (req, res, next) {
     return
   }
 
-  // Creates JWT token
+  // Create JWT token
   const token = await Auth.createToken(user.id, false)
 
   // API key metrics
