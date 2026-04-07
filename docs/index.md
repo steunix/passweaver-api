@@ -394,7 +394,7 @@ In order to be able to install PassWeaver API:
 
 ## 2. Install
 
-Download the source at [this link](https://github.com/steunix/passweaver-api/releases/latest), and install all dependencies with npm:
+Download the source at [this link](https://github.com/steunix/passweaver-api/releases/latest), possibly via `git clone` and install all dependencies with npm:
 
 `npm install`
 
@@ -479,3 +479,14 @@ A default user `admin` has been created, with password `0`: of course you should
 ## 8. Need a GUI to handle your passwords?
 
 If you need a GUI, have a look at [PassWeaver GUI](https://steunix.github.io/passweaver-gui/), a WEB based frontend for PassWeaver API.
+
+# Upgrade
+
+To upgrade Passweaver-API, run this in the installation folder:
+
+- `git pull`: update source
+- `npm install`: upgrade the dependencies
+- `npx prisma generate`: update Prisma.io generated code
+- `npx prisma db push`: update database schema
+
+Restart the application.
