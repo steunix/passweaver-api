@@ -175,16 +175,19 @@ export async function children (id, foldersRecordset) {
 export async function permissions (id, user, useCache) {
   const ret = {
     read: false,
-    write: false
+    write: false,
+    append: false
   }
 
   // Check for cache existance
   if (useCache !== false) {
     const cacheRead = await Cache.get(user, Cache.foldersReadableKey)
     const cacheWrite = await Cache.get(user, Cache.foldersWritableKey)
-    if (cacheRead && cacheWrite) {
+    const cacheAppend = await Cache.get(user, Cache.foldersAppendableKey)
+    if (cacheRead && cacheWrite && cacheAppend) {
       ret.read = cacheRead.find(elem => elem === id) !== undefined
       ret.write = cacheWrite.find(elem => elem === id) !== undefined
+      ret.append = cacheAppend.find(elem => elem === id) !== undefined
       return ret
     }
   }
@@ -221,16 +224,21 @@ export async function permissions (id, user, useCache) {
     if (folder.personal && folder.userid === user) {
       ret.read = true
       ret.write = true
+      ret.append = false
     }
     return ret
   }
 
+  // Descend the tree and OR permissions, so that if a user has read or write on a folder it has it on all the children
   for (const perm of pPerms) {
     ret.read = ret.read || perm.read
     ret.write = ret.write || perm.write
+    ret.append = ret.append || perm.append
 
-    // If both perm are true, we can early exit
-    if (ret.read && ret.write) {
+    // If write is true, we can early exit since it implies read and excludes append-only
+    if (ret.write) {
+      ret.read = true
+      ret.append = false
       return ret
     }
   }
@@ -316,7 +324,7 @@ export async function userTree (user) {
       select id, level
       from   folder_tree
     )
-    select t.level,f.*, p.read, p.write
+    select t.level, f.*, p.read, p.write, p.append
     from   folders f
     join   folderspermissions p
     on     f.id = p.folderid
@@ -338,6 +346,8 @@ export async function userTree (user) {
   // For each allowed folder, add all parents and children
   const readable = new Map()
   const writable = new Map()
+  const appendable = new Map()
+
   const data = []
   const added = new Map()
   for (const folder of readFolders) {
@@ -348,8 +358,11 @@ export async function userTree (user) {
     if (folder.write) {
       writable.set(folder.id, folder.id)
     }
+    if (folder.append) {
+      appendable.set(folder.id, folder.id)
+    }
 
-    // Each child is also added to read-permitted folders for caching
+    // Set permissions for children
     for (const el of achildren) {
       // Admin can see all personal folders, but only at the first level
       if (el.personal && !(user === Const.PW_USER_ADMINID && el.parent === Const.PW_FOLDER_PERSONALROOTID)) {
@@ -357,7 +370,8 @@ export async function userTree (user) {
       }
 
       if (!added.get(el.id)) {
-        // Get permissions avoiding cache checks, since we're building it
+        // Get permissions avoiding cache usage, since we're building it
+        // TODO: Should not the children permission be inherited from the parent, instead of doing a separate query?
         el.permissions = await permissions(el.id, user, false)
         data.push(el)
         added.set(el.id, el.id)
@@ -365,6 +379,9 @@ export async function userTree (user) {
         readable.set(el.id, el.id)
         if (el.permissions.write) {
           writable.set(el.id, el.id)
+        }
+        if (el.permissions.append) {
+          appendable.set(el.id, el.id)
         }
       }
     }
@@ -382,6 +399,9 @@ export async function userTree (user) {
         }
         if (el.write) {
           writable.set(el.id, el.id)
+        }
+        if (el.append) {
+          appendable.set(el.id, el.id)
         }
       }
     }
@@ -412,6 +432,8 @@ export async function userTree (user) {
   await Cache.set(user, Cache.foldersTreeKey, tree)
   await Cache.set(user, Cache.foldersReadableKey, Array.from(readable.keys()))
   await Cache.set(user, Cache.foldersWritableKey, Array.from(writable.keys()))
+  await Cache.set(user, Cache.foldersAppendableKey, Array.from(appendable.keys()))
+
   return tree
 }
 

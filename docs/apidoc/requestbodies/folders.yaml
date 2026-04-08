@@ -35,9 +35,14 @@ folderAddGroupBody:
       type: boolean
       description: Group can add and delete items or subfolders in folder
       example: false
+    append:
+      type: boolean
+      description: Group can add items in folder, but not read or delete them
+      example: false
   required:
     - read
     - write
+    - append
 
 linkedItemCreateBody:
   type: object

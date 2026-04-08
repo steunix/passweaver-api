@@ -350,9 +350,9 @@ export async function create (req, res, next) {
     return
   }
 
-  // Check write permissions on folder
+  // Check write or append only permissions on folder
   const perm = await Folder.permissions(folder, req.user)
-  if (!perm.write) {
+  if (!perm.write && !perm.append) {
     res.status(R.FORBIDDEN).send(R.forbidden())
     return
   }

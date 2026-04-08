@@ -3,7 +3,8 @@
   "type": "object",
   "properties": {
     "read" : { "type": "boolean" },
-    "write" : { "type": "boolean" }
+    "write" : { "type": "boolean" },
+    "append" : { "type": "boolean" }
   },
-  "required": ["read", "write"]
+  "required": ["read", "write", "append"]
 }

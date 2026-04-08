@@ -114,6 +114,8 @@ model folderspermissions {
   groupid   String
   read      Boolean
   write     Boolean
+  append    Boolean? @default(false)
+
   createdat DateTime @default(now())
   updatedat DateTime @updatedAt
 

@@ -3,7 +3,7 @@
 require('./common.cjs')
 
 describe('Items', () => {
-  it('Create, update and remove item', async () => {
+  it('Create, update and remove item (write folder)', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/folders/sample1/items`)
       .set('Authorization', `Bearer ${global.userJWT}`)
@@ -27,6 +27,32 @@ describe('Items', () => {
       .set('Authorization', `Bearer ${global.userJWT}`)
       .catch(v => v)
     assert.strictEqual(res3.status, 200)
+  })
+
+  it('Create item (append only folder)', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample3/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 201)
+    const itemid = res1.body.data.id
+
+    // Cannot update
+    const res2 = await agent
+      .patch(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send({ metadata: 'test' })
+      .catch(v => v)
+    assert.strictEqual(res2.status, 403)
+
+    // Cannot delete
+    const res3 = await agent
+      .delete(`${global.host}/api/v1/items/${itemid}`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .catch(v => v)
+    assert.strictEqual(res3.status, 403)
   })
 
   it('Clone item', async () => {
@@ -90,7 +116,17 @@ describe('Items', () => {
     assert.strictEqual(res1.status, 404)
   })
 
-  it('Create item, unauthorized as user', async () => {
+  it('Create item, unauthorized as user, read folder', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample2/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 403)
+  })
+
+  it('Create item, unauthorized as user (write)', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/folders/sample2/items`)
       .set('Authorization', `Bearer ${global.userJWT}`)
@@ -128,7 +164,7 @@ describe('Items', () => {
     assert.strictEqual(res2.status, 422)
   })
 
-  it('List items in folder', async () => {
+  it('List items in folder (read folder)', async () => {
     const res1 = await agent
       .post(`${global.host}/api/v1/folders/sample1/items`)
       .set('Authorization', `Bearer ${global.userJWT}`)
@@ -143,6 +179,16 @@ describe('Items', () => {
       .catch(v => v)
 
     assert.strictEqual(res2.status, 200)
+  })
+
+  it('List items in folder (append only folder)', async () => {
+    const res1 = await agent
+      .post(`${global.host}/api/v1/folders/sample3/items`)
+      .set('Authorization', `Bearer ${global.userJWT}`)
+      .send(global.itemCreateData)
+      .catch(v => v)
+
+    assert.strictEqual(res1.status, 403)
   })
 
   it('Update item, bad type', async () => {

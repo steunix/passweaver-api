@@ -366,6 +366,10 @@ export async function addGroup (req, res, next) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('If write is true, also read must be true'))
     return
   }
+  if (req.body.append && (req.body.write || req.body.read)) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('If append is true, write and read must be false'))
+    return
+  }
 
   // Checks the group
   if (!await Group.exists(req.params.group)) {
@@ -436,6 +440,10 @@ export async function setGroup (req, res, next) {
   // Check for permissions
   if (req.body.write && !req.body.read) {
     res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('If write is true, also read must be true'))
+    return
+  }
+  if (req.body.append && (req.body.write || req.body.read)) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('If append is true, write and read must be false'))
     return
   }
 
