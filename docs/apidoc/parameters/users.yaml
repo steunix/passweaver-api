@@ -12,11 +12,11 @@ userid:
 search:
   name: search
   in: query
-  description: Search string
+  description: Search string (matches login, firstname, lastname and email)
   required: false
   schema:
     type: string
-    example: "example search string"
+    example: "Alex"
 
 lastid:
   name: lastid
