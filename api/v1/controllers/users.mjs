@@ -89,7 +89,8 @@ export async function list (req, res, next) {
         OR: [
           { login: { contains: req.query.search, mode: 'insensitive' } },
           { firstname: { contains: req.query.search, mode: 'insensitive' } },
-          { lastname: { contains: req.query.search, mode: 'insensitive' } }
+          { lastname: { contains: req.query.search, mode: 'insensitive' } },
+          { email: { contains: req.query.search, mode: 'insensitive' } }
         ]
       },
       orderBy: {
