@@ -153,6 +153,13 @@ PassWeaver API users can be authenticated via these methods:
  - API key: authenticate only via an existing API key
  - Google OAuth2 token validation: see below
 
+### LDAP user provisioning
+
+You can decide to automatically create users when they authenticate with LDAP server, without the need of being pre-created in PassWeaver. See configuration below to
+fine tune this process.
+
+Any auto-provisioned user will be part of `Everyone` default group.
+
 ### Google OAuth2 token validation
 
 You can integrate your frontend with Google OAuth2 (PassWeaver GUI supports is), and once you obtain a valid token PassWeaver API can validate it and obtain the informations to log you in:
