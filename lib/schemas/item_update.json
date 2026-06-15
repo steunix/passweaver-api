@@ -7,6 +7,7 @@
     "data" : { "type": "string" },
     "metadata": { "type": "string" },
     "folder" : { "type": "string", "maxLength": 40 },
-    "favorite" : { "type": "boolean" }
+    "favorite" : { "type": "boolean" },
+    "enterprise" : { "type": "boolean" }
   }
 }

@@ -128,6 +128,7 @@ model items {
   id          String    @id
   folderid    String
   personal    Boolean   @default(false)
+  enterprise  Boolean   @default(false)
   type        String?   @db.Uuid
   title       String
 
@@ -152,6 +153,7 @@ model items {
 
   linkeditem  items?     @relation("ItemToLinkedItem", fields: [linkeditemid], references: [id], onUpdate: Cascade, onDelete: Restrict )
   linkeditems items[]    @relation("ItemToLinkedItem")
+  edata       itemsedata[]
 
   fav      itemsfav[]
   fts      itemsfts[]
@@ -181,10 +183,30 @@ model itemsfav {
   @@index([itemid])
 }
 
+model itemsedata {
+  itemid      String    @id
+  userid      String
+
+  kmsid       String?   @db.Uuid
+  dek         String?
+  kekversion  String?
+
+  data        String
+  dataiv      String
+  dataauthtag String
+  algo        String?
+
+  createdat   DateTime  @default(now())
+
+  kms         kms?       @relation(fields: [kmsid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+  item        items      @relation(fields: [itemid], references: [id], onUpdate: Cascade, onDelete: Restrict )
+}
+
 model itemsdeleted {
   id          String    @id
   folderid    String
   personal    Boolean   @default(false)
+  enterprise  Boolean   @default(false)
   type        String?
   title       String
 
@@ -206,12 +228,13 @@ model itemsdeleted {
 }
 
 model itemtypes {
-  id          String   @id @db.Uuid @default(uuid(7))
-  description String
-  icon        String?
-  createdat   DateTime @default(now())
-  updatedat   DateTime @updatedAt
-  items       items[]
+  id           String   @id @db.Uuid @default(uuid(7))
+  description  String
+  icon         String?
+  createdat    DateTime @default(now())
+  updatedat    DateTime @updatedAt
+
+  items        items[]
 }
 
 model onetimetokens {
@@ -253,16 +276,17 @@ model events {
 }
 
 model kms {
-  id          String   @id @db.Uuid @default(uuid(7))
-  type        Int
-  description String
-  config      String?
-  active      Boolean  @default(false)
+  id           String   @id @db.Uuid @default(uuid(7))
+  type         Int
+  description  String
+  config       String?
+  active       Boolean  @default(false)
 
-  createdat   DateTime @default(now())
-  updatedat   DateTime @updatedAt
+  createdat    DateTime @default(now())
+  updatedat    DateTime @updatedAt
 
-  items       items[]
+  items        items[]
+  itemsedata   itemsedata[]
 }
 
 model apikeys {

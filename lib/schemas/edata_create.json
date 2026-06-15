@@ -1,0 +1,8 @@
+{
+  "$id": "edata_create",
+  "type": "object",
+  "properties": {
+    "data" : { "type": "string" }
+  },
+  "required": ["data"]
+}

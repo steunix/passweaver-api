@@ -10,11 +10,15 @@ import { Router } from 'express'
 
 import * as auth from '../../../lib/auth.mjs'
 import * as itemsController from '../controllers/items.mjs'
+import edataRouter from './edata.mjs'
 
 const router = Router({ mergeParams: true })
 
 // Validation middleware
 router.use(auth.validateJWT)
+
+// Enterprise data router
+router.use('/:id/edata', edataRouter)
 
 router.get('/:id', itemsController.get)
 
