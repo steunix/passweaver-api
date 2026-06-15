@@ -65,7 +65,6 @@ describe('Items enterprise data', () => {
 
     assert.strictEqual(res5.status, 200)
     res5.body.data.data = await global.decryptBlock(res5.body.data.data, global.key)
-    console.log(res5.body.data)
 
     assert.strictEqual(res5.body.data.data.length, edata.data.length)
     assert.strictEqual(res5.body.data.data, edata.data)
