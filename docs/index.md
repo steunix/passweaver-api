@@ -30,6 +30,7 @@ These are the features this API support, in random order:
 - Login via Google OAuth2 token validation
 - API keys, with IP whitelist and day of week/time whitelist
 - Personal folders for each user
+- Enterprise data for personal items
 - Favorite items
 - Linked items
 - Share one-time secrets with anyone, even if they have not an account
@@ -112,6 +113,22 @@ PassWeaver API has 2 predefined folders that cannot be modified or deleted:
 Each user has a personal folder for storing private, non-shared-with-anyone items. In order to use personal folders, users have to set a personal password that will be used to
 encrypt items inside those folders. Since this password is used to encrypt the key that will be used to encrypt his items ("envelope encryption"), there is no way to recover
 the items if a user forgets his password.
+
+#### Enterprise data
+
+For personal items you can set an "enterprise" flag, which allows to share some data at enterprise level. Immagine this scenario:
+- in your personal folders, you have some credential to access a Customer VPN
+- these are personal credentials, so you protect them in your personal folders: these items cannot be read by anyone but you
+- your leave this enterprise
+- your enterprise should dismiss and invalidate all the credentials you were using for their Customers
+- your enterprise need to know what credentials you were using for your job, so they can be dismissed. Since personal items are double encrypted with a custom password, your enterprise is
+  not able to know what credentials you were using
+- flagging a personal item as "enterprise" allows you to store additional data, separated from the data itself
+- "enterprise" personal items may share for example the URL and the user name you have been using, but NOT your password
+- your enterprise is able to get a list of what you have been using, and it's able to have your Customer dismiss those credentials
+
+Your "enterprise" items is NOT a regular item, so it's not searchable by anyone, it's just a subset of item info (e.g. excluding the passord) stored separately from the item itself.
+Your item is securely double-encrypted, but an excerpt of it is shared with your enterprise. It's up to a single user to define what is enterprise and what is not.
 
 ### Users and groups
 

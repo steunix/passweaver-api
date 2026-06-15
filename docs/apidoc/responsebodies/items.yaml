@@ -119,3 +119,24 @@ getactivity:
                   type: boolean
                   description: Favorite item flag
                   example: true
+
+getedata:
+  description: Success
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              data:
+                type: string
+                description: AES-256-CBC encrypted and base64 encoded item enterprise data in the form "iv:data", encrypted using the key provided in the request
+                example: ZXhhbXBsZQ==:ZXhhbXBsZQ==
+              createdat:
+                type: string
+                description: Item creation timestamp
+                example: "2024-09-18T14:55:27.451Z"

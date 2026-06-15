@@ -268,6 +268,7 @@ export async function list (req, res, next) {
   const items = await DB.$queryRaw`
     select i.id, i.folderid, i.type, i.title, i.metadata, i.createdat, i.updatedat, i.personal, i.linkeditemid, f.description folderdescription, t.description typedescription, t.icon, t.id typeid,
       case when fav.id is not null then true else false end as favorite,
+      i.enterprise,
       (select array(select l.id from items l where l.linkeditemid = i.id)) childrenlinkeditems
     from   items i
     join   itemsfts fts
@@ -396,6 +397,7 @@ export async function create (req, res, next) {
       id: newid,
       folderid: folder,
       personal,
+      enterprise: false,
       kmsid: encData.kmsId,
       dek: encData.dek,
       kekversion: encData.kekversion,
@@ -499,6 +501,11 @@ export async function update (req, res, next) {
     }
   }
 
+  if ('enterprise' in req.body && !item.personal) {
+    res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Enterprise items is for personal items only'))
+    return
+  }
+
   // If the folder is changing, check if the new folder is personal
   if (folderChanged) {
     const newFolder = await DB.folders.findUnique({
@@ -511,6 +518,11 @@ export async function update (req, res, next) {
       const check = await checkPersonalAccess(req)
       if (check !== 0) {
         res.status(check).send(R.ko('Personal folder not accessible'))
+        return
+      }
+
+      if ('enterprise' in req.body && !newFolder.personal) {
+        res.status(R.UNPROCESSABLE_ENTITY).send(R.ko('Enterprise items is for personal items only'))
         return
       }
     }
@@ -632,6 +644,11 @@ export async function update (req, res, next) {
     await Item.setFavorite(itemid, req.user, req.body.favorite)
   }
 
+  // Update enterprise flag
+  if ('enterprise' in req.body) {
+    await Item.setEnterprise(itemid, req.body.enterprise)
+  }
+
   res.send(R.ok())
 }
 
@@ -746,6 +763,12 @@ async function hardDelete (item, user) {
     }
   })
 
+  await DB.itemsedata.deleteMany({
+    where: {
+      itemid: item.id
+    }
+  })
+
   await DB.items.delete({
     where: {
       id: item.id
@@ -826,6 +849,7 @@ export async function clone (req, res, next) {
   const newItem = {
     id: newid,
     personal: item.personal,
+    enterprise: false,
     folderid: item.folderid,
     title: `${item.title} - Copy`,
     kmsid: newData.kmsId,

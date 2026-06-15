@@ -49,6 +49,10 @@ itemUpdateBody:
       type: boolean
       description: Set/unset favorite item
       example: true
+    enterprise:
+      type: boolean
+      description: Set/unset enterprise flag for personal item. If set to false, current enterprise data will be deleted.
+      example: true
   required:
     - title
     - data

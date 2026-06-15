@@ -123,6 +123,25 @@ export async function setFavorite (itemid, userid, favorite) {
 }
 
 /**
+ * Set enterprise item for user
+ * @param {string} itemid Item ID
+ * @param {boolean} enterprise Boolean value for enterprise
+ */
+export async function setEnterprise (itemid, enterprise) {
+  await DB.items.updateMany({
+    where: { id: itemid },
+    data: { enterprise }
+  })
+  if (!enterprise) {
+    await DB.itemsedata.deleteMany({
+      where: { itemid }
+    })
+  }
+
+  return true
+}
+
+/**
  * Return favorite flag for item and user
  * @param {string} itemid Item ID
  * @param {string} userid User ID
