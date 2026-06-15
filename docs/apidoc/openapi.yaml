@@ -101,6 +101,8 @@ paths:
     $ref: '.\paths\itemsid.yaml'
   /items/{itemid}/activity:
     $ref: '.\paths\itemsidactivity.yaml'
+  /items/{itemid}/edata:
+    $ref: '.\paths\itemsidedata.yaml'
   /items/{itemid}/clone:
     $ref: '.\paths\itemsidclone.yaml'
   /items/{itemid}/passwordread:

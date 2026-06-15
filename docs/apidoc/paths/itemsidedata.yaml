@@ -1,0 +1,21 @@
+get:
+  tags:
+    - Items
+  operationId: "getItemEData"
+  summary: Get item enterprise data
+  description: Return item enterprise data if it's an enterprise item; otherwise, return 404 not found
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\items.yaml#/itemid'
+  responses:
+    "200":
+      description: Enterprise data returned
+      $ref: '..\responsebodies\items.yaml#/getedata'
+    "401":
+      $ref: '..\responsebodies\default.yaml#/unauthorized'
+    "403":
+      $ref: '..\responsebodies\default.yaml#/forbidden'
+    "404":
+      description: Enterprise data not found
+      $ref: '..\responsebodies\default.yaml#/notfound'
