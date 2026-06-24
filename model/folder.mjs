@@ -434,6 +434,8 @@ export async function groupTree (group) {
     on     g.id = p.groupid
     where  p.groupid = ${group}
     and    p.read = true
+    and    f.id != ${Const.PW_FOLDER_PERSONALROOTID}
+    and    f.personal = false
     `
 
   // For each allowed folder, add all parents and children
@@ -444,14 +446,14 @@ export async function groupTree (group) {
     const aparents = await parents(folder.id, allFolders)
 
     for (const el of achildren) {
-      if (!added.get(el.id)) {
+      if (!el.personal && el.code !== Const.PW_FOLDER_PERSONALROOTID && !added.get(el.id)) {
         el.permissions = await groupPermissions(el.id, group)
         data.push(el)
         added.set(el.id, el.id)
       }
     }
     for (const el of aparents) {
-      if (!added.get(el.id)) {
+      if (!el.personal && el.code !== Const.PW_FOLDER_PERSONALROOTID && !added.get(el.id)) {
         el.permissions = await groupPermissions(el.id, group)
         data.push(el)
         added.set(el.id, el.id)
