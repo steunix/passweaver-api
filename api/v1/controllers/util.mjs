@@ -14,6 +14,8 @@ import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Settings from '../../../lib/settings.mjs'
 import * as Const from '../../../lib/const.mjs'
+import * as Item from '../../../model/item.mjs'
+import * as Crypt from '../../../lib/crypt.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -188,4 +190,39 @@ export async function systemGetLock (req, res, next) {
     }
   }
   res.send(R.ok({ locked: false }))
+}
+
+/**
+ * Return enterprise data
+ * @param {*} req Express request
+ * @param {*} res Express response
+ * @param {*} next Express next
+ */
+export async function getEdata (req, res, next) {
+  // Check supplied key
+  let key
+  try {
+    key = Buffer.from(req.query?.key, 'base64')
+    if (key.length !== 32) {
+      throw new Error('Invalid key length')
+    }
+  } catch (e) {
+    res.status(R.BAD_REQUEST).send(R.badRequest('Invalid key'))
+    return
+  }
+
+  const edata = await DB.itemsedata.findMany()
+  const res = []
+
+  for (const e of edata) {
+    const ddata = await Item.decrypt(e, req)
+
+    res.push({
+      userid: e.userid,
+      userdescription: e.user.description,
+      data: Crypt.encryptedPayload(key, ddata)
+    })
+  }
+
+  res.send(R.ok({ edata }))
 }

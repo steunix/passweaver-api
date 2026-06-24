@@ -34,4 +34,6 @@ router.post('/systemreadwrite', utilController.systemReadWrite)
 
 router.get('/systemreadonly', utilController.systemGetReadOnly)
 
+router.get('/edata', utilController.getEdata)
+
 export default router
