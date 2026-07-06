@@ -102,3 +102,32 @@ systemgetlock:
                 type: boolean
                 example: false
                 description: System is locked
+
+edataSuccess:
+  description: Enterprise items data are returned
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          status:
+            $ref: '#/status'
+          data:
+            type: object
+            properties:
+              userid:
+                type: string
+                example: "1125"
+                description: The user ID associated with the enterprise items data
+              lastname:
+                type: string
+                example: "Doe"
+                description: The last name of the user associated with the enterprise items data
+              firstname:
+                type: string
+                example: "John"
+                description: The first name of the user associated with the enterprise items data
+              data:
+                type: string
+                example: "enterprise_data_here"
+                description: The encrypted enterprise items data

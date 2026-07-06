@@ -137,6 +137,8 @@ paths:
     $ref: '.\paths\utilsystemreadonly.yaml'
   /util/systemreadwrite:
     $ref: '.\paths\utilsystemreadwrite.yaml'
+  /util/edata:
+    $ref: '.\paths\utiledata.yaml'
   /events:
     $ref: '.\paths\events.yaml'
   /onetimetokens:

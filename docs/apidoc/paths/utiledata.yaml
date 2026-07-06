@@ -1,0 +1,17 @@
+get:
+  tags:
+    - Utilities
+  operationId: edata
+  summary: Get all enterprise items data
+  description: Get all enterprise items data
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '..\parameters\util.yaml#/key'
+
+  responses:
+    "200":
+      $ref: '..\responsebodies\util.yaml#/edataSuccess'
+      description: Enterprise items data successfully returned
+    "400":
+      $ref: '..\responsebodies\default.yaml#/badrequest'

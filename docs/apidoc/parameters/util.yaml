@@ -18,3 +18,12 @@ length:
     minimum: 1
     maximum: 50
     default: 15
+
+key:
+  name: key
+  in: query
+  description: The base64-encoded key to use for encryption. Avoid reusing the key, use a different key for each request.
+  required: true
+  schema:
+    type: string
+    example: "MTkzMTAxNjg2MzkxODUzOTA0OTQxMjc5MTM3Mzc4OTc="

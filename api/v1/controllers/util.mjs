@@ -14,6 +14,8 @@ import * as Cache from '../../../lib/cache.mjs'
 import * as Auth from '../../../lib/auth.mjs'
 import * as Settings from '../../../lib/settings.mjs'
 import * as Const from '../../../lib/const.mjs'
+import * as Crypt from '../../../lib/crypt.mjs'
+import * as Item from '../../../model/item.mjs'
 
 import DB from '../../../lib/db.mjs'
 
@@ -188,4 +190,45 @@ export async function systemGetLock (req, res, next) {
     }
   }
   res.send(R.ok({ locked: false }))
+}
+
+/**
+ * Return enterprise data
+ * @param {Object} req Express request
+ * @param {Object} res Express response
+ * @param {Function} next Express next callback
+ */
+export async function edata (req, res, next) {
+  // Check supplied key
+  let key
+  try {
+    key = Buffer.from(req.query?.key, 'base64')
+    if (key.length !== 32) {
+      throw new Error('Invalid key length')
+    }
+  } catch (e) {
+    res.status(R.BAD_REQUEST).send(R.badRequest('Invalid key'))
+    return
+  }
+
+  const data = []
+  const itemsedata = await DB.$queryRaw`
+    select e.*, u.firstname, u.lastname
+    from   itemsedata e
+    join   users u
+    on     u.id = e.userid
+    order  by u.id`
+
+  for (const edata of itemsedata) {
+    const ed = await Item.decrypt(edata, req)
+    data.push({
+      userid: edata.userid,
+      firstname: edata.firstname,
+      lastname: edata.lastname,
+      data: ed
+    })
+  }
+
+  const encryptedData = Crypt.encryptedPayload(key, JSON.stringify(data))
+  res.send(R.ok({ data: encryptedData }))
 }

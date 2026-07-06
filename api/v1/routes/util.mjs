@@ -18,6 +18,8 @@ router.use(auth.validateJWT)
 
 router.get('/generatepassword', utilController.generatePassword)
 
+router.get('/edata', utilController.edata)
+
 router.get('/info', utilController.info)
 
 router.post('/clearcache', utilController.clearCache)
