@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@google-cloud/kms": "5.7.0",
-    "@prisma/adapter-pg": "7.9.0",
+    "@prisma/adapter-pg": "7.9.1",
     "@prisma/client": "7.9.1",
     "ajv": "8.20.0",
     "bcrypt": "6.0.0",
