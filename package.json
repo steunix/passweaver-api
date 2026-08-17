@@ -34,7 +34,7 @@
     "node-cache": "5.1.2",
     "prisma": "7.9.1",
     "redis": "6.2.0",
-    "rotating-file-stream": "3.2.9",
+    "rotating-file-stream": "3.2.10",
     "uuidv7": "1.2.1",
     "is-in-subnet": "4.0.1",
     "is-cidr": "7.0.1",
