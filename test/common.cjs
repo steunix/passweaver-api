@@ -52,43 +52,41 @@ global.groupCreateData = {
 
 const AUTO_TEST = process.env?.PASSWEAVER_AUTO_TEST === '1'
 
-before((done) => {
+before(async function () {
+  this.timeout(15000)
   console.log('Passweaver API test before hook')
   // Read listen port from config
   console.log('Reading port from config')
-  const port = JSON.parse(
+  const config = JSON.parse(
     global.fs.readFileSync(
       AUTO_TEST ? './test/config-test.json' : 'config.json'
     )
-  ).listen.port
-  const ip = JSON.parse(
-    global.fs.readFileSync(
-      AUTO_TEST ? './test/config-test.json' : 'config.json'
-    )
-  ).listen.host
+  )
+  const port = config.listen.port
+  const ip = config.listen.host
 
   global.host = `http://${ip}:${port}`
   console.log(`Running tests on ${global.host}`)
 
+  const requestTimeout = { response: 3000, deadline: 10000 }
+
   // Get both admin jwt and user jwt
-  global.agent
+  const adminLogin = await global.agent
     .post(`${global.host}/api/v1/login`)
     .send({ username: 'ADMIN', password: '0' })
-    .then(res => {
-      global.adminJWT = res.body.data.jwt
+    .timeout(requestTimeout)
+  global.adminJWT = adminLogin.body.data.jwt
 
-      global.agent
-        .post(`${global.host}/api/v1/util/systemunlock`)
-        .set('Authorization', `Bearer ${global.adminJWT}`).then(res => {
-          global.agent
-            .post(`${global.host}/api/v1/login`)
-            .send({ username: 'USER1', password: '0' })
-            .then(res => {
-              global.userJWT = res.body.data.jwt
-              done()
-            })
-        })
-    })
+  await global.agent
+    .post(`${global.host}/api/v1/util/systemunlock`)
+    .set('Authorization', `Bearer ${global.adminJWT}`)
+    .timeout(requestTimeout)
+
+  const userLogin = await global.agent
+    .post(`${global.host}/api/v1/login`)
+    .send({ username: 'USER1', password: '0' })
+    .timeout(requestTimeout)
+  global.userJWT = userLogin.body.data.jwt
 })
 
 global.rnd = (prefix) => {
