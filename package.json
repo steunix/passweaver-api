@@ -21,7 +21,7 @@
     "@prisma/client": "7.10.0",
     "ajv": "8.20.0",
     "bcrypt": "6.0.0",
-    "compression": "1.8.1",
+    "compression": "1.8.2",
     "crockford-base32": "2.1.0",
     "express": "5.2.1",
     "express-rate-limit": "8.7.0",
