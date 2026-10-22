@@ -119,6 +119,10 @@ edataSuccess:
                 type: string
                 example: "1125"
                 description: The user ID associated with the enterprise items data
+              login:
+                type: string
+                example: "johndoe"
+                description: The login of the user associated with the enterprise items data
               lastname:
                 type: string
                 example: "Doe"

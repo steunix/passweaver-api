@@ -223,6 +223,7 @@ export async function edata (req, res, next) {
     const ed = await Item.decrypt(edata, req)
     data.push({
       userid: edata.userid,
+      login: edata.login,
       firstname: edata.firstname,
       lastname: edata.lastname,
       data: ed
