@@ -13,7 +13,7 @@
   "devDependencies": {
     "mocha": "12.0.3",
     "standard": "17.1.2",
-    "superagent": "10.4.1"
+    "superagent": "10.4.2"
   },
   "dependencies": {
     "@google-cloud/kms": "6.3.0",
